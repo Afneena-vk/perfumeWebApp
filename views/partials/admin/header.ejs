@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin</title>
+    <!-- <link rel="stylesheet" href="/css/admin/main.css"> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="shortcut icon" type="image/x-icon" href="#">
+    <!-- <link href="/admin-assets/css/main.css" rel="stylesheet" type="text/css" /> -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10.16.6/dist/sweetalert2.min.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<!-- <link rel="stylesheet" href="/css/mainadminhdr.css"> -->
+</head>
+<style>
+    body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+.container {
+    display: flex;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #f0f0f0;
+    padding: 20px;
+    height: 100vh;
+    color: #333;
+}
+
+.sidebar .logo {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.sidebar .logo img {
+    max-width: 100px;
+}
+
+.sidebar .nav-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar .nav-item {
+    margin-bottom: 10px;
+}
+
+.sidebar .nav-item a {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    text-decoration: none;
+    color: #333;
+    border-radius: 5px;
+    background-color: #fff;
+    transition: background-color 0.3s ease;
+}
+
+.sidebar .nav-item a:hover {
+    background-color: #e9e9e9;
+}
+
+.sidebar .nav-item a i {
+    margin-right: 10px;
+    font-size: 18px;
+    color: #333;
+}
+
+.sidebar .nav-item a span {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.main-content {
+    flex: 1;
+    padding: 20px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+}
+
+.header .logout-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #dc3545;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.col-md-4 {
+    flex: 1 0 33.33%;
+    margin-bottom: 20px;
+}
+
+.card {
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    overflow: hidden;
+}
+
+.card-header {
+    padding: 20px;
+    background-color: #f0f0f0;
+    color: #333;
+    font-weight: bold;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+.amount {
+    font-size: 36px;
+    font-weight: bold;
+    color: #333;
+}
+
+.text {
+    font-size: 14px;
+    color: #333;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th, .table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+.table th {
+    background-color: #f0f0f0;
+    color: #333;
+    font-weight: bold;
+}
+
+.table img {
+    max-width: 50px;
+    margin-right: 10px;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.page-item {
+    margin: 0 5px;
+}
+
+.page-item .page-link {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #fff;
+    color: #333;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.page-item.active .page-link {
+    background-color: #007bff;
+    color: #fff;
+    border-color: #007bff;
+}
+
+.page-item .page-link:hover {
+    background-color: #e9e9e9;
+}
+
+.badge {
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.badge-success {
+    background-color: #28a745;
+    color: #fff;
+}
+
+.badge-danger {
+    background-color: #dc3545;
+  color:#fff;
+}
+</style>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="logo">
+                <img src="/images/s2.jpg" alt="Logo">
+            </div>
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="/admin/">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin/products">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span>Products</span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="/admin/brands">
+                        <i class="icon material-icons md-stars"></i>
+                        <span>Brands</span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="/admin/category">
+                        <i class="fas fa-th-list"></i>
+                        <span>Category</span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="/admin/orders">
+                        <i class="fas fa-file-invoice"></i>
+                        <span>Orders</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin/coupons">
+                        <i class="fas fa-tags"></i>
+                        <span>Coupon</span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="/admin/adminOffer">
+                        <i class="fas fa-gift"></i>
+                        <span>Offer</span>
+                    </a>
+                </li>
+                
+                <li class="nav-item">
+                    <a href="/admin/users">
+                        <i class="fas fa-users"></i>
+                        <span>Customers</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin/addProducts">
+                        <i class="fas fa-question-circle"></i>
+                        <span>Add product</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin/logout">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </a>
+                </li>
+            </ul>
+    </div>

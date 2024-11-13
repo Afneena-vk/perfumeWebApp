@@ -1,0 +1,370 @@
+
+<!DOCTYPE html>
+<html lang="zxx">
+<head>
+   <meta charset="UTF-8">
+   <meta name="description" content="Male_Fashion Template">
+   <meta name="keywords" content="Male_Fashion, unica, creative, html">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+   <title>Male-Fashion</title>
+   <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap"
+   rel="stylesheet">
+   <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
+   <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css">
+   <link rel="stylesheet" href="css/elegant-icons.css" type="text/css">
+   <link rel="stylesheet" href="css/magnific-popup.css" type="text/css">
+   <link rel="stylesheet" href="css/nice-select.css" type="text/css">
+   <link rel="stylesheet" href="css/owl.carousel.min.css" type="text/css">
+   <link rel="stylesheet" href="css/slicknav.min.css" type="text/css">
+   <link rel="stylesheet" href="css/style.css" type="text/css">
+   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+
+<style>
+.header_nav_option .sign-in-link {
+   font-size: 16px;
+   color: #333;
+   margin-right: 15px;
+   text-decoration: none;
+   font-weight: 600;
+}
+.header_nav_option .sign-in-link:hover {
+   color: #ff7f50;
+}
+
+
+.dropdown {
+   position:relative;
+   display:inline-block;
+}
+.dropdown-content {
+   display: none;
+   position:absolute;
+   background-color: white;
+   min-width: 160px;
+   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+   z-index:1000;
+   right:0;
+}
+
+
+.dropdown-content a {
+   color: black;
+   padding: 12px 16px;
+   text-decoration: none;
+   display: block;
+   width: 100%;
+
+
+}
+.dropdown-content a:hover{
+   background-color: #f1f1f1;
+}
+.dropdown:hover .dropdown-content{
+   display: block;
+}
+.header {
+   position: relative;
+   z-index: 500;
+}
+
+#imageZoom{
+    width: 550px;
+    height: 700px;
+    border: 5px solid red;
+    position: relative;
+}
+
+#imageZoom img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 0 0;
+
+}
+#imageZoom::after{
+    display: var(--display);
+    content: '';
+    width: 100%;
+    height: 100%;
+    /* background-color: black; */
+    background-image: var(--url);
+    background-size: 200%;
+    background-position: var(--zoom-x) var(--zoom-y);
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+</style>
+
+<body>
+   <header class="header">
+       <div class="container">
+           <div class="row">
+               <div class="col-lg-3 col-md-3">
+                   <div class="header__logo">
+                       <a href="#"><img src="img/logo.png" alt=""></a>
+                   </div>
+               </div>
+               <div class="col-lg-6 col-md-6">
+                   <nav class="header__menu mobile-menu">
+                       <ul>
+                        <li><a href="/">Home</a></li>
+                        <li class="active"><a href="./shop.html">Shop</a></li>
+                           
+                       </ul>
+                   </nav>
+               </div>
+               <div class="col-lg-3 col-md-3">
+                   <div class="header__nav__option">
+                       <%if(locals.user){%>
+                           <div class="dropdown">
+                               <a href="#" class="sign-in-link"><%=locals.user.name%></a>
+                               <div class="dropdown-content">
+
+                                   <a href="/userProfile">Profile</a>
+                                   <a href="/logout">Logout</a>
+
+                                </div>
+
+                           </div>
+                       <%}else {%>
+
+
+                       <a href="/signup" class="sign-in-link">Sign Up</a>
+                       <a href="/login" class="sign-in-link">Log in</a>
+                       <%}%>
+                       <a href="#" class="search-switch"><img src="img/icon/search.png" alt=""></a>
+                       <a href="#"><img src="img/icon/heart.png" alt=""></a>
+                       <a href="./shopping-cart.html"><img src="img/icon/cart.png" alt=""> <span>0</span></a>
+                   </div>
+               </div>
+           </div>
+           <div class="canvas__open"><i class="fa fa-bars"></i></div>
+       </div>
+   </header>
+
+    <!-- Shop Details Section Begin -->
+    <section class="shop-details">
+        <div class="product__details__pic">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">                             
+                        <div class="product__details__breadcrumb">
+                            <a href="./index.html">Home</a>
+                            <a href="./shop.html">Shop</a>
+                            <span>Product Details</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <!-- Thumbnail Navigation (Left Column) -->
+                    <div class="col-lg-3 col-md-3">
+                        <ul class="nav nav-tabs" role="tablist">
+                            <% product.productImage.forEach((image, index) => { %>
+                                <li class="nav-item">
+                                    <a class="nav-link <%= index === 0 ? 'active' : '' %>" data-toggle="tab" href="#tabs-<%= index + 1 %>" role="tab">
+                                        <div class="product__thumb__pic set-bg" data-setbg="/uploads/re-images/<%= image %>">
+                                        </div>
+                                    </a>
+                                </li>
+                            <% }) %>
+                        </ul>
+                    </div>
+                
+                    <!-- Main Image Display Area (Right Column) -->
+                    <div class="col-lg-6 col-md-9">
+                        <div class="tab-content">
+                            <% product.productImage.forEach((image, index) => { %>
+                                <div class="tab-pane <%= index === 0 ? 'active' : '' %>" id="tabs-<%= index + 1 %>" role="tabpanel">
+                                    <div class="product__details__pic__item" id="imageZoom" style="--url: url(image); --zoom-x: 0%; --zoom-y: 0%; --display: none ">
+                                        <img src="/uploads/re-images/<%= image %>" alt="Product Image <%= index + 1 %>">
+                                        
+                                    </div>
+                                </div>
+                            <% }) %>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        <div class="product__details__content">
+            <div class="container">
+                <div class="row d-flex justify-content-center">
+                    <div class="col-lg-8">
+                        <div class="product__details__text">
+                            <h4><%= product.productName %></h4>
+                            <div class="rating">
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star-o"></i>
+                                <span> - 5 Reviews</span>
+                            </div>
+                            <h3>₹<%= product.salePrice %> <span>₹<%= product.regularPrice %></span></h3>
+                            <p><%= product.description %></p>
+                            <div class="product__details__option">
+                                <div class="product__details__option__size">
+                                    <span>Size:</span>
+                                    <label for="50 ml">50 ml
+                                        <input type="radio" id="xxl">
+                                    </label>
+                                    <label class="active" for="100 ml">100 ml
+                                        <input type="radio" id="xl">
+                                    </label>
+                                    <label for="100 ml">100 ml
+                                        <input type="radio" id="l">
+                                    </label>
+                                    
+                                </div>
+                                
+                            </div>
+                            <div class="product__details__cart__option">
+                                <div class="quantity">
+                                    <div class="pro-qty">
+                                        <input type="text" value="1">
+                                    </div>
+                                </div>
+                                <a href="#" class="primary-btn">add to cart</a>
+                            </div>
+                            <div class="product__details__btns__option">
+                                <a href="#"><i class="fa fa-heart"></i> add to wishlist</a>
+                                
+                            </div>
+                            <div class="product__details__last__option">
+                                
+                                <ul>
+                                    <li><span>Brand:</span> <%= product.brand %></li>
+                                    <li><span>Categories:</span> <%= product.category.name %></li>
+                                    <!-- <li><span>Tag:</span> Clothes, Skin, Body</li> -->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+               
+            </div>
+        </div>
+    </section>
+   
+
+    
+
+    <!-- Footer Section Begin -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-md-6 col-sm-6">
+                    <div class="footer__about">
+                        <div class="footer__logo">
+                            <a href="#"><img src="img/footer-logo.png" alt=""></a>
+                        </div>
+                        <p>The customer is at the heart of our unique business model, which includes design.</p>
+                        <a href="#"><img src="img/payment.png" alt=""></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 offset-lg-1 col-md-3 col-sm-6">
+                    <div class="footer__widget">
+                        <h6>Shopping</h6>
+                        <ul>
+                            <li><a href="#">Clothing Store</a></li>
+                            <li><a href="#">Trending Shoes</a></li>
+                            <li><a href="#">Accessories</a></li>
+                            <li><a href="#">Sale</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-3 col-sm-6">
+                    <div class="footer__widget">
+                        <h6>Shopping</h6>
+                        <ul>
+                            <li><a href="#">Contact Us</a></li>
+                            <li><a href="#">Payment Methods</a></li>
+                            <li><a href="#">Delivary</a></li>
+                            <li><a href="#">Return & Exchanges</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-3 offset-lg-1 col-md-6 col-sm-6">
+                    <div class="footer__widget">
+                        <h6>NewLetter</h6>
+                        <div class="footer__newslatter">
+                            <p>Be the first to know about new arrivals, look books, sales & promos!</p>
+                            <form action="#">
+                                <input type="text" placeholder="Your email">
+                                <button type="submit"><span class="icon_mail_alt"></span></button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <div class="footer__copyright__text">
+                        <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                        <p>Copyright ©
+                            <script>
+                                document.write(new Date().getFullYear());
+                            </script>2020
+                            All rights reserved | This template is made with <i class="fa fa-heart-o"
+                            aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
+                        </p>
+                        <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- Footer Section End -->
+
+    <!-- Search Begin -->
+    <div class="search-model">
+        <div class="h-100 d-flex align-items-center justify-content-center">
+            <div class="search-close-switch">+</div>
+            <form class="search-model-form">
+                <input type="text" id="search-input" placeholder="Search here.....">
+            </form>
+        </div>
+    </div>
+    <!-- Search End -->
+
+    <!-- Js Plugins -->
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.nice-select.min.js"></script>
+    <script src="js/jquery.nicescroll.min.js"></script>
+    <script src="js/jquery.magnific-popup.min.js"></script>
+    <script src="js/jquery.countdown.min.js"></script>
+    <script src="js/jquery.slicknav.js"></script>
+    <script src="js/mixitup.min.js"></script>
+    <script src="js/owl.carousel.min.js"></script>
+    <script src="js/main.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/elevatezoom/3.0.8/jquery.elevatezoom.min.js"></script>
+    <script>
+        const imageZoom = document.getElementById("imageZoom");
+      
+        imageZoom.addEventListener("mousemove", (e) => {
+          const rect = imageZoom.getBoundingClientRect();
+          const x = ((e.clientX - rect.left) / rect.width) * 100;
+          const y = ((e.clientY - rect.top) / rect.height) * 100;
+      
+          // Update CSS variables for zoom position
+          imageZoom.style.setProperty("--zoom-x", `${x}%`);
+          imageZoom.style.setProperty("--zoom-y", `${y}%`);
+          imageZoom.style.setProperty("--display", "block");  // Ensure display is enabled
+          imageZoom.style.setProperty("--url", `url('${imageZoom.querySelector("img").src}')`);
+        });
+      
+        imageZoom.addEventListener("mouseleave", () => {
+          imageZoom.style.setProperty("--display", "none");  // Hide zoom effect when not hovering
+        });
+      </script>
+      
+</body>
+
+</html>

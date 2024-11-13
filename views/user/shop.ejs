@@ -1,0 +1,133 @@
+<%- include("../../views/partials/user/header") %>
+<style>
+    
+  .product-content-wrap h6 {
+      font-size: 18px;
+      color: #333;
+      margin-bottom: 5px;
+  }
+
+
+  .product-content-wrap h5 {
+      font-size: 16px;
+      color: #ff6b6b;
+      margin-bottom: 10px;
+  }
+
+
+  .product-content-wrap a {
+      display: inline-block;
+      padding: 8px 12px;
+      background-color: #ff6b6b;
+      color: white;
+      text-transform: uppercase;
+      font-size: 14px;
+      border-radius: 4px;
+      text-decoration: none;
+  }
+
+
+  .product-content-wrap a:hover {
+      background-color: #ff4c4c;
+  }
+</style>
+<!-- Shop Section Begin -->
+<section class="shop spad">
+    <div class="container">
+        <div class="row">
+            <!-- Sidebar Begin -->
+            <div class="col-lg-3 col-md-4">
+                <div class="shop__sidebar">
+                    <div class="shop__sidebar__accordion">
+                        <!-- Brand Section -->
+                        <div class="accordion" id="brandAccordion">
+                            <div class="card">
+                                <div class="card-heading">
+                                    <a href="#" data-toggle="collapse" data-target="#brandCollapse">Brand</a>
+                                </div>
+                                <div id="brandCollapse" class="collapse" data-parent="#brandAccordion">
+                                    <div class="card-body">
+                                        <ul>
+                                            <li><a href="#">Rasai</a></li>
+                                            <li><a href="#">Chanel</a></li>
+                                            <li><a href="#">Bella Vita</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Category Section -->
+                        <div class="accordion" id="categoryAccordion">
+                            <div class="card">
+                                <div class="card-heading">
+                                    <a href="#" data-toggle="collapse" data-target="#categoryCollapse">Category</a>
+                                </div>
+                                <div id="categoryCollapse" class="collapse" data-parent="#categoryAccordion">
+                                    <div class="card-body">
+                                        <ul>
+                                            <li><a href="#">ladies collection</a></li>
+                                            <li><a href="#">Mens Collection</a></li>
+                                            <li><a href="#">Sample Collection</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Filter Section -->
+                        <div class="accordion" id="filterAccordion">
+                            <div class="card">
+                                <div class="card-heading">
+                                    <a href="#" data-toggle="collapse" data-target="#filterCollapse">Filter</a>
+                                </div>
+                                <div id="filterCollapse" class="collapse" data-parent="#filterAccordion">
+                                    <div class="card-body">
+                                        <ul>
+                                            <li><a href="#">Price Low to High</a></li>
+                                            <li><a href="#">Price High to Low</a></li>
+                                            <li><a href="#">Newest Arrivals</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Sidebar End -->
+
+           
+            <!-- Product Listing Begin -->
+<div class="col-lg-9 col-md-8">
+    <div class="row">
+        <% products.forEach(product => { %>
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+            <a href="/productDetails?id=<%= product._id %>">
+                <div class="product-card card">
+                    <img src="/uploads/re-images/<%= product.productImage[0] %>" class="card-img-top" alt="<%= product.productName %>" />
+                    <div class="card-body">
+                        <h3 class="card-title"><%= product.productName %></h3>
+                        <p class="card-text">Brand: <%= product.brand %></p>
+                        <p class="price">₹<%= product.salePrice %></p>
+                       
+                    </div>
+                </div>
+            </a>
+        </div>
+        <% }) %>
+    </div>
+</div>
+<!-- Product Listing End -->
+
+          
+            <!-- Product Listing End -->
+
+            
+        </div>
+    </div>
+</section>
+<!-- Shop Section End -->
+
+<%- include("../../views/partials/user/footer") %>
+
