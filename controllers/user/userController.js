@@ -23,7 +23,7 @@ const pageNotFound = async (req,res)=>{
 
 const loadHomepage = async (req,res)=>{
     try {
-          const user = req.session.user;
+          const user = req.session.user || req.user;
           const categories = await Category.find({isListed:true});
           let productData = await Product.find(
             {
@@ -285,26 +285,10 @@ const logout = async (req,res)=>{
 }
 
 
-
-// const loadShopping = async (req,res)=>{
-
-//     try {
-
-//         const products = await Product.find();
-//        // return res.render('shop');
-//         return res.render('shop', { products });
-//     } catch (error) {
-        
-//         console.log('Shopping page is not loading:',error);
-//         res.status(500).send('Server Error');
-
-//     }
-// }
-
-
 const loadShopping = async (req,res)=>{
     try {
-          const user = req.session.user;
+          const user = req.session.user || req.user;
+          console.log("userexist", user);
           if(user){
           const categories = await Category.find({isListed:true});
           let products = await Product.find(

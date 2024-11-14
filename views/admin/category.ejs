@@ -276,11 +276,13 @@
 
         }
 
-        if(description===""){
-             displayErrorMessage("description-error","Please enter a description");
-             isValid = false;
-
-        }
+        if (description === "") {
+        displayErrorMessage("description-error", "Please enter a description");
+        isValid = false;
+    } else if (!/^[a-zA-Z\s.,'"-]+$/.test(description)) {
+        displayErrorMessage("description-error", "Description can contain only alphabets, spaces, periods, commas, single quotes, and double quotes");
+        isValid = false;
+    }
         return isValid;
      }
 
@@ -311,7 +313,7 @@
     .then(response => response.json())
     .then(data => {
       if (data.success) {
-        // Reload the page to update the category list
+        
         location.reload();
       } else {
         alert("Error: " + data.message);

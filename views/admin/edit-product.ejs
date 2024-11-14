@@ -240,10 +240,17 @@
        isValid = false;
     }
               
-               if (description=== '') {
-                   displayErrorMessage('description-error', 'Please enter a product description.');
-                   isValid = false;
-               } 
+               if (description.trim() === "") {
+    displayErrorMessage('description-error', 'Please enter a product description.');
+    isValid = false;
+} else if (!/^[a-zA-Z\s.,'"-]+$/.test(description.trim())) {
+    displayErrorMessage(
+        'description-error',
+        'Product description can contain only alphabetic characters, spaces, periods, commas, single quotes, double quotes, and dashes.'
+    );
+    isValid = false;
+}
+
     
     
                if ( parseInt(quantity) < 0) {

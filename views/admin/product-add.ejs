@@ -341,13 +341,20 @@
       isValid = false;
    }
             
-   if (description.trim() === "") {
-      displayErrorMessage('description-error', 'Please enter a product description.');
-      isValid = false;
-   } else if (!/^[a-zA-Z\s]+$/.test(description.trim())) {
-      displayErrorMessage('description-error', 'Product description should contain only alphabetic characters.');
-      isValid = false;
-   }
+   
+   if (description === "") {
+    displayErrorMessage("description-error", "Please enter a description");
+    isValid = false;
+} else if (!/^[a-zA-Z\s.,'"-]+$/.test(description)) {
+    displayErrorMessage(
+        "description-error",
+        "Description can contain only alphabets, spaces, periods, commas, single quotes, double quotes, and dashes"
+    );
+    isValid = false;
+}
+
+
+
    if (brand.trim() === "") {
         displayErrorMessage('brand-error', 'Please select a brand.');
         isValid = false;

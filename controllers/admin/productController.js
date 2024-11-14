@@ -230,28 +230,6 @@ const editProduct = async (req,res)=>{
 }
 
 
-// const deleteProduct =  async (req, res) => {
-//     try {
-//       const productId = req.body.id;
-      
-//       const product = await Product.findByIdAndUpdate(
-//         productId, 
-//         { isDeleted: true }, 
-//         { new: true }
-//       );
-      
-//       if (!product) {
-//         return res.status(404).json({ message: 'Product not found' });
-//       }
-  
-//       res.json({ success: true });
-//     } catch (error) {
-//       console.error(error);
-//       res.status(500).json({ message: 'An error occurred' });
-//     }
-//   };
-
-
 const deleteSingleImage = async (req,res)=>{
     try {
         
@@ -282,5 +260,5 @@ module.exports = {
     getEditProduct,
     editProduct,
     deleteSingleImage,
-    //deleteProduct,
+
 };
