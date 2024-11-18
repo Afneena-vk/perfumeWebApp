@@ -1,27 +1,26 @@
 <%- include("../../views/partials/admin/header") %>
 
 <head>
-    <!-- Link to SweetAlert2 Stylesheet -->
+  
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
-    <!-- Custom CSS to handle layout and overflow -->
+
     <style>
-        /* Global Reset for box sizing */
+       
         *, *:before, *:after {
             box-sizing: border-box;
         }
 
-        /* Prevent Body overflow */
         html, body {
             margin: 0;
             padding: 0;
             height: 100%;
-            overflow-x: hidden; /* Prevent horizontal scroll */
+            overflow-x: hidden;
         }
 
-        /* Ensure the content fits the screen without overflowing */
+       
         .content-wrapper {
-            min-height: calc(100vh - 80px); /* Adjust based on header/footer size */
-            padding-bottom: 40px; /* Ensure space at the bottom */
+            min-height: calc(100vh - 80px);
+            padding-bottom: 40px; 
             overflow: hidden;
         }
 
@@ -29,7 +28,7 @@
             width: 100%;
         }
 
-        /* Add custom padding and margins where necessary */
+       
         .input-group {
             max-width: 600px;
             margin-left: auto;
@@ -39,19 +38,39 @@
         .table td, .table th {
             text-align: center;
         }
+
+        /* Pagination button color */
+.pagination .page-link {
+    background-color: #ffffff; /* Set background to white for better contrast */
+    color: #426c89; /* Set text color */
+    border: 1px solid #426c89; /* Border color */
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #426c89; /* Active page background color */
+    color: #ffffff; /* Active page text color */
+    border: 1px solid #426c89; /* Active page border color */
+}
+
+.pagination .page-link:hover {
+    background-color: #e6f1f3; /* Light hover effect */
+    color: #426c89; /* Hover text color */
+    border-color: #426c89; /* Hover border color */
+}
+
     </style>
 </head>
 
-<!-- Content Wrapper to Fix Overflow Issues -->
+
 <div class="content-wrapper">
-    <!-- Content Header -->
+    
     <div class="content-header">
         <div>
             <h2 class="content-title card-title">Products</h2>
         </div>
     </div>
 
-    <!-- Search Bar Section -->
+   
     <header class="card-header text-center mb-20">
         <form action="" method="get" class="d-inline">
             <div class="input-group input-group-sm border border-1 border-grey rounded-pill" style="width: 500px; margin-left: 230px;">
@@ -61,7 +80,7 @@
         </form>
     </header>
 
-    <!-- Table of Products -->
+   
     <div class="right mt-5">
         <table class="table table-striped">
             <thead>
@@ -89,10 +108,10 @@
                     <td><%=data[i].salePrice%></td>
                     <td></td>
                     <td>
-                        <button class="btn btn-info" onclick="" style="width: 100px;">
+                        <button class="btn" onclick="" style="background-color: #426c89; width: 100px; margin-bottom: 10px; width: 100px; margin-bottom: 10px;">
                             <a href="#" class="text-white">Add Offer</a>
                         </button>
-                        <button class="btn btn-info" onclick="" style="width: 100px;">
+                        <button class="btn" onclick="" style="background-color: #426c89; width: 100px; margin-bottom: 10px; width: 100px;">
                             <a href="#" class="text-white">Remove</a>
                         </button>
                     </td>
@@ -109,7 +128,7 @@
                         <%}%>
                     </td>
                     <td>
-                        <button class="btn btn-info" style="width: 80px;">
+                        <button class="btn" style="background-color: #426c89; width: 100px; margin-bottom: 10px; width: 80px;">
                             <a href="/admin/editProduct?id=<%=data[i]._id%>" class="text-white" style="text-decoration: none;">Edit</a>
                         </button>
                     </td>
@@ -142,7 +161,7 @@
 
 </div>
 
-<!-- Include SweetAlert2 Script and jQuery -->
+
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 

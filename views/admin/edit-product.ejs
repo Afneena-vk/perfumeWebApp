@@ -392,34 +392,18 @@
                }
            };
 
-        //    function deleteSingleImage(imageId,productId){
-        //      $.ajax({
-        //         url:"/admin/deleteImage",
-        //         method:'post',
-        //         data:{imageNameToServer:imageId,productIdToServer:productId},
-        //         success:((response)=>{
-        //             if(response.status===true){
-        //                 window.location.reload();
-        //             }
-        //         })
-
-
-        //      })
-
-
-        //    }
-
+    
         function deleteSingleImage(imageId, productId) {
     $.ajax({
-        url: "/admin/deleteImage", // Endpoint to delete the image
+        url: "/admin/deleteImage", 
         method: 'post',
         data: {
-            imageNameToServer: imageId, // The image filename or identifier
-            productIdToServer: productId // The associated product ID
+            imageNameToServer: imageId, 
+            productIdToServer: productId 
         },
         success: (response) => {
             if (response.status === true) {
-                window.location.reload(); // Reload page on successful image deletion
+                window.location.reload(); 
             } else {
                 alert(response.message || 'Failed to delete image');
             }

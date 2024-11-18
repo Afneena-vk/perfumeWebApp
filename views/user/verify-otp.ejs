@@ -149,7 +149,26 @@
     let timer = 60;
     let timerInterval;
 
+    // function startTimer() {
+    //     timerInterval = setInterval(() => {
+    //         timer--;
+    //         document.getElementById("timerValue").textContent = timer;
+    //         if (timer <= 0) {
+    //             clearInterval(timerInterval);
+    //             document.getElementById("timerValue").classList.add("expired");
+    //             document.getElementById("timerValue").textContent = "Expired";
+    //             document.getElementById("otp").disabled = true;
+    //         }
+    //     }, 1000);
+    // }
+    // startTimer();
+
     function startTimer() {
+
+        const resendButton = document.querySelector(".btn-secondary");
+        resendButton.style.display = "none";
+
+
         timerInterval = setInterval(() => {
             timer--;
             document.getElementById("timerValue").textContent = timer;
@@ -157,61 +176,147 @@
                 clearInterval(timerInterval);
                 document.getElementById("timerValue").classList.add("expired");
                 document.getElementById("timerValue").textContent = "Expired";
+                resendButton.style.display = "block";
                 document.getElementById("otp").disabled = true;
             }
         }, 1000);
     }
     startTimer();
 
-    function validateOTPForm(){
-        const otpInput = document.getElementById("otp").value;
 
-    // Debugging step to check OTP value
-    console.log("OTP sent to server:", otpInput); // Add this line
+    // function validateOTPForm(){
+    //     const otpInput = document.getElementById("otp").value;
 
-        $.ajax({
-            type:"POST",
-            url:"verify-otp",
-            data:{otp:otpInput},
-            success: function(response){
+ 
+    // console.log("OTP sent to server:", otpInput); 
+
+    //     $.ajax({
+    //         type:"POST",
+    //         url:"/verify-otp",
+    //         data:{otp:otpInput},
+    //         success: function(response){
                
-                if(response.success){
-                    Swal.fire({
-                        icon:"success",
-                        title:"OTP Verified successfully",
-                        showConfirmButton:false,
-                        timer:1500,
+    //             if(response.success){
+    //                 Swal.fire({
+    //                     icon:"success",
+    //                     title:"OTP Verified successfully",
+    //                     showConfirmButton:false,
+    //                     timer:1500,
 
-                    }).then(() => {
-                        window.location.href = response.redirectUrl;
-                    })
-                }else {
-                    Swal.fire({
-                        icon:'error',
-                        title:Error,
-                        text:response.message,
-                    })
-                }
-            },
-            error: function(){
-                console.log("AJAX error:", err);
+    //                 }).then(() => {
+    //                     window.location.href = response.redirectUrl;
+    //                 })
+    //             }else {
+    //                 Swal.fire({
+    //                     icon:'error',
+    //                     title:Error,
+    //                     text:response.message,
+    //                 })
+    //             }
+    //         },
+    //         error: function(){
+    //             console.log("AJAX error:", err);
+    //             Swal.fire({
+    //                 icon:"error",
+    //                 title:"Invalid OTP",
+    //                 text:"Please try again"
+    //             })
+    //         }
+    //     })
+    //     return false;
+    // }
+
+    function validateOTPForm() {
+    const otpInput = document.getElementById("otp").value;
+
+    console.log("OTP sent to server:", otpInput); 
+
+    $.ajax({
+        type: "POST",
+        url: "/verify-otp",
+        data: { otp: otpInput },
+        success: function (response) {
+            if (response.success) {
                 Swal.fire({
-                    icon:"error",
-                    title:"Invalid OTP",
-                    text:"Please try again"
-                })
+                    icon: "success",
+                    title: "OTP Verified successfully",
+                    showConfirmButton: false,
+                    timer: 1500,
+                }).then(() => {
+                    window.location.href = response.redirectUrl;
+                });
             }
-        })
-        return false;
-    }
+        },
+        error: function (err) {
+            console.error("AJAX error:", err);
+            
+            // Parse the response to extract the error message
+            const response = err.responseJSON || {};
+            const errorMessage = response.message || "Invalid OTP. Please try again.";
+
+            Swal.fire({
+                icon: "error",
+                title: "Invalid OTP",
+                text: errorMessage,
+            });
+        },
+    });
+
+    return false; // Prevent form submission
+}
+
+
+
+    // function resendOTP(){
+    // clearInterval(timerInterval); 
+    // timer = 60; 
+    // document.getElementById("otp").disabled = false; 
+    // document.getElementById("timerValue").classList.remove("expired"); 
+    // startTimer(); 
+
+    // $.ajax({
+    //     type: "POST",
+    //     url: "/resend-otp",
+    //     success: function (response) {
+    //         if (response.success) {
+    //             Swal.fire({
+    //                 icon: "success",
+    //                 title: "OTP Resend Successfully",
+    //                 showConfirmButton: false,
+    //                 timer: 1500,
+    //             });
+    //         } else {
+    //             Swal.fire({
+    //                 icon: "error",
+    //                 title: "Error",
+    //                 text: "An error occurred while resending OTP. Please try again.",
+    //             });
+    //         }
+    //     },
+    //     error: function () {
+    //         Swal.fire({
+    //             icon: "error",
+    //             title: "Error",
+    //             text: "An error occurred while resending OTP. Please try again.",
+    //         });
+    //     }
+    // });
+
+    // return false;
+
+    // }
 
     function resendOTP(){
-    clearInterval(timerInterval); // Stop the current timer
-    timer = 60; // Reset the timer to 60 seconds
-    document.getElementById("otp").disabled = false; // Enable OTP input
-    document.getElementById("timerValue").classList.remove("expired"); // Remove expired class
-    //document.getElementById("timerValue").textContent = timer; // Reset timer display
-    startTimer(); // Start the timer again
+    clearInterval(timerInterval); 
+    timer = 60; 
+
+    const resendButton = document.querySelector(".btn-secondary");
+    resendButton.style.display = "none";
+
+    document.getElementById("otp").disabled = false; 
+    document.getElementById("timerValue").classList.remove("expired"); 
+    document.getElementById("timerValue").textContent = timer;
+    startTimer(); 
 
     $.ajax({
         type: "POST",
@@ -222,7 +327,7 @@
                     icon: "success",
                     title: "OTP Resend Successfully",
                     showConfirmButton: false,
-                    timer: 750,
+                    timer: 1500,
                 });
             } else {
                 Swal.fire({
@@ -244,6 +349,7 @@
     return false;
 
     }
+
 
 
 

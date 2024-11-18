@@ -366,8 +366,7 @@
                   isValid = false;
               }
   
-  
-  
+
   
               if (!/^\d+(\.\d{1,2})?$/.test(price) || parseFloat(price) < 0) {
                   displayErrorMessage('regularPrice-error', 'Please enter a valid non-negative price.');
@@ -375,15 +374,13 @@
               }
   
   
-  
-  
-              if (!/^\d+(\.\d{1,2})?$/.test(saleprice) || parseFloat(saleprice) < 0) {
+             else if (!/^\d+(\.\d{1,2})?$/.test(saleprice) || parseFloat(saleprice) < 0) {
                   displayErrorMessage('salePrice-error', 'Please enter a valid non-negative price.');
                   isValid = false;
               }
-              if (parseFloat(price) <= parseFloat(saleprice)) {
-      displayErrorMessage('regularPrice-error', 'Regular price must be greater than sale price.');
-      isValid = false;
+             else if (parseFloat(price) <= parseFloat(saleprice)) {
+               displayErrorMessage('regularPrice-error', 'Regular price must be greater than sale price.');
+               isValid = false;
    }
   
          if (images1.files.length === 0) {

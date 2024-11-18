@@ -59,6 +59,25 @@ status:{
     default:"Available"
 },
 
+ratings: {
+    type: [Number], 
+    default: [], 
+  },
+  reviews: [{
+    user: { type: Schema.Types.ObjectId, ref: 'User' },
+    comment: String,
+    rating: Number, 
+    createdAt: { type: Date, default: Date.now }
+  }],
+  highlights: {
+    type: [String], 
+    default: []
+  },
+  coupons: {
+    type: [String], 
+    default: []
+  },
+
 createdOn: {
     type: Date,
     default: Date.now, 

@@ -2,15 +2,11 @@ const User = require("../../models/userSchema");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 
-
-
 const pageerror = async (req,res)=>{
     
         res.render("admin-error");
 
     } 
-
-
 
 const loadLogin = (req,res)=>{
 
@@ -32,11 +28,11 @@ const login = async(req,res)=>{
               req.session.admin = true;
               return res.redirect("/admin");
           }else{
-            //return res.redirect("/admin-login"); 
+            
             return res.render("admin-login", { message: "Invalid email or password" });
           }
         }else {
-           // return res.redirect("/admin-login");
+         
             return res.render("admin-login", { message: "Invalid email or password" });
         }
 

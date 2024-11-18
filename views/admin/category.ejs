@@ -28,17 +28,17 @@
     }
 
     .btn-primary {
-      background-color: #007bff;
+      background-color: #426c89;
       color: #fff;
-      border: 1px solid #007bff;
+      border: 1px solid #426c89;
       border-radius: 5px;
       padding: 10px 20px;
       cursor: pointer;
     }
 
     .btn-primary:hover {
-      background-color: #0056b3;
-      border-color: #0056b3;
+      background-color: #426c89;
+      border-color: #426c89;
     }
 
     .pagination-container {
@@ -73,6 +73,26 @@
       color: gray;
       text-decoration: line-through;
     }
+
+    /* Pagination button color */
+/* .pagination .page-link {
+    background-color: #ffffff; 
+    color: #426c89; 
+    border: 1px solid #426c89;
+} */
+
+.pagination .page-item.active .page-link {
+    background-color: #426c89; /* Active page background color */
+    color: #ffffff; /* Active page text color */
+    border: 1px solid #426c89; /* Active page border color */
+}
+
+/* .pagination .page-link:hover {
+    background-color: #e6f1f3;
+    color: #426c89;
+    border-color: #426c89;
+} */
+
 
   </style>
 </head>
@@ -117,7 +137,7 @@
               <table class="table table-hover">
                 <thead>
                   <tr>
-                    <th class="text-center"></th>
+                    <!-- <th class="text-center"></th> -->
                     <th>Name</th>
                     <th>Description</th>
                     <th>Offer Price</th>
@@ -132,23 +152,23 @@
                   <%cat.reverse().forEach((category,index)=>{%>
                     <% if (!category.isDeleted) { %>
                   <tr>
-                    <td></td>
+                    <!-- <td></td> -->
                     <td class="text-start"><%=category.name%></td>
                     <td class="text-start"><%=category.description%></td>
                     <td></td>
                     <td class="text-start">
-                      <button class="btn btn-info" style="width: 100px">
+                      <button class="btn" style="background-color: #426c89; width: 100px; margin-bottom: 10px;">
                         <a href="#" class="text-white" style="text-decoration: none;">Add Offer</a>
                       </button>
-                      <button class="btn btn-info" style="width: 100px">
+                      <button class="btn" style="background-color: #426c89; width: 100px">
                         <a href="#" class="text-white" style="text-decoration: none;">Remove</a>
                       </button>
                     </td>
                     <td class="text-start">
                       <%if(category.isListed){%>
-                      <span class="badge rounded-pill alert-success" style="width: 60px">Listed</span>
+                      <span class="badge rounded-pill alert-success" style="width: 60px; color: black;">Listed</span>
                       <%}else{%>
-                      <span class="badge rounded-pill alert-danger" style="width: 60px">Unlisted</span>
+                      <span class="badge rounded-pill alert-danger" style="width: 60px; color: black;">Unlisted</span>
                       <%}%>
                     </td>
                     <td class="text-start">
@@ -163,7 +183,7 @@
                       <%}%>
                     </td>
                     <td class="text-start">
-                      <a href="/admin/editCategory?id=<%=category._id%>" class="btn btn-info text-white">Edit</a>
+                      <a href="/admin/editCategory?id=<%=category._id%>" class="btn  text-white" style="background-color: #426c89;" >Edit</a>
                     </td>
                     <td class="text-start">
                       <button class="btn btn-danger" onclick="deleteCategory('<%= category._id %>')">Delete</button>
@@ -173,7 +193,7 @@
                     <tr class="deleted-category">
                       <td class="text-start"><%= category.name %> <span class="badge badge-danger">Deleted</span></td>
                       <td class="text-start"><%= category.description %></td>
-                      <!-- Empty or styled columns to indicate deletion -->
+                     
                       <td class="text-muted">N/A</td>
                       <td class="text-muted">N/A</td>
                     </tr>

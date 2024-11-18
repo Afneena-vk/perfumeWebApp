@@ -1,11 +1,25 @@
 <%- include("../../views/partials/user/header") %>
 <style>
-    
+   
+  .shop {
+      background-color: rgb(243, 242, 238); 
+      padding: 20px 0;
+  } 
   .product-content-wrap h6 {
       font-size: 18px;
       color: #333;
       margin-bottom: 5px;
   }
+
+  .accordion ul li a {
+    color: black; /* Set the text color to black */
+    text-decoration: none; /* Optional: Remove underline */
+}
+
+  .accordion ul li a:hover {
+    color: #555; /* Optional: Set a hover color, like dark gray */
+}
+
 
 
   .product-content-wrap h5 {
@@ -31,15 +45,15 @@
       background-color: #ff4c4c;
   }
 </style>
-<!-- Shop Section Begin -->
+
 <section class="shop spad">
     <div class="container">
         <div class="row">
-            <!-- Sidebar Begin -->
+           
             <div class="col-lg-3 col-md-4">
                 <div class="shop__sidebar">
                     <div class="shop__sidebar__accordion">
-                        <!-- Brand Section -->
+                        
                         <div class="accordion" id="brandAccordion">
                             <div class="card">
                                 <div class="card-heading">
@@ -57,7 +71,7 @@
                             </div>
                         </div>
 
-                        <!-- Category Section -->
+                        
                         <div class="accordion" id="categoryAccordion">
                             <div class="card">
                                 <div class="card-heading">
@@ -75,7 +89,7 @@
                             </div>
                         </div>
 
-                        <!-- Filter Section -->
+                     
                         <div class="accordion" id="filterAccordion">
                             <div class="card">
                                 <div class="card-heading">
@@ -95,10 +109,10 @@
                     </div>
                 </div>
             </div>
-            <!-- Sidebar End -->
+       
 
            
-            <!-- Product Listing Begin -->
+           
 <div class="col-lg-9 col-md-8">
     <div class="row">
         <% products.forEach(product => { %>
@@ -118,16 +132,12 @@
         <% }) %>
     </div>
 </div>
-<!-- Product Listing End -->
-
-          
-            <!-- Product Listing End -->
 
             
         </div>
     </div>
 </section>
-<!-- Shop Section End -->
+
 
 <%- include("../../views/partials/user/footer") %>
 

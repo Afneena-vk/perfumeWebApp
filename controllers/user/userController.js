@@ -34,12 +34,12 @@ const loadHomepage = async (req,res)=>{
 
           productData.sort((a,b)=>new Date(b.createdOn)-new Date(a.createdOn));
           productData = productData.slice(0,4);
-          // Check if the user is logged in
+
           if(user){
             const userData = await User.findOne({_id:user._id});
             return res.render("home",{user:userData , products:productData});
           }else{
-          // If no user is logged in, render the homepage without user data 
+
           return res.render("home",{products:productData});
           }
     } catch (error) {
@@ -155,6 +155,7 @@ const verifyOtp = async (req,res)=>{
         
         const {otp} = req.body;
         console.log(otp);
+        console.log("Session OTP:", req.session.userOtp);
 
         if(otp===req.session.userOtp){
             const user = req.session.userData
@@ -166,19 +167,19 @@ const verifyOtp = async (req,res)=>{
                 phone:user.phone,
                 password:passwordHash,
             })
-            //console.log("Attempting to save user:", saveUserData);//new
-            //await saveUserData.save();
+           
             const savedUser = await saveUserData.save();
             console.log("User saved successfully:", savedUser);
             req.session.user = saveUserData._id;
             res.json({success:true,redirectUrl:"/"})
         }else {
-            res.status(400).json({success:false, message:"Invalid OTP, Please try again"})
+            console.log("Invalid OTP provided.");
+            res.status(400).json({success:false, message:"Invalid OTP, Please try again"});
         }
 
     } catch (error) {
-        console.error("Error Verifying OTP",error);
-        res.status(500).json({success:false,message:"An error occured"})
+        console.error("Error Verifying OTP:",error);
+        res.status(500).json({success:false,message:"An error occured"});
     }
 }
 
@@ -250,8 +251,7 @@ const login = async (req,res)=>{
            return res.render("login",{message:"Incorrect Password"})
        }
 
-       //req.session.user = findUser._id;
-       req.session.user = { _id: findUser._id, name: findUser.name }; // Include fields you need
+       req.session.user = { _id: findUser._id, name: findUser.name }; 
 
        console.log("Session user after login:", req.session.user);
 
@@ -300,12 +300,11 @@ const loadShopping = async (req,res)=>{
 
            products.sort((a,b)=>new Date(b.createdOn)-new Date(a.createdOn));
            products = products.slice(0,9);
-          // Check if the user is logged in
-          //if(user){
+        
             const userData = await User.findOne({_id:user._id});
             return res.render("shop",{user:userData , products:products});
           }else{
-          // If no user is logged in, render the homepage without user data 
+        
           return res.render("home",{products:products});
           }
     } catch (error) {
@@ -327,12 +326,20 @@ const getProductDetails = async (req, res) => {
             
         }
 
-        const product = await Product.findById(productId).populate('category');
+        const product = await Product.findById(productId).populate('category').populate('reviews.user');
 
         if (!product) {
             return res.status(404).render('404', { message: 'Product not found' });
         }
 
+        const totalRatings = product.ratings.reduce((sum, rating) => sum + rating, 0);
+        const avgRating = product.ratings.length ? (totalRatings / product.ratings.length).toFixed(1) : 'No Ratings Yet';
+        
+        const relatedProducts = await Product.find({ 
+            category: product.category._id, 
+            _id: { $ne: product._id } 
+          }).limit(4);
+      
         const breadcrumbs = [
             { name: 'Home', url: '/' },
             { name: 'Shop', url: '/shop' },
@@ -346,21 +353,23 @@ const getProductDetails = async (req, res) => {
         const stockStatus = product.quantity > 0 ? 'In Stock' : 'Out of Stock';
 
        
-        const ratings = { count: 10, average: 4.5 };
-        const reviews = []; 
-        const relatedProducts = await Product.find({
-            category: product.category,
-            _id: { $ne: productId }
-        }).limit(4);
+        // const ratings = { count: 10, average: 4.5 };
+        // const reviews = []; 
+        // const relatedProducts = await Product.find({
+        //     category: product.category,
+        //     _id: { $ne: productId }
+        // }).limit(4);
 
       
         res.render('productDetails', {
             user,
             product,
             breadcrumbs,
-            ratings,
+            //ratings,
+            avgRating,
             finalPrice,
             stockStatus,
+            relatedProducts,
         });
     } catch (error) {
         console.error('Error fetching product details:', error);

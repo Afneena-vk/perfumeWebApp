@@ -7,7 +7,7 @@
    <meta name="keywords" content="Male_Fashion, unica, creative, html">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-   <title>Male-Fashion</title>
+   <title>Essenzie</title>
    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap"
    rel="stylesheet">
    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
@@ -75,7 +75,30 @@
    </style>
 </head>
 <body>
-   <header class="header">
+
+    <div class="top-bar text-white py-2" style="background-color: black;">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-6 "></div>
+                <div class="col-6 text-end d-flex justify-content-end align-items-center">
+                    <% if (locals.user) { %>
+                        <div class="dropdown">
+                        <span class="me-4">Welcome, <%= locals.user.name %></span>
+                        <div class="dropdown-content">
+                        <a href="/userProfile" class="top-bar-link text-black me-4">Profile</a>
+                        <a href="/logout" class="top-bar-link text-black">Logout</a>
+                        </div>
+                        </div>
+                    <% } else { %>
+                        <a href="/signup" class="top-bar-link text-white " style="margin-right: 20px;">Sign Up</a>
+                        <a href="/login" class="top-bar-link text-white">Log In</a>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+   
+    <header class="header">
        <div class="container">
            <div class="row">
                <div class="col-lg-3 col-md-3">
@@ -93,7 +116,7 @@
                </div>
                <div class="col-lg-3 col-md-3">
                    <div class="header__nav__option">
-                       <%if(locals.user){%>
+                       <!-- <%if(locals.user){%>
                            <div class="dropdown">
                                <a href="#" class="sign-in-link"><%=locals.user.name%></a>
                                <div class="dropdown-content">
@@ -109,7 +132,7 @@
 
                        <a href="/signup" class="sign-in-link">Sign Up</a>
                        <a href="/login" class="sign-in-link">Log in</a>
-                       <%}%>
+                       <%}%> -->
                        <a href="#" class="search-switch"><img src="img/icon/search.png" alt=""></a>
                        <a href="#"><img src="img/icon/heart.png" alt=""></a>
                        <a href="./shopping-cart.html"><img src="img/icon/cart.png" alt=""> <span>0</span></a>
