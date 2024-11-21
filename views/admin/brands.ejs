@@ -3,9 +3,21 @@
   .pagination-container {
     text-align: center;
   }
-  .pagination {
+  /* .pagination {
     display: inline-block;
-  }
+  } */
+
+  .pagination {
+  display: flex;
+  justify-content: center; 
+  list-style: none; 
+  padding: 0;
+  margin: 0;
+}
+
+.pagination .page-item {
+  margin: 0 5px; 
+}
 
   .pagination a,
   .pagination .current-page {
@@ -23,6 +35,25 @@
   .error-message {
     color: red;
   }
+
+  .pagination .page-link {
+    background-color: #ffffff; 
+    color: #426c89; 
+    border: 1px solid #426c89; 
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #426c89;
+    color: #ffffff;
+    border: 1px solid #426c89; 
+}
+
+.pagination .page-link:hover {
+    background-color: #e6f1f3; 
+    color: #426c89; 
+    border-color: #426c89; 
+}
+
 </style>
 <section class="content-main">
   <div class="content-header">
@@ -50,7 +81,7 @@
               <input class="form-control border" name="image" type="file" />
             </div>
             <div class="d-grid">
-              <button class="btn btn-primary mt-20" type="submit">
+              <button class="btn btn-primary mt-20" type="submit" style="background-color: #426c89; color: white; border-color: #426c89; margin-top: 10px;">
                 Add Brand
               </button>
             </div>
@@ -107,7 +138,7 @@
                   </td>
                   <td class="text-start">
                     <%if(brand.isBlocked===false){%>
-                    <button class="btn btn-danger" style="width: 90px">
+                    <button class="btn btn-danger" style="width: 90px; margin-bottom: 10px;">
                       <a href="/admin/blockBrand?id=<%=brand._id%>" class="text-white">Block</a>
                     </button>
                     <%}else{%>

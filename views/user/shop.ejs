@@ -12,12 +12,12 @@
   }
 
   .accordion ul li a {
-    color: black; /* Set the text color to black */
-    text-decoration: none; /* Optional: Remove underline */
+    color: black; 
+    text-decoration: none; 
 }
 
   .accordion ul li a:hover {
-    color: #555; /* Optional: Set a hover color, like dark gray */
+    color: #555; 
 }
 
 
@@ -62,16 +62,15 @@
                                 <div id="brandCollapse" class="collapse" data-parent="#brandAccordion">
                                     <div class="card-body">
                                         <ul>
-                                            <li><a href="#">Rasai</a></li>
-                                            <li><a href="#">Chanel</a></li>
-                                            <li><a href="#">Bella Vita</a></li>
+                                            <% brands.forEach((brand) => { %>
+                                                <li><a href="#"><%= brand.brandName %></a></li>
+                                            <% }) %>
                                         </ul>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        
                         <div class="accordion" id="categoryAccordion">
                             <div class="card">
                                 <div class="card-heading">
@@ -80,9 +79,9 @@
                                 <div id="categoryCollapse" class="collapse" data-parent="#categoryAccordion">
                                     <div class="card-body">
                                         <ul>
-                                            <li><a href="#">ladies collection</a></li>
-                                            <li><a href="#">Mens Collection</a></li>
-                                            <li><a href="#">Sample Collection</a></li>
+                                            <% categories.forEach((category) => { %>
+                                                <li><a href="#"><%= category.name %></a></li>
+                                            <% }) %>
                                         </ul>
                                     </div>
                                 </div>

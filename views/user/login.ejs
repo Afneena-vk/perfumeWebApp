@@ -6,7 +6,7 @@
     <meta name="keywords" content="Male_Fashion, unica, creative, html" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Male-Fashion</title>
+    <title>Essenzie</title>
     <link
       href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap"
       rel="stylesheet"
@@ -117,7 +117,7 @@
         <div class="card-body login-section">
           <div class="login-form mt-5">
             <h3 class="card-title text-center">Log In</h3>
-            <form id="loginform" method="post" action="/login">
+            <form id="loginform" method="post" action="/login" nonvalidate>
               <div class="form-group mt-3px">
                 <label for="email">Email address</label>
                 <input
@@ -184,28 +184,23 @@
       function emailValidateChecking(e) {
         const emailval = emailid.value;
         const emailpattern =
-          /^[a-zA-Z0-9._-]+@([a-zA-Z0-9.-]+)\.([a-zA-Z]{2,4})$/;
-
-        if (!emailpattern.test(emailval)) {
+         
+          /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+          if (emailval === "") {
           error1.style.display = "block";
-          error1.innerHTML = "Invalid Format";
+          error1.innerHTML = "Please enter the email.";
+  
+        } else if (!emailpattern.test(emailval)) {
+          error1.style.display = "block";
+          
+          error1.innerHTML = "Invalid format";
         } else {
           error1.style.display = "none";
           error1.innerHTML = "";
         }
       }
 
-      // function passValidateChecking(e) {
-      //   const passval = passid.value;
-      //   if (passval.length < 8) {
-      //     error2.style.display = "block";
-      //     error2.innerHTML = "Should contain at least 8 characters";
-      //   } else {
-      //     error2.style.display = "none";
-      //     error2.innerHTML = "";
-      //   }
-      // }
-
+     
       function passValidateChecking(e) {
         const passval = passid.value;
         if (passval.length === 0) {
@@ -216,6 +211,7 @@
           error2.innerHTML = "";
         }
       }
+      
 
       document.addEventListener("DOMContentLoaded", function () {
         loginform.addEventListener("submit", function (e) {
@@ -230,6 +226,8 @@
             e.preventDefault();
           }
         });
+        emailid.addEventListener("blur", emailValidateChecking);
+        passid.addEventListener("blur", passValidateChecking);
       });
     </script>
   </body>

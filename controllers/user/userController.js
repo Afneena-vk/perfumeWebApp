@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const User = require("../../models/userSchema");
 const Category = require("../../models/categorySchema");
 const Product = require("../../models/productSchema");
+const Brand = require("../../models/brandSchema")
 const env = require("dotenv").config();
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
@@ -289,20 +290,24 @@ const loadShopping = async (req,res)=>{
     try {
           const user = req.session.user || req.user;
           console.log("userexist", user);
-          if(user){
+          
           const categories = await Category.find({isListed:true});
+          console.log("Categories fetched:", categories); 
+          const brands = await Brand.find({});
+          console.log("Brands fetched:", brands); 
           let products = await Product.find(
             {
                 isBlocked:false,
                 category:{$in:categories.map(category=>category._id)},quantity:{$gt:0}
             }
           )
-
+        console.log("Products fetched:", products);
+        
            products.sort((a,b)=>new Date(b.createdOn)-new Date(a.createdOn));
            products = products.slice(0,9);
-        
+        if(user){
             const userData = await User.findOne({_id:user._id});
-            return res.render("shop",{user:userData , products:products});
+            return res.render("shop",{user:userData , products:products , categories: categories , brands: brands});
           }else{
         
           return res.render("home",{products:products});
@@ -326,7 +331,7 @@ const getProductDetails = async (req, res) => {
             
         }
 
-        const product = await Product.findById(productId).populate('category').populate('reviews.user');
+        const product = await Product.findById(productId).populate('category')
 
         if (!product) {
             return res.status(404).render('404', { message: 'Product not found' });
@@ -345,27 +350,15 @@ const getProductDetails = async (req, res) => {
             { name: 'Shop', url: '/shop' },
             { name: product.productName, url: `/product/${productId}` }
         ];
-
-        
-      
+     
         const finalPrice = product.salePrice 
       
         const stockStatus = product.quantity > 0 ? 'In Stock' : 'Out of Stock';
 
-       
-        // const ratings = { count: 10, average: 4.5 };
-        // const reviews = []; 
-        // const relatedProducts = await Product.find({
-        //     category: product.category,
-        //     _id: { $ne: productId }
-        // }).limit(4);
-
-      
         res.render('productDetails', {
             user,
             product,
             breadcrumbs,
-            //ratings,
             avgRating,
             finalPrice,
             stockStatus,

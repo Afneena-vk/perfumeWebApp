@@ -219,8 +219,6 @@
     }
     
     
-    
-    
     function validateForm() {
        let imageDatas = false
                console.log("validate form");
@@ -236,29 +234,25 @@
     imageDatas = document.getElementById("imageDatas")?.value;
                let isValid = true;    
                if (name.trim() === "") {
-       displayErrorMessage('productName-error', 'Please enter a product name.');
-       isValid = false;
-    }
+                 displayErrorMessage('productName-error', 'Please enter a product name.');
+                 isValid = false;
+            }
               
                if (description.trim() === "") {
-    displayErrorMessage('description-error', 'Please enter a product description.');
-    isValid = false;
-} else if (!/^[a-zA-Z\s.,'"-]+$/.test(description.trim())) {
-    displayErrorMessage(
-        'description-error',
-        'Product description can contain only alphabetic characters, spaces, periods, commas, single quotes, double quotes, and dashes.'
-    );
-    isValid = false;
-}
-
-    
+                 displayErrorMessage('description-error', 'Please enter a product description.');
+                 isValid = false;
+            } else if (!/^[a-zA-Z\s.,'"-]+$/.test(description.trim())) {
+                 displayErrorMessage(
+                 'description-error',
+                 'Product description can contain only alphabetic characters, spaces, periods, commas, single quotes, double quotes, and dashes.'
+            );
+              isValid = false;
+            }
     
                if ( parseInt(quantity) < 0) {
                    displayErrorMessage('quantity-error', 'Please enter a valid non-negative quantity.');
                    isValid = false;
                }
-    
-    
     
     
                if (!/^\d+(\.\d{1,2})?$/.test(price) || parseFloat(price) < 0) {
@@ -292,13 +286,8 @@
                });
                const errorMessage = document.getElementById('errorMessage');
     
-    
-           }
-    
-    
-    
-    
-    function viewImage1(event) {
+               }
+           function viewImage1(event) {
                document.getElementById('imgView1').src = URL.createObjectURL(event.target.files[0])
            }
     
@@ -316,9 +305,6 @@
            function viewImage4(event) {
                document.getElementById('imgView4').src = URL.createObjectURL(event.target.files[0])
            }
-    
-    
-    
     
            function viewImage(event, index) {
                let input = event.target;

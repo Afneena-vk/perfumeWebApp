@@ -69,44 +69,65 @@
    z-index: 500;
 }
 
-#imageZoom{
-    width: 550px;
-    height: 700px;
-    /* border: 5px solid black; */
-    position: relative;
-}
+.imageZoom {
+            width: 100%; 
+            height: 700px;
+            position: relative;
+            overflow: hidden;
+        }
 
 
+ 
+.imageZoom img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px; 
+        }
 
-#imageZoom img{
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: 0 0;
 
-}
-#imageZoom::after{
-    display: var(--display);
-    content: '';
-    width: 100%;
-    height: 100%;
-    /* background-color: black; */
-    background-image: var(--url);
-    background-size: 200%;
-    background-position: var(--zoom-x) var(--zoom-y);
-    position: absolute;
-    left: 0;
-    top: 0;
-}
+.imageZoom::after {
+            display: var(--display);
+            content: '';
+            width: 200%; 
+            height: 200%; 
+            background-color: black;
+            background-image: var(--url);
+            background-size: 200%; 
+            background-position: var(--zoom-x) var(--zoom-y);
+            position: absolute;
+            left: 0;
+            top: 0;
+            pointer-events: none;
+        }
+
+        .thumbnail-images {
+            display: flex;
+            margin-top: 10px;
+        }
+
+        .thumbnail-images img {
+            width: 80px; 
+            height: 80px; 
+            margin-right: 5px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: transform 0.2s;
+        }
+
+        .thumbnail-images img:hover {
+            transform: scale(1.1); 
+        }
+
 
 .in-stock {
-    color: green; /* Green color for 'In Stock' */
-    font-weight: bold; /* Makes the text bold */
+    color: green; 
+    font-weight: bold; 
 }
 
 .out-of-stock {
-    color: red; /* Red color for 'Out of Stock' */
-    font-weight: bold; /* Makes the text bold */
+    color: red; 
+    font-weight: bold; 
 }
 
 
@@ -141,7 +162,7 @@
            <div class="row">
                <div class="col-lg-3 col-md-3">
                    <div class="header__logo pt-2 pb-2">
-                       <a href="#"><img src="/img/mylogo3.jpg" alt=""></a>
+                       <a href="#"><img src="/img/mylogo4.jpg" alt=""></a>
                    </div>
                </div>
                <div class="col-lg-6 col-md-6">
@@ -155,23 +176,7 @@
                </div>
                <div class="col-lg-3 col-md-3">
                    <div class="header__nav__option">
-                       <!-- <%if(locals.user){%>
-                           <div class="dropdown">
-                               <a href="#" class="sign-in-link"><%=locals.user.name%></a>
-                               <div class="dropdown-content">
-
-                                   <a href="/userProfile">Profile</a>
-                                   <a href="/logout">Logout</a>
-
-                                </div>
-
-                           </div>
-                       <%}else {%>
-
-
-                       <a href="/signup" class="sign-in-link">Sign Up</a>
-                       <a href="/login" class="sign-in-link">Log in</a>
-                       <%}%> -->
+                      
                        <a href="#" class="search-switch"><img src="img/icon/search.png" alt=""></a>
                        <a href="#"><img src="img/icon/heart.png" alt=""></a>
                        <a href="./shopping-cart.html"><img src="img/icon/cart.png" alt=""> <span>0</span></a>
@@ -202,7 +207,7 @@
                             <% product.productImage.forEach((image, index) => { %>
                                 <li class="nav-item">
                                     <a class="nav-link <%= index === 0 ? 'active' : '' %>" data-toggle="tab" href="#tabs-<%= index + 1 %>" role="tab">
-                                        <div class="product__thumb__pic set-bg" data-setbg="/uploads/re-images/<%= image %>">
+                                        <div class="product__thumb__pic set-bg"  data-setbg="/uploads/re-images/<%= image %>">
                                         </div>
                                     </a>
                                 </li>
@@ -214,12 +219,13 @@
                     <div class="col-lg-6 col-md-9">
                         <div class="tab-content">
                             <% product.productImage.forEach((image, index) => { %>
+                               
                                 <div class="tab-pane <%= index === 0 ? 'active' : '' %>" id="tabs-<%= index + 1 %>" role="tabpanel">
-                                    <div class="product__details__pic__item" id="imageZoom" style="--url: url(image); --zoom-x: 0%; --zoom-y: 0%; --display: none ">
+                                    <div class="product__details__pic__item imageZoom" style="--url: url('/uploads/re-images/<%= image %>'); --zoom-x: 0%; --zoom-y: 0%; --display: none;">
                                         <img src="/uploads/re-images/<%= image %>" alt="Product Image <%= index + 1 %>">
-                                        
                                     </div>
                                 </div>
+                                
                             <% }) %>
                         </div>
                     </div>
@@ -234,12 +240,7 @@
                         <div class="product__details__text">
                             <h4><%= product.productName %></h4>
                             <div class="rating">
-                                <!-- <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star-o"></i>
-                                <span> - 5 Reviews</span> -->
+                               
                                 <span style="font-weight: 600;">Average Rating: <%= avgRating %> / 5</span>
                                 <% product.ratings.forEach(rating => { %>
                                   <i class="fa <%= rating >= 1 ? 'fa-star' : 'fa-star-o' %>"></i>
@@ -331,8 +332,8 @@
                         <h6>Shopping</h6>
                         <ul>
                             <li><a href="#">Clothing Store</a></li>
-                            <li><a href="#">Trending Shoes</a></li>
-                            <li><a href="#">Accessories</a></li>
+                            <li><a href="#">Trending </a></li>
+                            <!-- <li><a href="#">Accessories</a></li> -->
                             <li><a href="#">Sale</a></li>
                         </ul>
                     </div>
@@ -399,25 +400,27 @@
     <script src="js/owl.carousel.min.js"></script>
     <script src="js/main.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/elevatezoom/3.0.8/jquery.elevatezoom.min.js"></script>
-    <script>
-        const imageZoom = document.getElementById("imageZoom");
-      
+    
+<script>
+    const imageZoomElements = document.querySelectorAll(".imageZoom");
+
+    imageZoomElements.forEach((imageZoom) => {
         imageZoom.addEventListener("mousemove", (e) => {
-          const rect = imageZoom.getBoundingClientRect();
-          const x = ((e.clientX - rect.left) / rect.width) * 100;
-          const y = ((e.clientY - rect.top) / rect.height) * 100;
-      
-          
-          imageZoom.style.setProperty("--zoom-x", `${x}%`);
-          imageZoom.style.setProperty("--zoom-y", `${y}%`);
-          imageZoom.style.setProperty("--display", "block");  
-          imageZoom.style.setProperty("--url", `url('${imageZoom.querySelector("img").src}')`);
+            const rect = imageZoom.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / rect.width) * 100;
+            const y = ((e.clientY - rect.top) / rect.height) * 100;
+
+            imageZoom.style.setProperty("--zoom-x", `${x}%`);
+            imageZoom.style.setProperty("--zoom-y", `${y}%`);
+            imageZoom.style.setProperty("--display", "block");
+            imageZoom.style.setProperty("--url", `url('${imageZoom.querySelector("img").src}')`);
         });
-      
+
         imageZoom.addEventListener("mouseleave", () => {
-          imageZoom.style.setProperty("--display", "none");  
+            imageZoom.style.setProperty("--display", "none");
         });
-      </script>
+    });
+</script>
 
 
       

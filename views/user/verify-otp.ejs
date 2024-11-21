@@ -144,24 +144,11 @@
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
+    
     document.getElementById("otp").focus();
 
     let timer = 60;
     let timerInterval;
-
-    // function startTimer() {
-    //     timerInterval = setInterval(() => {
-    //         timer--;
-    //         document.getElementById("timerValue").textContent = timer;
-    //         if (timer <= 0) {
-    //             clearInterval(timerInterval);
-    //             document.getElementById("timerValue").classList.add("expired");
-    //             document.getElementById("timerValue").textContent = "Expired";
-    //             document.getElementById("otp").disabled = true;
-    //         }
-    //     }, 1000);
-    // }
-    // startTimer();
 
     function startTimer() {
 
@@ -183,48 +170,6 @@
     }
     startTimer();
 
-
-    // function validateOTPForm(){
-    //     const otpInput = document.getElementById("otp").value;
-
- 
-    // console.log("OTP sent to server:", otpInput); 
-
-    //     $.ajax({
-    //         type:"POST",
-    //         url:"/verify-otp",
-    //         data:{otp:otpInput},
-    //         success: function(response){
-               
-    //             if(response.success){
-    //                 Swal.fire({
-    //                     icon:"success",
-    //                     title:"OTP Verified successfully",
-    //                     showConfirmButton:false,
-    //                     timer:1500,
-
-    //                 }).then(() => {
-    //                     window.location.href = response.redirectUrl;
-    //                 })
-    //             }else {
-    //                 Swal.fire({
-    //                     icon:'error',
-    //                     title:Error,
-    //                     text:response.message,
-    //                 })
-    //             }
-    //         },
-    //         error: function(){
-    //             console.log("AJAX error:", err);
-    //             Swal.fire({
-    //                 icon:"error",
-    //                 title:"Invalid OTP",
-    //                 text:"Please try again"
-    //             })
-    //         }
-    //     })
-    //     return false;
-    // }
 
     function validateOTPForm() {
     const otpInput = document.getElementById("otp").value;
@@ -250,7 +195,7 @@
         error: function (err) {
             console.error("AJAX error:", err);
             
-            // Parse the response to extract the error message
+            
             const response = err.responseJSON || {};
             const errorMessage = response.message || "Invalid OTP. Please try again.";
 
@@ -262,49 +207,8 @@
         },
     });
 
-    return false; // Prevent form submission
+    return false; 
 }
-
-
-
-    // function resendOTP(){
-    // clearInterval(timerInterval); 
-    // timer = 60; 
-    // document.getElementById("otp").disabled = false; 
-    // document.getElementById("timerValue").classList.remove("expired"); 
-    // startTimer(); 
-
-    // $.ajax({
-    //     type: "POST",
-    //     url: "/resend-otp",
-    //     success: function (response) {
-    //         if (response.success) {
-    //             Swal.fire({
-    //                 icon: "success",
-    //                 title: "OTP Resend Successfully",
-    //                 showConfirmButton: false,
-    //                 timer: 1500,
-    //             });
-    //         } else {
-    //             Swal.fire({
-    //                 icon: "error",
-    //                 title: "Error",
-    //                 text: "An error occurred while resending OTP. Please try again.",
-    //             });
-    //         }
-    //     },
-    //     error: function () {
-    //         Swal.fire({
-    //             icon: "error",
-    //             title: "Error",
-    //             text: "An error occurred while resending OTP. Please try again.",
-    //         });
-    //     }
-    // });
-
-    // return false;
-
-    // }
 
     function resendOTP(){
     clearInterval(timerInterval); 

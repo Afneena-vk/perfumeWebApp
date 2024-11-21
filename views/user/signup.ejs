@@ -275,6 +275,9 @@ function phoneValidateChecking(e) {
     } else if (phoneval.length !== 10) {
         error3.style.display = "block";
         error3.innerHTML = "Enter 10 digits";
+    } else if (!/^\d+$/.test(phoneval)) {
+    error3.style.display = "block";
+    error3.innerHTML = "Phone number must contain only numbers";
     } else if (/^0+$/.test(phoneval)) { 
         error3.style.display = "block";
         error3.innerHTML = "Phone number cannot be all zeroes";
@@ -302,15 +305,21 @@ function passValidateChecking(e){
         error4.innerHTML="";
     }
 
-    if(passval !==cpassval){
-        error5.style.display="block";
-        error5.innerHTML="Passwords do not match";
-    }else {
-        error5.style.display="none";
-        error5.innerHTML="";
+    
+    if (passval && cpassval) {
+        if (passval !== cpassval) {
+            error5.style.display = "block";
+            error5.innerHTML = "Passwords do not match";
+        } else {
+            error5.style.display = "none";
+            error5.innerHTML = "";
+        }
+    } else {
+        error5.style.display = "none";
     }
 }
 
+signform.setAttribute('novalidate', 'true');
 
 document.addEventListener("DOMContentLoaded",function(){
 

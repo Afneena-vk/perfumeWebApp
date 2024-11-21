@@ -94,6 +94,7 @@ try {
 }
 
 return res.redirect("/admin/addProducts");
+
         
 } catch (error) {
 console.error("Error in addProducts:", error);

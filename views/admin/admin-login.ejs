@@ -47,15 +47,15 @@
     <% if (message) { %>
     <div class="alert alert-danger text-center"><%= message %></div>
     <% } %>
-    <form id="adminLoginForm" method="post" action="/admin/login">
+    <form id="adminLoginForm" method="post" action="/admin/login" nonvalidate>
       <div class="form-group">
         <label for="adminEmail">Email address</label>
         <input
-          type="email"
+      
           class="form-control"
           id="adminEmail"
           name="email"
-          required
+        
         />
         <div id="emailError" class="error-message"></div>
       </div>
@@ -66,7 +66,7 @@
           class="form-control"
           id="adminPassword"
           name="password"
-          required
+          
         />
         <div id="passwordError" class="error-message"></div>
       </div>
@@ -85,16 +85,27 @@
 
       adminLoginForm.addEventListener("submit", function (event) {
         let isValid = true;
+
+      
+      const emailValue = emailField.value.trim();
         const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-        if (!emailPattern.test(emailField.value)) {
+
+        if (emailValue === "") {
+          emailError.textContent = "Please enter the email";
+          emailError.style.display = "block";
+          isValid = false;
+        } else if (!emailPattern.test(emailValue)) {
           emailError.textContent = "Invalid email format";
+          emailError.style.display = "block";
           isValid = false;
         } else {
           emailError.textContent = "";
+          emailError.style.display = "none";
         }
-        if (passwordField.value.length < 8) {
-          passwordError.textContent =
-            "Password should contain at least 8 characters";
+
+        // Password validation
+        if (passwordField.value.trim() === "") {
+          passwordError.textContent = "Enter the password";
           isValid = false;
         } else {
           passwordError.textContent = "";
@@ -104,6 +115,7 @@
           event.preventDefault();
         }
       });
+
     });
   </script>
 </body>
