@@ -3,10 +3,16 @@ const {Schema} = mongoose;
 const {v4:uuidv4} = require('uuid');
 
 const orderSchema = new Schema({
+
     orderId : {
         type:String,
         default:()=>uuidv4(),
         unique:true
+    },
+    userId: {  // Add userId to link orders to users
+        type: Schema.Types.ObjectId,
+        ref: 'User',  // Reference to the User model
+        required: true
     },
     orderedItems:[{
 
@@ -25,6 +31,8 @@ const orderSchema = new Schema({
         }
 
     }],
+    
+
     totalPrice:{
         type:Number,
         required:true

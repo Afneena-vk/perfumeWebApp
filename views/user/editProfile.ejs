@@ -1,0 +1,23 @@
+<%- include("../../views/partials/user/header") %>
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Edit Profile</h2>
+    <form action="/editProfile" method="POST" class="card p-4">
+        <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" id="name" name="name" class="form-control" value="<%= user.name %>" required>
+        </div>
+        <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" id="email" name="email" class="form-control" value="<%= user.email %>" disabled>
+        </div>
+        <div class="mb-3">
+            <label for="phone" class="form-label">Phone Number</label>
+            <input type="text" id="phone" name="phone" class="form-control" value="<%= user.phone || '' %>">
+        </div>
+        <button type="submit" class="btn btn-success">Save Changes</button>
+        <a href="/userProfile" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+
+<%- include("../../views/partials/user/footer") %>

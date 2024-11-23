@@ -1,0 +1,93 @@
+<%- include("../../views/partials/user/header") %>
+
+<div class="container mt-5 profile-container">
+    <h2 class="text-center mb-4">My Profile</h2>
+
+    <!-- User Details Section -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            User Details
+        </div>
+        <div class="card-body">
+            <p><strong>Name:</strong> <%= user.name %></p>
+            <p><strong>Email:</strong> <%= user.email %></p>
+            <p><strong>Phone Number:</strong> <%= user.phone || 'Not provided' %></p>
+        </div>
+        <div class="card-footer">
+            <a href="/editProfile" class="btn btn-warning btn-sm">Edit Profile</a>
+        </div>
+    </div>
+
+    <!-- Address Section -->
+    <div class="card mb-4">
+        <div class="card-header bg-secondary text-white">
+            Address Management
+        </div>
+        <div class="card-body">
+            <a href="/addAddress" class="btn btn-success mb-4">Add New Address</a>
+            <% if (user.address && user.address.length > 0) { %>
+                <div class="row">
+                    <% user.address.forEach((address, index) => { %>
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Address <%= index + 1 %></h5>
+                                    <p><strong>Street:</strong> <%= address.street %></p>
+                                    <p><strong>Town:</strong> <%= address.town %></p>
+                                    <p><strong>Postcode:</strong> <%= address.postcode %></p>
+                                    <p><strong>Phone:</strong> <%= address.phone %></p>
+                                     <a href="/editAddress/<%= address._id %>" class="btn btn-primary btn-sm">Edit</a>
+                                   
+                                    <form action="/deleteAddress/<%= address._id %>" method="POST" class="d-inline">
+                                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+            <% } else { %>
+                <p class="text-center">No addresses found. Add a new address to get started!</p>
+            <% } %>
+        </div>
+    </div>
+
+
+    <!-- Order History Section -->
+    <div class="card mb-4">
+        <div class="card-header bg-success text-white">
+            Recent Orders
+        </div>
+        <div class="card-body">
+            <% if (orders && orders.length > 0) { %>
+                <ul class="list-group">
+                    <% orders.forEach(order => { %>
+                        <li class="list-group-item">
+                            <div>
+                                <strong>Order ID:</strong> <%= order.orderId %>
+                            </div>
+                            <div>
+                                <strong>Total:</strong> $<%= order.totalPrice %>
+                            </div>
+                            <div>
+                                <strong>Status:</strong> <span class="<%= order.status === 'Cancelled' ? 'text-danger' : 'text-success' %>">
+                                    <%= order.status %>
+                                </span>
+                            </div>
+                            <% if (order.status !== 'Cancelled' && order.status !== 'Delivered') { %>
+                                <a href="/cancelOrder/<%= order._id %>" class="btn btn-danger btn-sm mt-2">Cancel Order</a>
+                            <% } %>
+                        </li>
+                    <% }); %>
+                </ul>
+            <% } else { %>
+                <p>No recent orders found.</p>
+            <% } %>
+        </div>
+    </div>
+</div>
+
+
+
+
+<%- include("../../views/partials/user/footer") %>

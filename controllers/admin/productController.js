@@ -93,7 +93,7 @@ try {
     return res.redirect("/admin/pageerror");
 }
 
-return res.redirect("/admin/addProducts");
+return res.redirect("/admin/products");
 
         
 } catch (error) {
@@ -260,5 +260,4 @@ module.exports = {
     getEditProduct,
     editProduct,
     deleteSingleImage,
-
 };
