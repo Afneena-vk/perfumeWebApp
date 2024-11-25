@@ -35,10 +35,22 @@ const userProfile = async (req,res) =>{
      
        const user = await User.findById(userSession._id);
        const orders = await Order.find({ userId:userSession._id });
+       //const address = await Address.find({userId:userSession._id});
+       const addressDoc = await Address.findOne({ userId: userSession._id });
+
+       const addresses = addressDoc ? addressDoc.address : []; // Extract nested addresses
+
+
+       if (!user) {
+        return res.status(404).send("User not found");
+    }
+
+    
 
        res.render('profile',{
         user:user,
-        orders: orders
+        orders: orders,
+        address: addresses,
        })
     } catch (error) {
         console.error("Error for retrieve profile data",error);
@@ -113,118 +125,158 @@ const getAddAddress = async (req,res) =>{
 }
 
 
-
-const addNewAddress = async (req,res) =>{
-    const { street, town, postcode, phone } = req.body;
+const addNewAddress = async (req, res) => {
+    const { addressType, name, city, landMark, state, pincode, phone } = req.body;
     const userSession = req.session.user || req.user;
 
     if (!userSession || !userSession._id) {
         return res.status(401).send("Unauthorized: No user session found");
     }
-    try {
-        
-        const user = await User.findById(userSession._id);
 
-        if (!user) {
-            return res.status(404).send("User not found");
-        }
+    try {
+      
         const newAddress = {
-            street,
-            town,
-            postcode,
+            addressType,
+            name,
+            city,
+            landMark,
+            state,
+            pincode,
             phone
         };
+
         
-        user.address.push(newAddress); 
+        const updatedUser = await Address.findOneAndUpdate(
+            { userId: userSession._id }, 
+            {
+                $push: {
+                    address: newAddress, 
+                },
+            },
+            { new: true, upsert: true } 
+        );
 
-        await user.save();
-        res.redirect('/userProfile');
-
+        res.redirect('/userProfile'); 
     } catch (error) {
-        
         console.error("Error adding address:", error.message);
         res.status(500).send("Server error occurred");
-
     }
-}
+};
+
 
 const getEditAddress = async (req,res) =>{
-
-    const userSession = req.session.user || req.user;
-
-    if (!userSession || !userSession._id) {
-        return res.redirect('/login'); // Redirect to login if not authenticated
-    }
-
-    const addressId = req.params.id;
-    console.log('Requested address ID:', addressId); 
-
     try {
-
-        const user = await User.findById(userSession._id);
-        if (!user) {
-            return res.status(404).send('User not found');
+        const userSession = req.session.user || req.user; // Retrieve user from session or req.user
+        if (!userSession) {
+            return res.redirect('/login'); // Redirect to login if no user session
         }
-        console.log('User Address:', user.address);
 
-        const address = await Address.findOne({ _id: addressId, userId: userSession._id });
+        const userId = userSession._id;
+        //const addressId = req.params.id;
+        const addressId = req.query.id;
 
+        const userAddresses = await Address.findOne({ userId });
+        if (!userAddresses) {
+            return res.status(404).send('No address found for this user.');
+        }
+
+        const address = userAddresses.address.id(addressId);
         if (!address) {
-            return res.status(404).send('Address not found or unauthorized access');
+            return res.status(404).send('Address not found.');
         }
 
         res.render('editAddress', { address });
-        
-    } catch (error) {
-        console.error(error);
+    } catch (err) {
+        console.error(err);
         res.status(500).send('Server error');
     }
-
+    
 
 }
 
 
 
-const editAddress = async (req,res) =>{
-    const { street, town, postcode, phone } = req.body;
-    const { addressId } = req.params;
-    const userSession = req.session.user || req.user;
+// const editAddress = async (req,res) =>{
+//     const { street, town, postcode, phone } = req.body;
+//     const { addressId } = req.params;
+//     const userSession = req.session.user || req.user;
 
-    try {
+//     try {
 
-        console.log('User Session:', userSession);
-        console.log('Address ID:', addressId);
+//         console.log('User Session:', userSession);
+//         console.log('Address ID:', addressId);
 
-        const user = await User.findById(userSession._id);
-        if (!user) {
-            return res.status(404).send("User not found");
-        }
+//         const user = await User.findById(userSession._id);
+//         if (!user) {
+//             return res.status(404).send("User not found");
+//         }
 
-        console.log('User Addresses:', user.address)
+//         console.log('User Addresses:', user.address)
 
-        const address = user.address.id(addressId);
-        if (!address) {
-            return res.status(404).send("Address not found");
-        }
+//         const address = user.address.id(addressId);
+//         if (!address) {
+//             return res.status(404).send("Address not found");
+//         }
 
-        console.log('Address to Edit:', address);
+//         console.log('Address to Edit:', address);
 
-        address.street = street;
-        address.town = town;
-        address.postcode = postcode;
-        address.phone = phone;
+//         address.street = street;
+//         address.town = town;
+//         address.postcode = postcode;
+//         address.phone = phone;
 
-        await user.save();
-        res.redirect("/userProfile");
+//         await user.save();
+//         res.redirect("/userProfile");
 
-    } catch (error) {
+//     } catch (error) {
         
-        console.error(error);
-        res.status(500).send("Error updating address");
+//         console.error(error);
+//         res.status(500).send("Error updating address");
 
+//     }
+// }
+
+const editAddress = async (req,res)=>{
+    try {
+        const userSession = req.session.user || req.user; // Retrieve user from session or req.user
+        if (!userSession) {
+            return res.redirect('/login'); // Redirect to login if no user session
+        }
+
+        const userId = userSession._id;
+        // const addressId = req.params.id;
+        const addressId = req.query.id;
+        const updatedData = {
+            addressType: req.body.addressType,
+            name: req.body.name,
+            city: req.body.city,
+            landMark: req.body.landMark,
+            state: req.body.state,
+            pincode: req.body.pincode,
+            phone: req.body.phone,
+        };
+
+        const userAddresses = await Address.findOne({ userId });
+        if (!userAddresses) {
+            return res.status(404).send('No address found for this user.');
+        }
+
+        const address = userAddresses.address.id(addressId);
+        if (!address) {
+            return res.status(404).send('Address not found.');
+        }
+
+        // Update the address fields
+        Object.assign(address, updatedData);
+
+        await userAddresses.save();
+
+        res.redirect('/userProfile'); // Redirect to profile or address list
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server error');
     }
 }
-
 const deleteAddress  = async (req,res)=>{
     const { addressId } = req.params;
     const userSession = req.session.user || req.user;
@@ -235,8 +287,15 @@ const deleteAddress  = async (req,res)=>{
             return res.status(404).send("User not found");
         }
 
-        user.address = user.address.filter((addr) => addr._id.toString() !== addressId);
-        await user.save();
+        const result = await Address.findOneAndUpdate(
+            { userId: userSession._id },
+            { $pull: { address: { _id: addressId } } },
+            { new: true }
+        );
+
+        if (!result) {
+            return res.status(404).send('Address not found');
+        }
 
         res.redirect("/userProfile");
 

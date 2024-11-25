@@ -179,7 +179,7 @@
                       
                        <a href="#" class="search-switch"><img src="img/icon/search.png" alt=""></a>
                        <a href="#"><img src="img/icon/heart.png" alt=""></a>
-                       <a href="./shopping-cart.html"><img src="img/icon/cart.png" alt=""> <span>0</span></a>
+                       <a href="/cart"><img src="img/icon/cart.png" alt=""> <span>0</span></a>
                    </div>
                </div>
            </div>
@@ -271,14 +271,38 @@
                                 </div>
                                 
                             </div>
-                            <div class="product__details__cart__option">
+                           
+                             <!-- <div class="product__details__cart__option">
                                 <div class="quantity">
                                     <div class="pro-qty">
                                         <input type="text" value="1">
                                     </div>
                                 </div>
                                 <a href="#" class="primary-btn">add to cart</a>
+                            </div>  -->
+                            <div class="product__details__cart__option">
+                                <form action="/add-to-cart" method="POST">
+                                    <!-- Hidden field to send the product ID -->
+                                    <input type="hidden" name="productId" value="<%= product._id %>">
+                                    
+                                    <div class="quantity">
+                                        <div class="pro-qty">
+                                            <!-- Quantity input -->
+                                            <input type="number" name="quantity" value="1" min="1" max="<%= product.quantity %>">
+                                        </div>
+                                    </div>
+                            
+                                    <!-- Add to cart button -->
+                                    <button type="submit" class="primary-btn <%= product.quantity === 0 ? 'disabled' : '' %>">Add to Cart</button>
+            
+                                    
+                                    
+                                </form>
                             </div>
+                            
+                            
+                            
+                            
                             <div class="product__details__btns__option">
                                 <a href="#"><i class="fa fa-heart"></i> add to wishlist</a>
                                 

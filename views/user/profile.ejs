@@ -19,39 +19,41 @@
     </div>
 
     <!-- Address Section -->
-    <div class="card mb-4">
-        <div class="card-header bg-secondary text-white">
-            Address Management
-        </div>
-        <div class="card-body">
-            <a href="/addAddress" class="btn btn-success mb-4">Add New Address</a>
-            <% if (user.address && user.address.length > 0) { %>
-                <div class="row">
-                    <% user.address.forEach((address, index) => { %>
-                        <div class="col-md-4 mb-3">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h5 class="card-title">Address <%= index + 1 %></h5>
-                                    <p><strong>Street:</strong> <%= address.street %></p>
-                                    <p><strong>Town:</strong> <%= address.town %></p>
-                                    <p><strong>Postcode:</strong> <%= address.postcode %></p>
-                                    <p><strong>Phone:</strong> <%= address.phone %></p>
-                                     <a href="/editAddress/<%= address._id %>" class="btn btn-primary btn-sm">Edit</a>
-                                   
-                                    <form action="/deleteAddress/<%= address._id %>" method="POST" class="d-inline">
-                                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                                    </form>
-                                </div>
+    <!-- Address Section -->
+<div class="card mb-4">
+    <div class="card-header bg-secondary text-white">
+        Address Management
+    </div>
+    <div class="card-body">
+        <a href="/addAddress" class="btn btn-success mb-4">Add New Address</a>
+        <% if (address && address.length > 0) { %>
+            <div class="row">
+                <% address && address.forEach((addr, index) => { %>
+                    <div class="col-md-4 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Address <%= index + 1 %></h5>
+                                <p><strong>Address Type:</strong> <%= addr.addressType %></p>
+                                <p><strong>Name:</strong> <%= addr.name %></p>
+                                <p><strong>City:</strong> <%= addr.city %></p>
+                                <p><strong>Landmark:</strong> <%= addr.landMark %></p>
+                                <p><strong>State:</strong> <%= addr.state %></p>
+                                <p><strong>Pincode:</strong> <%= addr.pincode %></p>
+                                <p><strong>Phone:</strong> <%= addr.phone %></p>
+                                <a href="/editAddress?id=<%= addr._id %>" class="btn btn-primary btn-sm">Edit</a>
+                                <form action="/deleteAddress/<%= addr._id %>" method="POST" class="d-inline">
+                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                </form>
                             </div>
                         </div>
-                    <% }); %>
-                </div>
-            <% } else { %>
-                <p class="text-center">No addresses found. Add a new address to get started!</p>
-            <% } %>
-        </div>
+                    </div>
+                <% }); %>
+            </div>
+        <% } else { %>
+            <p class="text-center">No addresses found. Add a new address to get started!</p>
+        <% } %>
     </div>
-
+</div>
 
     <!-- Order History Section -->
     <div class="card mb-4">
@@ -86,7 +88,6 @@
         </div>
     </div>
 </div>
-
 
 
 

@@ -3,7 +3,8 @@ const mongoose = require("mongoose");
 const User = require("../../models/userSchema");
 const Category = require("../../models/categorySchema");
 const Product = require("../../models/productSchema");
-const Brand = require("../../models/brandSchema")
+const Brand = require("../../models/brandSchema");
+//const Cart = require("../../models/cartSchema");
 const env = require("dotenv").config();
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
@@ -369,6 +370,63 @@ const getProductDetails = async (req, res) => {
         res.status(500).render('error', { message: 'Internal Server Error' });
     }
 };
+
+// const getProductDetails = async (req, res) => {
+//     try {
+        
+//         const productId = req.query.id;
+//         const user = req.session.user || req.user; 
+//         const userId = user._id;
+//         if (!user) {
+//             return res.status(401).json({ success: false, message: 'Please login' });
+            
+//         }
+
+//         const product = await Product.findById(productId).populate('category')
+
+//         if (!product) {
+//             return res.status(404).render('404', { message: 'Product not found' });
+//         }
+//         const cart = await Cart.findOne({ userId}).populate("items.productId");
+//     const cartItems = cart ? cart.items.map(item => ({
+//       productId: item.productId._id.toString(),
+//       quantity: item.quantity
+//     })) : [];
+
+
+//         const totalRatings = product.ratings.reduce((sum, rating) => sum + rating, 0);
+//         const avgRating = product.ratings.length ? (totalRatings / product.ratings.length).toFixed(1) : 'No Ratings Yet';
+        
+//         const relatedProducts = await Product.find({ 
+//             category: product.category._id, 
+//             _id: { $ne: product._id } 
+//           }).limit(4);
+      
+//         const breadcrumbs = [
+//             { name: 'Home', url: '/' },
+//             { name: 'Shop', url: '/shop' },
+//             { name: product.productName, url: `/product/${productId}` }
+//         ];
+     
+//         const finalPrice = product.salePrice 
+      
+//         const stockStatus = product.quantity > 0 ? 'In Stock' : 'Out of Stock';
+
+//         res.render('productDetails', {
+//             user,
+//             product,
+//             breadcrumbs,
+//             avgRating,
+//             finalPrice,
+//             stockStatus,
+//             relatedProducts,
+//             cartItems,
+//         });
+//     } catch (error) {
+//         console.error('Error fetching product details:', error);
+//         res.status(500).render('error', { message: 'Internal Server Error' });
+//     }
+// };
 
 
 
