@@ -1,40 +1,162 @@
 <%- include("../../views/partials/user/header") %>
-
+<style>
+    body {
+        background-color: rgb(243, 242, 238);
+    }
+</style>
 <div class="container mt-5">
-    <h2 class="text-center mb-4">Add New Address</h2>
-    <form action="/addAddress" method="POST" class="card p-4">
-        <div class="mb-3">
-            <label for="addressType" class="form-label">Address Type</label>
-            <input type="text" id="addressType" name="addressType" class="form-control" placeholder="e.g., Home, Office" required>
+    
+    <div class="text-center mb-5">
+        <h1 class="display-5 fw-bold">Add New Address</h1>
+        <p class="text-muted">Add a new delivery address to your profile.</p>
+    </div>
+
+    
+    <div class="card shadow-lg border-0">
+        <div class="card-body p-5">
+            <form action="/addAddress" method="POST" onsubmit="return validateForm()">
+                
+                <div class="mb-4">
+                    <label for="addressType" class="form-label fw-semibold">Address Type</label>
+                    <input type="text" id="addressType" name="addressType" class="form-control form-control-lg" placeholder="e.g., Home, Office">
+                    <small class="text-danger d-none" id="addressTypeError">Address Type must be either 'Home' or 'Office'.</small>
+                </div>
+
+                
+                <div class="mb-4">
+                    <label for="name" class="form-label fw-semibold">Full Name</label>
+                    <input type="text" id="name" name="name" class="form-control form-control-lg" placeholder="Enter your full name">
+                    <small class="text-danger d-none" id="nameError">Name can only include alphabets and spaces.</small>
+                </div>
+
+             
+                <div class="mb-4">
+                    <label for="city" class="form-label fw-semibold">City</label>
+                    <input type="text" id="city" name="city" class="form-control form-control-lg" placeholder="Enter your city">
+                    <small class="text-danger d-none" id="cityError">City field cannot be empty.</small>
+                </div>
+
+             
+                <div class="mb-4">
+                    <label for="landMark" class="form-label fw-semibold">Landmark</label>
+                    <input type="text" id="landMark" name="landMark" class="form-control form-control-lg" placeholder="Enter a nearby landmark">
+                    <small class="text-danger d-none" id="landMarkError">Landmark field cannot be empty.</small>
+                </div>
+
+                
+                <div class="mb-4">
+                    <label for="state" class="form-label fw-semibold">State</label>
+                    <input type="text" id="state" name="state" class="form-control form-control-lg" placeholder="Enter your state">
+                    <small class="text-danger d-none" id="stateError">State field cannot be empty.</small>
+                </div>
+
+               
+                <div class="mb-4">
+                    <label for="pincode" class="form-label fw-semibold">Pincode</label>
+                    <input type="text" id="pincode" name="pincode" class="form-control form-control-lg" placeholder="Enter your pincode">
+                    <small class="text-danger d-none" id="pincodeError">Pincode must contain only numbers.</small>
+                </div>
+
+               
+                <div class="mb-4">
+                    <label for="phone" class="form-label fw-semibold">Phone Number</label>
+                    <input type="text" id="phone" name="phone" class="form-control form-control-lg" placeholder="Enter your phone number">
+                    <small class="text-danger d-none" id="phoneError">Phone Number must be a 10-digit number.</small>
+                </div>
+
+               
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <button type="submit" class="btn btn-success btn-lg px-4">Save Address</button>
+                    <a href="/userProfile" class="btn btn-outline-secondary btn-lg px-4">Cancel</a>
+                </div>
+            </form>
         </div>
-        <div class="mb-3">
-            <label for="name" class="form-label">Full Name</label>
-            <input type="text" id="name" name="name" class="form-control" required>
-        </div>
-        <div class="mb-3">
-            <label for="city" class="form-label">City</label>
-            <input type="text" id="city" name="city" class="form-control" required>
-        </div>
-        <div class="mb-3">
-            <label for="landMark" class="form-label">Landmark</label>
-            <input type="text" id="landMark" name="landMark" class="form-control" required>
-        </div>
-        <div class="mb-3">
-            <label for="state" class="form-label">State</label>
-            <input type="text" id="state" name="state" class="form-control" required>
-        </div>
-        <div class="mb-3">
-            <label for="pincode" class="form-label">Pincode</label>
-            <input type="number" id="pincode" name="pincode" class="form-control" required>
-        </div>
-        <div class="mb-3">
-            <label for="phone" class="form-label">Phone Number</label>
-            <input type="text" id="phone" name="phone" class="form-control" required>
-        </div>
-        <button type="submit" class="btn btn-success">Save Address</button>
-        <a href="/userProfile" class="btn btn-secondary">Cancel</a>
-    </form>
+    </div>
 </div>
 
+<script>
+    function validateForm() {
+        let isValid = true;
+
+        
+        const addressType = document.getElementById("addressType").value.trim();
+        const name = document.getElementById("name").value.trim();
+        const city = document.getElementById("city").value.trim();
+        const landMark = document.getElementById("landMark").value.trim();
+        const state = document.getElementById("state").value.trim();
+        const pincode = document.getElementById("pincode").value.trim();
+        const phone = document.getElementById("phone").value.trim();
+
+        
+        const nameRegex = /^[A-Za-z\s]+$/;
+        const phoneRegex = /^[0-9]{10}$/;
+        const pincodeRegex = /^[0-9]+$/;
+
+        
+        const addressTypeError = document.getElementById("addressTypeError");
+        if (addressType.toLowerCase() !== "home" && addressType.toLowerCase() !== "office") {
+            addressTypeError.classList.remove("d-none");
+            isValid = false;
+        } else {
+            addressTypeError.classList.add("d-none");
+        }
+
+        
+        const nameError = document.getElementById("nameError");
+        if (!nameRegex.test(name)) {
+            nameError.classList.remove("d-none");
+            isValid = false;
+        } else {
+            nameError.classList.add("d-none");
+        }
+
+        
+        const cityError = document.getElementById("cityError");
+        if (city === "") {
+            cityError.classList.remove("d-none");
+            isValid = false;
+        } else {
+            cityError.classList.add("d-none");
+        }
+
+        
+        const landMarkError = document.getElementById("landMarkError");
+        if (landMark === "") {
+            landMarkError.classList.remove("d-none");
+            isValid = false;
+        } else {
+            landMarkError.classList.add("d-none");
+        }
+
+        
+        const stateError = document.getElementById("stateError");
+        if (state === "") {
+            stateError.classList.remove("d-none");
+            isValid = false;
+        } else {
+            stateError.classList.add("d-none");
+        }
+
+        
+        const pincodeError = document.getElementById("pincodeError");
+        if (!pincodeRegex.test(pincode)) {
+            pincodeError.classList.remove("d-none");
+            isValid = false;
+        } else {
+            pincodeError.classList.add("d-none");
+        }
+
+        
+        const phoneError = document.getElementById("phoneError");
+        if (!phoneRegex.test(phone)) {
+            phoneError.classList.remove("d-none");
+            isValid = false;
+        } else {
+            phoneError.classList.add("d-none");
+        }
+
+        return isValid;
+    }
+</script>
 
 <%- include("../../views/partials/user/footer") %>

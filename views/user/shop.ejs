@@ -44,15 +44,47 @@
   .product-content-wrap a:hover {
       background-color: #ff4c4c;
   }
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.page-number {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    border: 2px solid #080606;
+    border-radius: 50%;
+    text-align: center;
+    margin: 0 5px;
+    color: #030202;
+    text-decoration: none;
+}
+
+.page-number.active {
+    background-color: #080707;
+    color: white;
+}
+
+.page-number:hover {
+    background-color: #000000;
+    color: white;
+}
+
 </style>
+
 
 <section class="shop spad">
     <div class="container">
         <div class="row">
-           
+            
             <div class="col-lg-3 col-md-4">
                 <div class="shop__sidebar">
                     <div class="shop__sidebar__accordion">
+
                         
                         <div class="accordion" id="brandAccordion">
                             <div class="card">
@@ -63,7 +95,11 @@
                                     <div class="card-body">
                                         <ul>
                                             <% brands.forEach((brand) => { %>
-                                                <li><a href="#"><%= brand.brandName %></a></li>
+                                                <li>
+                                                    <a href="?brand=<%= brand._id %>&category=<%= selectedCategory %>&sortBy=<%= selectedSort %>">
+                                                        <%= brand.brandName %>
+                                                    </a>
+                                                </li>
                                             <% }) %>
                                         </ul>
                                     </div>
@@ -71,6 +107,7 @@
                             </div>
                         </div>
 
+                        
                         <div class="accordion" id="categoryAccordion">
                             <div class="card">
                                 <div class="card-heading">
@@ -80,7 +117,11 @@
                                     <div class="card-body">
                                         <ul>
                                             <% categories.forEach((category) => { %>
-                                                <li><a href="#"><%= category.name %></a></li>
+                                                <li>
+                                                    <a href="?category=<%= category._id %>&brand=<%= selectedBrand %>&sortBy=<%= selectedSort %>">
+                                                        <%= category.name %>
+                                                    </a>
+                                                </li>
                                             <% }) %>
                                         </ul>
                                     </div>
@@ -88,54 +129,74 @@
                             </div>
                         </div>
 
-                     
-                        <div class="accordion" id="filterAccordion">
+                        
+                        <div class="accordion" id="sortAccordion">
                             <div class="card">
                                 <div class="card-heading">
-                                    <a href="#" data-toggle="collapse" data-target="#filterCollapse">Filter</a>
+                                    <a href="#" data-toggle="collapse" data-target="#sortCollapse">Sort By</a>
                                 </div>
-                                <div id="filterCollapse" class="collapse" data-parent="#filterAccordion">
+                                <div id="sortCollapse" class="collapse" data-parent="#sortAccordion">
                                     <div class="card-body">
                                         <ul>
-                                            <li><a href="#">Price Low to High</a></li>
-                                            <li><a href="#">Price High to Low</a></li>
-                                            <li><a href="#">Newest Arrivals</a></li>
+                                            <li>
+                                                <a href="?sortBy=priceLowHigh&category=<%= selectedCategory %>&brand=<%= selectedBrand %>">Price Low to High</a>
+                                            </li>
+                                            <li>
+                                                <a href="?sortBy=priceHighLow&category=<%= selectedCategory %>&brand=<%= selectedBrand %>">Price High to Low</a>
+                                            </li>
+                                            <li>
+                                                <a href="?sortBy=ratings&category=<%= selectedCategory %>&brand=<%= selectedBrand %>">Average Ratings</a>
+                                            </li>
+                                            <li>
+                                                <a href="?sortBy=aZ&category=<%= selectedCategory %>&brand=<%= selectedBrand %>">A-Z</a>
+                                            </li>
+                                            <li>
+                                                <a href="?sortBy=zA&category=<%= selectedCategory %>&brand=<%= selectedBrand %>">Z-A</a>
+                                            </li>
                                         </ul>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>
-       
 
            
-           
-<div class="col-lg-9 col-md-8">
-    <div class="row">
-        <% products.forEach(product => { %>
-        <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-            <a href="/productDetails?id=<%= product._id %>">
-                <div class="product-card card">
-                    <img src="/uploads/re-images/<%= product.productImage[0] %>" class="card-img-top" alt="<%= product.productName %>" />
-                    <div class="card-body">
-                        <h3 class="card-title"><%= product.productName %></h3>
-                        <p class="card-text">Brand: <%= product.brand %></p>
-                        <p class="price">₹<%= product.salePrice %></p>
-                       
+            <div class="col-lg-9 col-md-8">
+                <div class="row">
+                    <% products.forEach(product => { %>
+                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                        <a href="/productDetails?id=<%= product._id %>">
+                            <div class="product-card card">
+                                <img src="/uploads/re-images/<%= product.productImage[0] %>" class="card-img-top" alt="<%= product.productName %>" />
+                                <div class="card-body">
+                                    <h3 class="card-title"><%= product.productName %></h3>
+                                    
+                                    <p class="price">₹<%= product.salePrice %></p>
+                                    <p class="status <%= product.status.toLowerCase().replace(' ', '-') %>"><%= product.status %></p>
+                                </div>
+                            </div>
+                        </a>
                     </div>
+                    <% }) %>
                 </div>
-            </a>
-        </div>
-        <% }) %>
-    </div>
-</div>
+            </div>
 
-            
         </div>
     </div>
+
+    <div class="pagination">
+        <% for (let i = 1; i <= totalPages; i++) { %>
+            <a href="?page=<%= i %>&category=<%= selectedCategory %>&brand=<%= selectedBrand %>&sortBy=<%= selectedSort %>" class="page-number <%= currentPage === i ? 'active' : '' %>">
+                <%= i %>
+            </a>
+        <% } %>
+    </div>
+
 </section>
+
 
 
 <%- include("../../views/partials/user/footer") %>

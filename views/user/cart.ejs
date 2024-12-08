@@ -1,17 +1,53 @@
 <%- include("../../views/partials/user/header") %>
 <!-- Header Section End -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
  <style>
    .product__cart__item__pic img {
-    width: 100px; /* Adjust this value to set the width */
-    height: auto; /* Maintain the aspect ratio */
-    max-height: 100px; /* Optional: limit the height */
-    object-fit: cover; /* Ensures the image fits within the specified dimensions */
+    width: 100px; 
+    height: auto; 
+    max-height: 100px;
+    object-fit: cover; 
 }
 .product__cart__item__pic {
-    width: 100px; /* Match the image width */
-    height: auto; /* Adjust accordingly */
+    width: 100px; 
+    height: auto; 
 }
 
+
+.quantity {
+    display: flex;
+    align-items: center;
+}
+
+.quantity__button {
+    background-color:  white; 
+    color: black;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 15px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* .quantity__button:hover {
+    background-color: #0056b3; 
+} */
+
+.quantity__input {
+    width: 50px;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin: 0 10px;
+    font-size: 16px;
+    padding: 5px;
+}
+
+.quantity__input:focus {
+    border-color: #007bff; 
+    outline: none;
+}
  
  </style>
 
@@ -58,22 +94,38 @@
                                                 <img src="/uploads/re-images/<%= item.image %>" alt="<%= item.name %>">
                                             </div>
                                             <div class="product__cart__item__text">
-                                                <h6><%= item.name %></h6>
+                                                <h6><%= item.name %> (Size: <%= item.size %>)</h6>
                                                 <h5>Rs.<%= item.price %></h5>
                                             </div>
                                         </td>
-                                        <td class="quantity__item">
+                                        <!-- <td class="quantity__item">
                                             <div class="quantity">
                                                 <div class="pro-qty-2">
+                                                    <button class="decrement-btn" data-id="<%= item.productId %>" data-size="<%= item.size %>">-</button>
                                                     <input type="text" value="<%= item.quantity %>">
+                                                    <button class="increment-btn" data-id="<%= item.productId %>" data-size="<%= item.size %>">+</button>
                                                 </div>
                                             </div>
+                                        </td> -->
+                                        <td class="quantity__item">
+                                            <div class="quantity">
+                                                <button class="quantity__button decrement-btn" data-id="<%= item.productId %>" data-size="<%= item.size %>">-</button>
+                                                <input type="number" class="quantity__input" value="<%= item.quantity %>" min="1" data-id="<%= item.productId %>" data-size="<%= item.size %>">
+                                                <button class="quantity__button increment-btn" data-id="<%= item.productId %>" data-size="<%= item.size %>">+</button>
+                                            </div>
                                         </td>
+
                                         <td class="cart__price">Rs.<%= item.totalPrice %></td>
-                                        <td class="cart__close">
+                                        <!-- <td class="cart__close">
                                             <a href="/remove-from-cart?productId=<%= item.productId %>" class="cart__remove-btn">
                                             <i class="fa fa-close"></i>
-                                        </a>
+                                        </a> -->
+                                        <td class="cart__close">
+                                            <a href="/remove-from-cart?productId=<%= item.productId %>&size=<%= item.size %>" class="cart__remove-btn">
+                                                <i class="fa fa-close"></i>
+                                            </a>
+                                        </td>
+                                        
                                         </td>
                                     </tr>
                                 <% }) %>
@@ -99,44 +151,91 @@
                 </div>
             </div>
             <div class="col-lg-4">
-                <div class="cart__discount">
+                <!-- <div class="cart__discount">
                     <h6>Discount codes</h6>
                     <form action="#">
                         <input type="text" placeholder="Coupon code">
                         <button type="submit">Apply</button>
                     </form>
-                </div>
+                </div> -->
                 <div class="cart__total">
                     <h6>Cart total</h6>
                     <ul>
                         <li>Subtotal <span>Rs.<%= subtotal %></span></li>
                         <li>Total <span>Rs.<%= cartTotalPrice %></span></li>
                     </ul>
-                    <a href="#" class="primary-btn">Proceed to checkout</a>
+                    <a href="/checkout" class="primary-btn">Proceed to checkout</a>
                 </div>
             </div>
         </div>
     </div>
 </section>
 <!-- Shopping Cart Section End -->
- <!-- <script>
- 
-    document.querySelectorAll('.cart__remove-btn').forEach(button => {
-        button.addEventListener('click', async (e) => {
-            e.preventDefault();
-            const url = button.getAttribute('href');
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+ <script>
+
+document.querySelectorAll(".increment-btn, .decrement-btn").forEach(button => {
+    button.addEventListener("click", async (event) => {
+        const productId = event.target.getAttribute("data-id");
+        const size = event.target.getAttribute("data-size");
+        const isIncrement = event.target.classList.contains("increment-btn");
+
+        const quantityInput = event.target.parentNode.querySelector("input");
+        let quantity = parseInt(quantityInput.value);
+
+        if (isIncrement) {
+            quantity++;
+        } else if (quantity > 1) {
+            quantity--;
+        } else {
             
-            const response = await fetch(url, { method: 'GET' });
+            Swal.fire({
+                icon: 'warning',
+                title: 'Invalid Quantity',
+                text: 'Quantity must be at least 1',
+            });
+            return;
+        }
+
+        try {
+            const response = await fetch("/update-cart-quantity", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ productId, selectedSize: size, quantity }),
+            });
+
+            const result = await response.json();
+
             if (response.ok) {
-                button.closest('tr').remove(); // Remove the row from the table
-                alert('Item removed from the cart!');
+                quantityInput.value = quantity;
+                document.querySelector(".cart__price").innerText = `Rs.${result.cart.items.find(
+                    item => item.productId === productId && item.size === size
+                ).totalPrice}`;
             } else {
-                alert('Failed to remove the item. Please try again.');
+                
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: result.message,
+                });
             }
-        });
+        } catch (error) {
+            console.error("Error updating cart:", error);
+            
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'An error occurred while updating the cart.',
+            });
+        }
     });
+});
+
+ 
 </script>
- -->
+ 
 
 
 <!-- Footer Section Begin -->

@@ -91,7 +91,7 @@
                     <th scope="col"><b>Sale Price</b></th>
                     <th scope="col"><b>Offer Price</b></th>
                     <th scope="col"><b>Offer</b></th>
-                    <th scope="col"><b>Quantity</b></th>
+                    <!-- <th scope="col"><b>Quantity</b></th> -->
                     <th scope="col"><b>Action</b></th>
                     <th scope="col"><b>Edit</b></th>
                     
@@ -103,10 +103,11 @@
 
                 <tr>
                     <td><%=data[i].productName%></td>
-                    <td><%=data[i].brand%></td>
+                    <td><%=data[i].brand.brandName%></td>
                     <td><%=data[i].category.name%></td>
+                    <!-- <td><%=data[i].regularPrice%></td> -->
                     <td><%=data[i].salePrice%></td>
-                    <td></td>
+                   <td></td>
                     <td>
                         <button class="btn" onclick="" style="background-color: #426c89; width: 100px; margin-bottom: 10px; width: 100px; margin-bottom: 10px;">
                             <a href="#" style="text-decoration: none;" class="text-white">Add Offer</a>
@@ -115,15 +116,17 @@
                             <a href="#" style="text-decoration: none;" class="text-white">Remove</a>
                         </button>
                     </td>
-                    <td><%=data[i].quantity%></td>
+                    <!-- <td><%=data[i].quantity%></td> -->
                     <td>
                         <%if(data[i].isBlocked===false){%>
-                        <button class="btn btn-danger" style="width: 80px;">
-                            <a href="/admin/blockProduct?id=<%=data[i]._id%>" class="text-white" style="text-decoration: none;">Block</a>
+                        <button class="btn btn-danger" style="width: 80px;" onclick="confirmAction('/admin/blockProduct?id=<%= data[i]._id %>', 'Are you sure you want to block this product?')">
+                            Block  
+                            <!-- <a href="/admin/blockProduct?id=<%=data[i]._id%>" class="text-white" style="text-decoration: none;">Block</a> -->
                         </button>
                         <%}else{%>
-                        <button class="btn btn-success" style="width: 80px;">
-                            <a href="/admin/unblockProduct?id=<%=data[i]._id%>" class="text-white" style="text-decoration: none;">Unblock</a>
+                        <button class="btn btn-success" style="width: 80px;"  onclick="confirmAction('/admin/unblockProduct?id=<%= data[i]._id %>', 'Are you sure you want to unblock this product?')">
+                            Unblock
+                            <!-- <a href="/admin/unblockProduct?id=<%=data[i]._id%>" class="text-white" style="text-decoration: none;">Unblock</a> -->
                         </button>
                         <%}%>
                     </td>
@@ -164,5 +167,25 @@
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+<script>
+    function confirmAction(url, message) {
+        Swal.fire({
+            title: 'Confirmation',
+            text: message,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, proceed!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = url; // Redirect if confirmed
+            }
+        });
+    }
+</script>
+
 
 <%- include("../../views/partials/admin/footer") %>

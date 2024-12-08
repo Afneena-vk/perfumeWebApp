@@ -1,0 +1,214 @@
+
+<%- include("../../views/partials/user/header") %>
+<style>
+.checkout__input__checkbox {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.checkout__input__checkbox:last-child {
+    border-bottom: none;
+}
+
+.checkout__input__checkbox input[type="radio"] {
+    display: none;
+}
+
+.checkout__input__checkbox label {
+    position: relative;
+    flex: 1;
+    margin-right: 15px;
+    cursor: pointer;
+    padding-left: 30px;
+    font-size: 14px;
+    color: #333;
+}
+
+.checkout__input__checkbox .checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 20px;
+    width: 20px;
+    border: 2px solid #ccc;
+    border-radius: 50%;
+    background: #fff;
+}
+
+.checkout__input__checkbox input[type="radio"]:checked + .checkmark {
+    border-color: black;
+    background: black;
+}
+
+.checkout__input__checkbox .checkmark::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 10px;
+    height: 10px;
+    background: #fff;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
+}
+
+.checkout__input__checkbox input[type="radio"]:checked + .checkmark::after {
+    display: block;
+}
+
+.address-list {
+    margin-top: 20px;
+}
+
+.btn-primary.mt-3 {
+    margin-top: 15px;
+}
+
+.btn-secondary {
+    white-space: nowrap;
+}
+</style>
+
+<body>
+
+    
+
+    
+    <div id="preloder">
+        <div class="loader"></div>
+    </div>
+
+    
+    <header class="header">
+        
+    </header>
+   
+
+    
+    <section class="breadcrumb-option">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="breadcrumb__text">
+                        <h4>Check Out</h4>
+                        <div class="breadcrumb__links">
+                            <a href="/home">Home</a>
+                            <a href="/shop">Shop</a>
+                            <span>Check Out</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+
+    
+<section class="checkout spad">
+    <div class="container">
+        <div class="checkout__form">
+            <form action="/place-order" method="POST" id="checkoutForm">
+                <div class="row">
+                    <div class="col-lg-8 col-md-6">
+                        <h6 class="checkout__title">Select Your Address</h6>
+                        <div class="address-list">
+                            <% if (addresses && addresses.length > 0) { %>
+                            <% addresses.forEach(function(address) { %>
+                                <div class="checkout__input__checkbox">
+                                    <label for="address-<%= address._id %>">
+                                        <input type="radio" id="address-<%= address._id %>" name="selectedAddress" value="<%= address._id %>">
+                                        <span class="checkmark"></span>
+                                        <strong><%= address.name %></strong><br>
+                                        <span><%= address.landMark %>, <%= address.city %>, <%= address.state %> - <%= address.pincode %></span><br>
+                                        <span>Phone: <%= address.phone %></span>
+                                    </label>
+                                    <a href="/editAddress?id=<%= address._id %>" class="btn btn-dark">Edit</a>
+                                </div>
+                            <% }); %>
+                            <% } else { %>
+                                <p>No addresses found. <a href="/addAddress"  class="btn btn-dark mt-3">Add New Address</a></p>
+                                <% } %>
+                            </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="checkout__order">
+                            <h4 class="order__title">Your Order</h4>
+                            <div class="checkout__order__products">Product <span>Total</span></div>
+                            <ul class="checkout__total__products">
+                                <% cartItems.forEach(function(item, index) { %>
+                                    <li><%= index + 1 %>. <%= item.productId.productName %> <span>Rs. <%= item.totalPrice.toFixed(2) %></span></li>
+                                <% }); %>
+                            </ul>
+                            <ul class="checkout__total__all">
+                                <li>Subtotal <span>Rs. <%= cartItems.reduce((sum, item) => sum + item.totalPrice, 0).toFixed(2) %></span></li>
+                                <li>Total <span>Rs. <%= cartItems.reduce((sum, item) => sum + item.totalPrice, 0).toFixed(2) %></span></li>
+                            </ul>
+                            <h6>Select Payment Method</h6>
+                            <div class="checkout__input__checkbox">
+                                <label for="paypal">
+                                    PayPal
+                                    <input type="radio" id="paypal" name="paymentMethod" value="PayPal" required>
+                                    <span class="checkmark"></span>
+                                </label>
+                            </div>
+                            <div class="checkout__input__checkbox">
+                                <label for="cod">
+                                    Cash on Delivery
+                                    <input type="radio" id="cod" name="paymentMethod" value="COD" required>
+                                    <span class="checkmark"></span>
+                                </label>
+                            </div>
+                            <button type="submit" class="site-btn" id="placeOrderBtn" disabled>PLACE ORDER</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+    
+
+   
+
+   
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.nice-select.min.js"></script>
+    <script src="js/jquery.nicescroll.min.js"></script>
+    <script src="js/jquery.magnific-popup.min.js"></script>
+    <script src="js/jquery.countdown.min.js"></script>
+    <script src="js/jquery.slicknav.js"></script>
+    <script src="js/mixitup.min.js"></script>
+    <script src="js/owl.carousel.min.js"></script>
+    <script src="js/main.js"></script>
+
+    <script>
+       const addressRadios = document.querySelectorAll('input[name="selectedAddress"]');
+    const paymentMethodRadios = document.querySelectorAll('input[name="paymentMethod"]');
+    const placeOrderBtn = document.getElementById('placeOrderBtn');
+
+    function validateForm() {
+        const isAddressSelected = [...addressRadios].some(radio => radio.checked);
+        const isPaymentMethodSelected = [...paymentMethodRadios].some(radio => radio.checked);
+
+        placeOrderBtn.disabled = !(isAddressSelected && isPaymentMethodSelected);
+    }
+
+    
+    addressRadios.forEach(radio => {
+        radio.addEventListener('change', validateForm);
+    });
+
+    paymentMethodRadios.forEach(radio => {
+        radio.addEventListener('change', validateForm);
+    });
+
+    
+    validateForm();
+</script> 
+<%- include("../../views/partials/user/footer") %>

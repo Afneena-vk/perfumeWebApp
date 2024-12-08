@@ -87,15 +87,50 @@
                                    </div>
                                    <div id="salePrice-error" class="error-message"></div>
                                </div>
-                               <div class="col-lg-4">
+                               <!-- <div class="col-lg-4">
                                    <div class="mb-4">
                                        <label class="form-label">Quantity</label>
                                        <input placeholder="" name="quantity" type="text" class="form-control border">
                                        <div id="quantity-error" class="error-message"></div>
                                    </div>
-                               </div>
+                               </div> -->
+                               <div class="row">
+                                <div class="col-lg-4">
+                                  <div class="mb-4">
+                                    <label class="form-label">Color</label>
+                                    <input name="color" type="text" class="form-control border" />
+                                    <div id="color-error" class="error-message"></div>
+                                  </div>
+                                </div>
+                              </div>  
                            </div>
-                          
+                           <div class="mb-4">
+                            <label class="form-label">Sizes</label>
+                            <div id="sizesContainer">
+                              <div class="size-input">
+                                <input
+                                  type="text"
+                                  name="sizes[]"
+                                  placeholder="Size"
+                                  class="form-control border mb-2"
+                                />
+                                <input
+                                  type="number"
+                                  name="quantities[]"
+                                  placeholder="Quantity"
+                                  class="form-control border mb-2"
+                                />
+                              </div>
+                            </div>
+                            <div id="sizes-error" class="error-message"></div>
+                            <button
+                              type="button"
+                              onclick="addSizeInput()"
+                              class="btn btn-secondary"
+                            >
+                              Add Another Size
+                            </button>
+                          </div>
                            <div class="card mb-4">
                                <div class="card-body">
                                    <div class="row gx-2">
@@ -209,6 +244,16 @@
 <script src="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.js"></script>
 
 <script>
+    function addSizeInput() {
+    const container = document.getElementById("sizesContainer");
+    const newInput = document.createElement("div");
+    newInput.className = "size-input";
+    newInput.innerHTML = `
+    <input type="text" name="sizes[]" placeholder="Size" class="form-control border mb-2">
+    <input type="number" name="quantities[]" placeholder="Quantity" class="form-control border mb-2">
+  `;
+    container.appendChild(newInput);
+  }
     function validateAndSubmit(){
         if(validateForm()){
             document.forms[0].submit();
@@ -326,12 +371,15 @@
               const brand = document.getElementsByName('brand')[0].value;
               const price = document.getElementsByName('regularPrice')[0].value;
               const saleprice = document.getElementsByName('salePrice')[0].value;
+              const color = document.getElementsByName("color")[0].value.trim();
               const category = document.getElementsByName('category')[0].value;
+              const sizeInputs = document.getElementsByName("sizes[]");
+              const quantityInputs = document.getElementsByName("quantities[]");
               const images1 = document.getElementById('input1')
               const images2= document.getElementById('input2')
               const images3= document.getElementById('input3')
               const images4= document.getElementById('input4')
-              const quantity=document.getElementsByName('quantity')
+              
               let isValid = true
               if (name.trim() === "") {
       displayErrorMessage('productName-error', 'Please enter a product name.');
@@ -353,6 +401,27 @@
     isValid = false;
 }
 
+if (sizeInputs.length === 0) {
+      displayErrorMessage("sizes-error", "Please add at least one size.");
+      isValid = false;
+    }
+    for (let i = 0; i < sizeInputs.length; i++) {
+      const size = sizeInputs[i].value.trim();
+      const quantity = quantityInputs[i].value.trim();
+
+      if (size === "") {
+        displayErrorMessage("sizes-error", "Please enter a size.");
+        isValid = false;
+      }
+
+      if (quantity === "" || isNaN(quantity) || parseInt(quantity) < 0) {
+        displayErrorMessage(
+          "sizes-error",
+          "Please enter a valid positive quantity."
+        );
+        isValid = false;
+      }
+    }
 
 
    if (brand.trim() === "") {
@@ -361,10 +430,10 @@
     }
   
 
-   if ( parseInt(quantity) < 0) {
-                  displayErrorMessage('quantity-error', 'Please enter a valid non-negative quantity.');
-                  isValid = false;
-              }
+//    if ( parseInt(quantity) < 0) {
+//                   displayErrorMessage('quantity-error', 'Please enter a valid non-negative quantity.');
+//                   isValid = false;
+//               }
   
 
   
@@ -382,6 +451,12 @@
                displayErrorMessage('regularPrice-error', 'Regular price must be greater than sale price.');
                isValid = false;
    }
+
+   
+   if (color === "") {
+      displayErrorMessage("color-error", "Please enter a color.");
+      isValid = false;
+    }
   
          if (images1.files.length === 0) {
                   displayErrorMessage("images1-error",'Please select an image.');
@@ -431,5 +506,3 @@
 </script>
      
 <%- include("../../views/partials/admin/footer") %> 
-
-

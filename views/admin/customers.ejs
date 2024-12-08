@@ -55,12 +55,14 @@
                         <td><%=data[i].phone%></td>
                         <td> 
                             <%if(data[i].isBlocked===false){%>
-                            <button class="btn btn-danger btn-sm" style="width: 80px;">
-                                <a href="/admin/blockCustomer?id=<%=data[i]._id%>" class="text-white" style="text-decoration: none;">Block</a>
+                            <button class="btn btn-danger btn-sm" style="width: 80px;" onclick="confirmAction('/admin/blockCustomer?id=<%=data[i]._id%>', 'Block')">
+                                Block
+                                <!-- <a href="/admin/blockCustomer?id=<%=data[i]._id%>" class="text-white" style="text-decoration: none;">Block</a> -->
                             </button>
                             <%}else{%>
-                            <button class="btn btn-success btn-sm" style="width: 80px;">
-                                <a href="/admin/unblockCustomer?id=<%=data[i]._id%>" class="text-white" style="text-decoration: none;">Unblock</a>
+                            <button class="btn btn-success btn-sm" style="width: 80px;"  onclick="confirmAction('/admin/unblockCustomer?id=<%=data[i]._id%>', 'Unblock')">
+                                Unblock
+                                <!-- <a href="/admin/unblockCustomer?id=<%=data[i]._id%>" class="text-white" style="text-decoration: none;">Unblock</a> -->
                             </button> 
                             <%}%>
                         </td>
@@ -86,4 +88,21 @@
     </div>
 </section>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
+<script>
+    function confirmAction(url, action) {
+        Swal.fire({
+            title: `Are you sure you want to ${action} this customer?`,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: `Yes, ${action}`,
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = url;
+            }
+        });
+    }
+</script>
 <%- include("../../views/partials/admin/footer") %>

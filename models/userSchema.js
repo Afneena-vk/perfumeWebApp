@@ -2,24 +2,7 @@ const { name } = require("ejs");
 const mongoose = require("mongoose");
 const {Schema} = mongoose;
 
-// const addressSchema = new Schema({
-//     street: {
-//         type: String,
-//         required: true,
-//     },
-//     town: {
-//         type: String,
-//         required: true,
-//     },
-//     postcode: {
-//         type: String,
-//         required: true,
-//     },
-//     phone: {
-//         type: String,
-//         required: true,
-//     },
-// }, { _id: false });
+
 
 const userSchema = new Schema({
     name : {
@@ -72,7 +55,7 @@ const userSchema = new Schema({
         type:Schema.Types.ObjectId,
         ref:"Order"
     }],
-    //address: [addressSchema], 
+    
     createdOn : {
         type:Date,
         default:Date.now,

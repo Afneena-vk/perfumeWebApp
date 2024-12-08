@@ -7,7 +7,7 @@
    <meta name="keywords" content="Male_Fashion, unica, creative, html">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-   <title>Essenzie</title>
+   <title>Male-Fashion</title>
    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap"
    rel="stylesheet">
    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
@@ -103,7 +103,8 @@
            <div class="row">
                <div class="col-lg-3 col-md-3">
                    <div class="header__logo pt-2 pb-2">
-                       <a href="#"><img src="/img/mylogo4.jpg" alt="jgfhgc"></a>
+                       <!-- <a href="#"><img src="/img/mylogo4.jpg" alt="jgfhgc"></a> -->
+                       <a href="./index.html"><img src="img/logo.png" alt=""></a>
                    </div>
                </div>
                <div class="col-lg-6 col-md-6">
@@ -115,12 +116,15 @@
                    </nav>
                </div>
                <div class="col-lg-3 col-md-3">
+                <% if (locals.user) { %>
                    <div class="header__nav__option">
-                      
+                   
                        <a href="#" class="search-switch"><img src="img/icon/search.png" alt=""></a>
                        <a href="#"><img src="img/icon/heart.png" alt=""></a>
                        <a href="/cart"><img src="img/icon/cart.png" alt=""> <span>0</span></a>
+                  
                    </div>
+                   <% } %>
                </div>
            </div>
            <div class="canvas__open"><i class="fa fa-bars"></i></div>

@@ -1,0 +1,40 @@
+<%- include("../../views/partials/user/header") %>
+<style>
+    body {
+        font-family: "Nunito Sans", sans-serif;
+        background-color: rgb(243, 242, 238);
+    }
+    
+    .confirmation-container {
+            margin-top: 50px;
+            display: flex;
+            justify-content: center;
+        }
+        .confirmation-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            max-width: 500px;
+            text-align: center;
+        }
+        .footer {
+            background-color: black;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+        }
+</style>
+<div class="container confirmation-container">
+    <div class="confirmation-card">
+        <h1>Thank You for Purchasing!</h1>
+        <p>Your order has been placed successfully.</p>
+        <p>We appreciate your business and hope you enjoy your purchase!</p>
+        <a href="/" class="btn btn-dark mt-3">Continue Shopping</a>
+    </div>
+</div>
+<br>
+<script src="js/jquery-3.3.1.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<%- include("../../views/partials/user/footer") %>
+

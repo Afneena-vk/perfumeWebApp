@@ -11,7 +11,8 @@ const productSchema = new Schema({
         required:true,
   },
   brand: {
-        type: String,
+        type: Schema.Types.ObjectId,
+        ref:"Brand",
         required:true,
   },
   category: {
@@ -19,27 +20,32 @@ const productSchema = new Schema({
     ref:"Category",
     required:true,
 },
-regularPrice:{
-    type:Number,
-    required:true,
+regularPrice: {
+  type: Number,
+  required: true,
 },
-salePrice:{
-    type:Number,
-    required:true
+salePrice: {
+  type: Number,
+  required: true,
 },
+
 productOffer : {
     type:Number,
     default:0,
 },
-quantity:{
-    type:Number,
-    default:true
-},
-size:{
-    type:[String],
-    required:true,
 
+
+sizes: [
+  {
+    size: String,
+    quantity: Number,
+  },
+],
+color: {
+  type: String,
+  required: true,
 },
+
 productImage:{
     type:[String],
     required:true
@@ -48,10 +54,10 @@ isBlocked:{
     type:Boolean,
     default:false
 },
-isDeleted: { 
-    type: Boolean,
-    default: false,
-  },
+// isDeleted: { 
+//     type: Boolean,
+//     default: false,
+//   },
 status:{
     type:String,
     enum:["Available","out of stock","Discontinued"],

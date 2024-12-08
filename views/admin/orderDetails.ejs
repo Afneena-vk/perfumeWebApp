@@ -1,0 +1,108 @@
+<%- include("../../views/partials/admin/header") %>  
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .content-wrapper {
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            margin: 20px auto;
+            max-width: 900px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .order-summary {
+            margin-bottom: 20px;
+        }
+
+        .order-summary h3 {
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .order-summary .details {
+            font-size: 16px;
+            color: #555;
+        }
+
+        .table th, .table td {
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        .product-image {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+<div class="content-wrapper">
+    <h2 class="text-center mb-4">Order Details</h2>
+
+    <div class="order-summary">
+        <h3>Order Summary</h3>
+        <p class="details"><strong>Order ID:</strong> <%= order.orderId %></p>
+        <p class="details"><strong>User:</strong> <%= order.userId.name %></p>
+        <p class="details"><strong>Order Date:</strong> <%= new Date(order.date).toLocaleDateString() %></p>
+        <p class="details"><strong>Payment Method:</strong> <%= order.payment[0].method %></p>
+        <p class="details"><strong>Total Price:</strong> ₹<%= order.totalPrice %></p>
+    </div>
+    <div>
+        <p><strong>Delivery Address:</strong></p>
+        <p><%= order.address.addressType %>, <%= order.address.name %>, <%= order.address.city %>, <%= order.address.state %>, </p>
+        <p>Pin code: <%= order.address.pincode %></p>
+        <p>Contact: <%= order.address.phone %></p>
+    </div>
+
+
+    <table class="table table-bordered">
+        <thead class="table-dark">
+        <tr>
+            <!-- <th>Product Image</th> -->
+            <th>Product Name</th>
+            <th>Size</th> 
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Total</th>
+            <th>Status</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% order.orderedItems.forEach(item => { %>
+            <tr>
+               
+                <td><%= item.product.productName %></td>
+                <td><%= item.size %>
+                <td><%= item.quantity %></td>
+                <td>₹<%= item.price %></td>
+                <td>₹<%= item.quantity * item.price %></td>
+                <!-- <td><%= order.status %></td> -->
+                <td>
+                    <form action="/admin/update-order-status/<%= order.orderId %>" method="POST">
+                    
+                        <select name="status" class="form-select">
+                            <% const statuses = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled', 'Return Request', 'Returned']; %>
+                            <% statuses.forEach(status => { %>
+                                <option value="<%= status %>" <%= status === order.status ? 'selected' : '' %>><%= status %></option>
+                            <% }); %>
+                        </select>
+                        
+                        <button type="submit" class="btn btn-primary btn-sm mt-2" <%= order.status === 'Cancelled' ? 'disabled' : '' %>>Update</button>
+                    </form>
+                </td>
+                
+            </tr>
+        <% }); %>
+        </tbody>
+    </table>
+</div>
+
+
+<%- include("../../views/partials/admin/footer") %>  

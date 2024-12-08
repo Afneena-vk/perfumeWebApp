@@ -1,11 +1,71 @@
 <%- include("../../views/partials/user/header") %>
 
+<style>
+    body {
+        background-color: rgb(243, 242, 238);
+    }
+
+    .profile-container {
+        max-width: 800px;
+        margin: auto;
+        padding: 20px;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .card {
+        border: none;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-header {
+        background-color: #343a40;
+        color: white;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+    }
+
+    .btn-dark {
+        background-color: #343a40;
+        border-color: #343a40;
+    }
+
+    .btn-dark:hover {
+        background-color: #23272b;
+        border-color: #1d2124;
+    }
+
+    .address-card {
+        transition: transform 0.2s;
+    }
+
+    .address-card:hover {
+        transform: scale(1.02);
+    }
+
+    .confirmation-message {
+        background-color: #ffeb3b;
+        padding: 15px;
+        margin: 20px 0;
+        border-radius: 5px;
+    }
+  
+    .mt-3 p {
+    margin-bottom: 5px;
+    font-size: 0.95rem;
+    color: #555;
+    }
+
+
+</style>
+
 <div class="container mt-5 profile-container">
     <h2 class="text-center mb-4">My Profile</h2>
 
-    <!-- User Details Section -->
     <div class="card mb-4">
-        <div class="card-header bg-primary text-white">
+        <div class="card-header">
             User Details
         </div>
         <div class="card-body">
@@ -13,71 +73,101 @@
             <p><strong>Email:</strong> <%= user.email %></p>
             <p><strong>Phone Number:</strong> <%= user.phone || 'Not provided' %></p>
         </div>
-        <div class="card-footer">
-            <a href="/editProfile" class="btn btn-warning btn-sm">Edit Profile</a>
+        <div class="card-footer text-end">
+            <a href="/editProfile" class="btn btn-dark btn-sm">Edit Profile</a>
         </div>
     </div>
 
-    <!-- Address Section -->
-    <!-- Address Section -->
-<div class="card mb-4">
-    <div class="card-header bg-secondary text-white">
-        Address Management
-    </div>
-    <div class="card-body">
-        <a href="/addAddress" class="btn btn-success mb-4">Add New Address</a>
-        <% if (address && address.length > 0) { %>
-            <div class="row">
-                <% address && address.forEach((addr, index) => { %>
-                    <div class="col-md-4 mb-3">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Address <%= index + 1 %></h5>
-                                <p><strong>Address Type:</strong> <%= addr.addressType %></p>
-                                <p><strong>Name:</strong> <%= addr.name %></p>
-                                <p><strong>City:</strong> <%= addr.city %></p>
-                                <p><strong>Landmark:</strong> <%= addr.landMark %></p>
-                                <p><strong>State:</strong> <%= addr.state %></p>
-                                <p><strong>Pincode:</strong> <%= addr.pincode %></p>
-                                <p><strong>Phone:</strong> <%= addr.phone %></p>
-                                <a href="/editAddress?id=<%= addr._id %>" class="btn btn-primary btn-sm">Edit</a>
-                                <form action="/deleteAddress/<%= addr._id %>" method="POST" class="d-inline">
-                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                                </form>
+    <div class="card mb-4">
+        <div class="card-header">
+            Address Management
+        </div>
+        <div class="card-body">
+            <a href="/addAddress" class="btn btn-dark mb-4">Add New Address</a>
+            <% if (address && address.length > 0) { %>
+                <div class="row">
+                    <% address.forEach((addr, index) => { %>
+                        <div class="col-md-4 mb-3">
+                            <div class="card address-card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Address <%= index + 1 %></h5>
+                                    <p><strong>Address Type:</strong> <%= addr.addressType %></p>
+                                    <p><strong>Name:</strong> <%= addr.name %></p>
+                                    <p><strong>City:</strong> <%= addr.city %></p>
+                                    <p><strong>Landmark:</strong> <%= addr.landMark %></p>
+                                    <p><strong>State:</strong> <%= addr.state %></p>
+                                    <p><strong>Pincode:</strong> <%= addr.pincode %></p>
+                                    <p><strong>Phone:</strong> <%= addr.phone %></p>
+                                    <a href="/editAddress?id=<%= addr._id %>" class="btn btn-dark btn-sm">Edit</a>
+                                    <form action="/deleteAddress/<%= addr._id %>" method="POST" class="d-inline">
+                                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                <% }); %>
-            </div>
-        <% } else { %>
-            <p class="text-center">No addresses found. Add a new address to get started!</p>
-        <% } %>
-    </div>
-</div>
+                    <% }); %>
+                </div>
+                <div class="pagination mt-3">
+                    <% if (addressPage > 1) { %>
+                        <a href="?addressPage=<%= addressPage - 1 %>&orderPage=<%= orderPage %>" class="btn btn-secondary btn-sm">Previous</a>
+                    <% } %>
+                    <% for (let i = 1; i <= totalAddressPages; i++) { %>
+                        <a href="?addressPage=<%= i %>&orderPage=<%= orderPage %>" class="btn btn-sm <%= i === addressPage ? 'btn-dark' : 'btn-secondary' %>">
+                            <%= i %>
+                        </a>
+                    <% } %>
+                    <% if (addressPage < totalAddressPages) { %>
+                        <a href="?addressPage=<%= addressPage + 1 %>&orderPage=<%= orderPage %>" class="btn btn-secondary btn-sm">Next</a>
+                    <% } %>
+                </div>
 
-    <!-- Order History Section -->
-    <div class="card mb-4">
-        <div class="card-header bg-success text-white">
+            <% } else { %>
+                <p class="text-center">No addresses found. Add a new address to get started!</p>
+            <% } %>
+        </div>
+    </div>
+
+    <!-- <div class="card mb-4">
+        <div class="card-header">
             Recent Orders
         </div>
         <div class="card-body">
             <% if (orders && orders.length > 0) { %>
                 <ul class="list-group">
                     <% orders.forEach(order => { %>
-                        <li class="list-group-item">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
                             <div>
-                                <strong>Order ID:</strong> <%= order.orderId %>
-                            </div>
-                            <div>
-                                <strong>Total:</strong> $<%= order.totalPrice %>
-                            </div>
-                            <div>
+                                <strong>Order ID:</strong> <%= order.orderId %><br>
+                                <strong>Order Date:</strong> <%= new Date(order.date).toLocaleDateString() %><br>
+                                <strong>Total:</strong> $ <%= order.totalPrice %><br>
+                                <strong>Payment Method:</strong> <%= order.payment[0]?.method || 'N/A' %><br>
                                 <strong>Status:</strong> <span class="<%= order.status === 'Cancelled' ? 'text-danger' : 'text-success' %>">
                                     <%= order.status %>
                                 </span>
+                                
+                                <ul>
+                                    <% order.orderedItems.forEach(item => { %>
+                                      <li>
+                                        <strong>Product:</strong> <%= item.product?.productName || 'Unknown' %><br>
+                                        <strong>Size:</strong> <%= item.size %><br>
+                                        <strong>Quantity:</strong> <%= item.quantity %><br>
+                                        <strong>Price:</strong> $<%= item.price %>
+                                      </li>
+                                    <% }); %>
+                                  </ul>
+                                  
+                                  <div class="mt-3">
+                                    <strong>Shipping Address:</strong><br>
+                                    <p><%= order.address.name %></p>
+                                    <p><%= order.address.addressType %> - <%= order.address.city %>, <%= order.address.state %>, <%= order.address.pincode %></p>
+                                    <p>Landmark: <%= order.address.landMark %></p>
+                                    <p>Phone: <%= order.address.phone %></p>
+                                </div>
                             </div>
                             <% if (order.status !== 'Cancelled' && order.status !== 'Delivered') { %>
-                                <a href="/cancelOrder/<%= order._id %>" class="btn btn-danger btn-sm mt-2">Cancel Order</a>
+                                
+                                <a href="#" class="btn btn-danger btn-sm cancel-order" data-id="<%= order._id %>">Cancel Order</a>
+
                             <% } %>
                         </li>
                     <% }); %>
@@ -86,9 +176,160 @@
                 <p>No recent orders found.</p>
             <% } %>
         </div>
+    </div> -->
+    <div class="card mb-4"> 
+        <div class="card-header">
+            Recent Orders
+        </div>
+        <div class="card-body">
+            <% if (orders && orders.length > 0) { %>
+                <ul class="list-group">
+                    <% orders.forEach(order => { %>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>Order ID:</strong> <%= order.orderId %><br>
+                                <strong>Order Date:</strong> <%= new Date(order.date).toLocaleDateString() %><br>
+                                <strong>Total:</strong> $ <%= order.totalPrice %><br>
+                                <strong>Payment Method:</strong> <%= order.payment[0]?.method || 'N/A' %><br>
+                                <strong>Status:</strong> 
+                                <span class="<%= order.status === 'Cancelled' ? 'text-danger' : 'text-success' %>">
+                                    <%= order.status %>
+                                </span>
+                                <ul>
+
+                                    <% order.orderedItems.forEach(item => { %>
+                                        <li>
+                                            <strong>Product:</strong> <%= item.product?.productName || 'Unknown' %><br>
+                                            <strong>Size:</strong> <%= item.size %><br>
+                                            <strong>Quantity:</strong> <%= item.quantity %><br>
+                                            <strong>Price:</strong> $<%= item.price %>
+                                        </li>
+                                    <% }); %>
+                                </ul>
+                                <!-- Shipping Address Display -->
+                                <div class="mt-3">
+                                    <strong>Shipping Address:</strong>
+                                    <p>
+                                        <%= `${order.address.name}, ${order.address.addressType}, ${order.address.city}, ${order.address.state}, ${order.address.pincode}, Landmark: ${order.address.landMark}, Phone: ${order.address.phone}` %>
+                                    </p>
+                                </div>
+
+                            </div>
+                            <% if (order.status !== 'Cancelled' && order.status !== 'Delivered') { %>
+                                <a href="#" class="btn btn-danger btn-sm cancel-order" data-id="<%= order._id %>">Cancel Order</a>
+                            <% } %>
+                        </li>
+                    <% }); %>
+                </ul>
+                <div class="pagination mt-3">
+                    <% if (orderPage > 1) { %>
+                        <a href="?orderPage=<%= orderPage - 1 %>&addressPage=<%= addressPage %>" class="btn btn-secondary btn-sm">Previous</a>
+                    <% } %>
+                    <% for (let i = 1; i <= totalOrderPages; i++) { %>
+                        <a href="?orderPage=<%= i %>&addressPage=<%= addressPage %>" 
+                           class="btn btn-sm <%= i === orderPage ? 'btn-dark' : 'btn-light' %>">
+                            <%= i %>
+                        </a>
+                    <% } %>
+                    <% if (orderPage < totalOrderPages) { %>
+                        <a href="?orderPage=<%= orderPage + 1 %>&addressPage=<%= addressPage %>" class="btn btn-dark btn-sm">Next</a>
+                    <% } %>
+                </div>
+            <% } else { %>
+                <p>No recent orders found.</p>
+            <% } %>
+        </div>
     </div>
+    
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    // document.querySelectorAll('.cancel-order').forEach(button => {
+    //     button.addEventListener('click', function (event) {
+    //         event.preventDefault();
+
+           
+    //         const confirmed = window.confirm('Are you sure you want to cancel this order?');
+
+    //         if (confirmed) {
+    //             const orderId = this.getAttribute('data-id');
+
+                
+    //             fetch(`/cancelOrder/${orderId}`, {
+    //                 method: 'POST',
+    //             })
+    //                 .then(response => {
+    //                     if (response.ok) {
+                            
+    //                         alert("Order successfully cancelled");
+    //                         location.reload();
+    //                     } else {
+    //                         alert("Failed to cancel the order. Please try again.");
+    //                     }
+    //                 })
+    //                 .catch(error => {
+    //                     console.error("Error:", error);
+    //                     alert("An error occurred. Please try again.");
+    //                 });
+    //         }
+    //     });
+    // });
+
+    document.querySelectorAll('.cancel-order').forEach(button => {
+    button.addEventListener('click', function (event) {
+        event.preventDefault();
+
+        const orderId = this.getAttribute('data-id');
+
+      
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, cancel it!',
+            cancelButtonText: 'No, keep it'
+        }).then((result) => {
+            if (result.isConfirmed) {
+               
+                fetch(`/cancelOrder/${orderId}`, {
+                    method: 'POST',
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            Swal.fire(
+                                'Cancelled!',
+                                'Your order has been cancelled.',
+                                'success'
+                            ).then(() => {
+                                location.reload(); 
+                            });
+                        } else {
+                            Swal.fire(
+                                'Error!',
+                                'Failed to cancel the order. Please try again.',
+                                'error'
+                            );
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error:", error);
+                        Swal.fire(
+                            'Error!',
+                            'An error occurred. Please try again.',
+                            'error'
+                        );
+                    });
+            }
+        });
+    });
+});
+
+
+</script>
 
 
 <%- include("../../views/partials/user/footer") %>

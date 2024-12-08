@@ -9,9 +9,9 @@ const orderSchema = new Schema({
         default:()=>uuidv4(),
         unique:true
     },
-    userId: {  // Add userId to link orders to users
+    userId: {  
         type: Schema.Types.ObjectId,
-        ref: 'User',  // Reference to the User model
+        ref: 'User',  
         required: true
     },
     orderedItems:[{
@@ -21,6 +21,10 @@ const orderSchema = new Schema({
             ref:'Product',
             required:true
         },
+        size: {
+            type: String,
+            required: true,
+          },
         quantity:{
             type:Number,
             required:true
@@ -45,28 +49,66 @@ const orderSchema = new Schema({
         type:Number,
         required:true
     },
-    address:{
-        type:Schema.Types.ObjectId,
-        ref:'Address',
-        required:true
-    },
+    
+    address: {
+        addressType: String,
+        name: String,
+        city: String,
+        landMark: String,
+        state: String,
+        pincode: Number,
+        phone: String,
+      },
     invoiceDate:{
         type:Date
     },
     status:{
         type:String,
         required:true,
-        enum:['Pending','Processing','Shipped','Delivered','Cancelled','Return Request','Returned']
+        enum:['Pending','Processing','Shipped','Delivered','Cancelled','Return Request','Returned'],
+        default: "Pending",   
     },
-    createdOn :{
-        type:Date,
-        default:Date.now,
-        required:true
-    },
+    date: {
+        type: Date,
+        default: Date.now,
+        required: false
+      },
+    
+    payment: [{
+        method: {
+          type: String,
+          required: true,
+          enum: ["COD", "Online Payment", "Wallet Payment"]
+        },
+        status: {
+          type: String,
+          required: true,
+          enum: ["pending", "completed",'Failed','Refunded']
+        },
+        razorpayOrderId: {
+          type: String,
+          required: false  
+        }
+      }],
+    // createdOn :{
+    //     type:Date,
+    //     default:Date.now,
+    //     required:true
+    // },
     couponApplied:{
         type:Boolean,
         default:false
-    }
+    },
+    shippingMethod: {
+        type: String,
+        enum: ["Standard", "Express", "Free Shipping"]
+      },
+    trackingNumber: {
+        type: String
+      },
+      cancelReason: {
+        type: String
+      },
 })
 
 const Order = mongoose.model("Order",orderSchema);
