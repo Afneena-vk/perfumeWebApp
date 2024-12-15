@@ -6,7 +6,8 @@ const orderSchema = new Schema({
 
     orderId : {
         type:String,
-        default:()=>uuidv4(),
+        
+        default: () => uuidv4().split('-')[0],
         unique:true
     },
     userId: {  
@@ -65,7 +66,8 @@ const orderSchema = new Schema({
     status:{
         type:String,
         required:true,
-        enum:['Pending','Processing','Shipped','Delivered','Cancelled','Return Request','Returned'],
+        // enum:['Pending','Processing','Shipped','Delivered','Cancelled','Return Request','Returned'],
+        enum:['Pending','Processing','Shipped','Delivered','Cancelled', "Return Requested","Return Approved","Return Rejected",'Returned'],
         default: "Pending",   
     },
     date: {
@@ -95,10 +97,12 @@ const orderSchema = new Schema({
     //     default:Date.now,
     //     required:true
     // },
-    couponApplied:{
-        type:Boolean,
-        default:false
-    },
+   
+    coupon: {
+      type: Schema.Types.ObjectId,
+      ref:'Coupon',
+      required:false
+    },  
     shippingMethod: {
         type: String,
         enum: ["Standard", "Express", "Free Shipping"]

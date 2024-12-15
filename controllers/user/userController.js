@@ -310,8 +310,10 @@ const loadShopping = async (req, res) => {
       
       let filterOptions = {
         isBlocked: false,
-        "sizes.quantity": { $gt: 0 }
+        
       };
+
+   
   
       
       if (req.query.category) {
@@ -322,48 +324,88 @@ const loadShopping = async (req, res) => {
       if (req.query.brand) {
         filterOptions.brand = req.query.brand;
       }
-  
-      
-      let products = await Product.find(filterOptions).populate("brand category");
-  
+
+
+       
+       if (req.query.search) {
+        filterOptions.productName = new RegExp(req.query.search, 'i'); 
+    }
+
      
-      if (req.query.sortBy) {
-        switch (req.query.sortBy) {
-          case 'priceLowHigh':
-            products.sort((a, b) => a.salePrice - b.salePrice);
-            break;
-          case 'priceHighLow':
-            products.sort((a, b) => b.salePrice - a.salePrice);
-            break;
-          case 'ratings':
-            products.sort((a, b) => {
-              const avgA = a.ratings.length ? a.ratings.reduce((sum, val) => sum + val, 0) / a.ratings.length : 0;
-              const avgB = b.ratings.length ? b.ratings.reduce((sum, val) => sum + val, 0) / b.ratings.length : 0;
-              return avgB - avgA;
-            });
-            break;
-          case 'aZ':
-            products.sort((a, b) => a.productName.localeCompare(b.productName));
-            break;
-          case 'zA':
-            products.sort((a, b) => b.productName.localeCompare(a.productName));
-            break;
-          default:
-            break;
-        }
-      }
 
       const page = parseInt(req.query.page) || 1; 
-      const limit = 20; 
-      const totalProducts = products.length; 
-      const totalPages = Math.ceil(totalProducts / limit); 
+      const limit = 8; 
       const skip = (page - 1) * limit; 
 
-     
-      const paginatedProducts = products.slice(skip, skip + limit);
+      let sortCriteria = { createdAt: -1 }; 
 
-      
+    //   if (req.query.sortBy) {
+    //     switch (req.query.sortBy) {
+    //       case 'priceLowHigh':
+    //         products.sort((a, b) => a.salePrice - b.salePrice);
+    //         break;
+    //       case 'priceHighLow':
+    //         products.sort((a, b) => b.salePrice - a.salePrice);
+    //         break;
+    //       case 'ratings':
+    //         products.sort((a, b) => {
+    //           const avgA = a.ratings.length ? a.ratings.reduce((sum, val) => sum + val, 0) / a.ratings.length : 0;
+    //           const avgB = b.ratings.length ? b.ratings.reduce((sum, val) => sum + val, 0) / b.ratings.length : 0;
+    //           return avgB - avgA;
+    //         });
+    //         break;
+    //       case 'aZ':
+    //         products.sort((a, b) => a.productName.localeCompare(b.productName));
+    //         break;
+    //       case 'zA':
+    //         products.sort((a, b) => b.productName.localeCompare(a.productName));
+    //         break;
+    //       default:
+    //         break;
+    //     }
+    //   }
+
+    if (req.query.sortBy) {
+        switch (req.query.sortBy) {
+            case 'priceLowHigh':
+                sortCriteria = { salePrice: 1 }; 
+                break;
+            case 'priceHighLow':
+                sortCriteria = { salePrice: -1 }; 
+                break;
+            case 'ratings':
+                sortCriteria = { 'ratings.average': -1 }; 
+                break;
+            case 'aZ':
+                sortCriteria = { productName: 1 }; 
+                break;
+            case 'zA':
+                sortCriteria = { productName: -1 }; 
+                break;
+            default:
+                sortCriteria = { createdAt: -1 }; 
+                break;
+        }
+    }
+
+    const totalProducts = await Product.countDocuments(filterOptions);
+    const products = await Product.find(filterOptions)
+        .populate('brand category')
+        .sort(sortCriteria) 
+        .skip(skip)
+        .limit(limit)
+        .lean();
+
+
+          const totalPages = Math.ceil(totalProducts / limit);
   
+          for (let product of products) {
+            const totalStock = product.sizes.reduce((sum, size) => sum + size.quantity, 0);
+            product.status = totalStock > 0 ? "Available" : "Out of Stock";
+            await Product.updateOne({ _id: product._id }, { $set: { status: product.status } });
+        }
+
+    
       
       let userData = null;
       if (user) {
@@ -379,8 +421,10 @@ const loadShopping = async (req, res) => {
         selectedCategory: req.query.category || '',
         selectedBrand: req.query.brand || '',
         selectedSort: req.query.sortBy || '',
+        searchQuery: req.query.search || '',
         currentPage: page,
-        totalPages: totalPages
+        totalPages: totalPages,
+        
       });
     } catch (error) {
       console.error("Error loading shopping page:", error);

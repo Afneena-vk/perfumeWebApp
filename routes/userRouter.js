@@ -5,8 +5,10 @@ const profileController = require("../controllers/user/profileController");
 const cartController = require("../controllers/user/cartController");
 const checkoutController = require("../controllers/user/checkoutController");
 const orderController = require("../controllers/user/orderController");
+const wishlistController =require("../controllers/user/wishlistController");
+const walletController = require("../controllers/user/walletController");
 const passport = require("passport");
-const { userAuth } = require("../middlewares/auth");
+const { userAuth, adminAuth } = require("../middlewares/auth");
 
 
 router.get("/pageNotFound",userController.pageNotFound);
@@ -45,7 +47,8 @@ router.post('/addAddress',userAuth,profileController.addNewAddress);
 router.get('/editAddress',userAuth,profileController.getEditAddress);
 router.post("/editAddress",userAuth,profileController.editAddress);
 router.post("/deleteAddress/:addressId",userAuth,profileController.deleteAddress);
-router.post("/cancelOrder/:orderId", userAuth,profileController.cancelOrder);
+//router.post("/cancelOrder/:orderId", userAuth,profileController.cancelOrder);
+
 
 
 router.get('/cart',userAuth,cartController.getCart);
@@ -53,7 +56,31 @@ router.post('/add-to-cart',userAuth,cartController.addToCart);
 router.get('/remove-from-cart',userAuth,cartController.removeFromCart);
 router.post('/update-cart-quantity',userAuth,cartController.updateCartQuantity);
 router.get('/checkout',userAuth,checkoutController.getCheckoutPage);
+router.post('/cart/apply-coupon',userAuth,checkoutController.applyCoupon);
+
+// Route to remove a coupon
+router.post('/cart/remove-coupon',userAuth,checkoutController.removeCoupon);
+
+
 
 router.post("/place-order",userAuth,orderController.placeOrder);
+router.get('/order-confirmation',userAuth,orderController.getOrderConfirmation);
+router.post("/verify-payment", userAuth,orderController.verifyPayment);
+router.get("/payment-failurePage", userAuth,orderController.getPaymentFailure);
+
+router.get("/orders",userAuth,orderController.getOrders);
+router.post("/cancelOrder/:orderId", userAuth,orderController.cancelOrder);
+router.patch('/requestReturn/:orderId',userAuth,orderController.requestReturn);
+
+router.get("/wishlist", userAuth, wishlistController.getWishlist);
+router.post('/wishlist/toggle', userAuth, wishlistController.toggleWishlist);
+router.delete('/wishlist/:productId',userAuth, wishlistController.deleteProductFromWishlist);
+
+router.get('/wallet',userAuth,walletController.getWalletPage);
+router.post("/wallet/add", userAuth, walletController.addMoney);
+router.patch('/wallet/withdraw',userAuth, walletController.withdrawMoney);
+  
+
+  
 
 module.exports = router;

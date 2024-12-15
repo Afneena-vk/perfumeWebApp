@@ -1,0 +1,102 @@
+<%- include("../../views/partials/user/header") %>
+<style>
+    body {
+        font-family: "Nunito Sans", sans-serif;
+        background-color: rgb(243, 242, 238);
+        margin: 0;
+        padding: 0;
+    }
+
+    .failure-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh; 
+        padding: 20px; 
+    }
+
+    .failure-card {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+        max-width: 500px;
+        width: 100%; 
+        text-align: center;
+    }
+
+    h1 {
+        font-size: 24px;
+        margin-bottom: 15px;
+    }
+
+    p {
+        font-size: 16px;
+        margin-bottom: 20px;
+    }
+
+    .btn {
+        display: inline-block;
+        padding: 10px 20px;
+        margin: 5px;
+        border: none;
+        border-radius: 5px;
+        text-decoration: none;
+        font-size: 16px;
+        transition: background-color 0.3s;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .btn-danger:hover {
+        background-color: #c82333;
+    }
+
+    .btn-dark {
+        background-color: #343a40;
+        color: white;
+    }
+
+    .btn-dark:hover {
+        background-color: #23272b;
+    }
+
+    .footer {
+        background-color: black;
+        color: white;
+        padding: 20px 0;
+        text-align: center;
+    }
+
+    @media (max-width: 600px) {
+        h1 {
+            font-size: 20px;
+        }
+
+        p {
+            font-size: 14px;
+        }
+
+        .btn {
+            font-size: 14px;
+            padding: 8px 16px;
+        }
+    }
+</style>
+
+<div class="container failure-container">
+    <div class="failure-card">
+        <h1>Payment Failed</h1>
+        <p>We're sorry, but your payment could not be processed.</p>
+        <p>Please try again or contact customer support if the issue persists.</p>
+        <a href="/orders" class="btn btn-danger">View Order</a>
+        <a href="/" class="btn btn-dark">Continue Shopping</a>
+    </div>
+</div>
+
+<script src="js/jquery-3.3.1.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<%- include("../../views/partials/user/footer") %>

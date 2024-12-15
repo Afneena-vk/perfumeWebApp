@@ -1,0 +1,145 @@
+<%- include("../../views/partials/admin/header") %>
+
+<div class="content-wrapper">
+  <div class="container-fluid">
+    <div class="row mb-4">
+      <div class="col">
+        <br><br><br><br>
+        <h1 class="h2">Coupons</h1>
+      </div>
+      <div class="col text-end">
+        <br><br><br><br>
+        <a href="/admin/create-coupon" class="btn btn-dark">+ Create Coupon</a>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="card-header">
+        <form class="d-flex" action="/admin/coupons" method="GET">
+          <input class="form-control me-2" type="search" placeholder="Search coupons..." aria-label="Search" name="search" value="<%= searchQuery || '' %>">
+          <button class="btn btn-outline-success" type="submit">Search</button>
+        </form>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Coupon Code</th>
+                <th>Description</th>
+                <th>Discount Type</th>
+                <th>Discount</th>
+                <th>Max</th>
+                <th>Min</th>
+                <th>Start</th>
+                <th>Expiry</th>
+                <th>Status</th>
+                <th>Usage Limit</th>
+                <th>Created</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if(coupons.length > 0) { %>
+                <% coupons.forEach(coupon => { %>
+                  <tr>
+                    <td><%= coupon.code %></td>
+                    <td><%= coupon.description %></td>
+                    <td><%= coupon.discountType.charAt(0).toUpperCase() + coupon.discountType.slice(1) %></td>
+                    <td>
+                      <%= coupon.discountType === 'fixed' 
+                          ? `${coupon.discountValue} rs` 
+                          : `${coupon.discountValue} %` 
+                      %>
+                    </td>
+                    <td><%= coupon.maxPurchaseAmount %></td>
+                    <td><%= coupon.minPurchaseAmount %></td>
+                    <td><%= coupon.startDate.toLocaleDateString() %></td>
+                    <td><%= coupon.endDate.toLocaleDateString() %></td>
+                    <td><span class="badge bg-<%= coupon.status === 'active' ? 'success' : 'danger' %>"><%= coupon.status %></span></td>
+                    <td><%= coupon.usageLimit %></td>
+                    <td><%= coupon.createdAt.toLocaleDateString() %></td>
+                    <td>
+                        <div class="d-flex flex-column align-items-center w-100">
+                          <a href="/admin/coupons/edit/<%= coupon._id %>" 
+                             class="btn btn-sm btn-dark mb-2 w-100">
+                            Edit
+                          </a>
+                          <a href="#" 
+                             onclick="deleteCoupon('<%= coupon._id %>')" 
+                             class="btn btn-sm btn-danger w-100">
+                            Delete
+                          </a>
+                        </div>
+                      </td>
+                      
+                    
+                    
+                  </tr>
+                <% }); %>
+              <% } else { %>
+                <tr>
+                  <td colspan="12" class="text-center">
+                    <h4>No coupons found</h4>
+                    <a href="/admin/create-coupon" class="btn btn-primary mt-2">+ Add Coupon</a>
+                  </td>
+                </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include("../../views/partials/admin/footer") %>
+
+<script>
+function deleteCoupon(couponId) {
+  Swal.fire({
+    title: 'Are you sure?',
+    text: "You won't be able to revert this!",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Yes, delete it!'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      fetch(`/admin/coupons/delete-coupon/${couponId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          Swal.fire(
+            'Deleted!',
+            'Coupon has been deleted.',
+            'success'
+          ).then(() => {
+            window.location.reload();
+          });
+        } else {
+          Swal.fire(
+            'Error!',
+            data.message || 'Failed to delete coupon',
+            'error'
+          );
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        Swal.fire(
+          'Error!',
+          'An unexpected error occurred',
+          'error'
+        );
+      });
+    }
+  });
+}
+</script>

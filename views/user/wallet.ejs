@@ -1,0 +1,425 @@
+<%-include("../../views/partials/user/header") %>
+<style>
+  body {
+    font-family: "Arial", sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f9f9f9;
+  }
+
+  .container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+  }
+
+  .breadcrumb-option {
+    background-color: #f3f2ee;
+    padding: 30px 0;
+    margin-bottom: 40px;
+  }
+
+  .breadcrumb__text h4 {
+    color: #111111;
+    font-weight: 700;
+    margin-bottom: 8px;
+    font-size: 28px;
+  }
+
+  .breadcrumb__links a,
+  .breadcrumb__links span {
+    font-size: 15px;
+    color: #111111;
+    margin-right: 10px;
+    display: inline-block;
+    position: relative;
+    text-decoration: none;
+  }
+
+  .breadcrumb__links span {
+    color: #b7b7b7;
+  }
+
+  .breadcrumb__links a:after {
+    position: absolute;
+    right: -8px;
+    top: 0;
+    content: "/";
+    color: #888888;
+  }
+
+  .account-section {
+    padding: 40px 0;
+    background-color: #fff;
+  }
+
+  .account-wrapper {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .account-sidebar {
+    width: 100%;
+    margin-bottom: 30px;
+  }
+
+  .account-sidebar ul {
+    list-style: none;
+    padding: 0;
+    border: 1px solid #ddd;
+    background-color: #f5f5f5;
+  }
+
+  .account-sidebar ul li a {
+    display: block;
+    padding: 12px 15px;
+    color: #333;
+    text-decoration: none;
+    border-bottom: 1px solid #ddd;
+    font-size: 14px;
+  }
+
+  .account-sidebar ul li a:hover {
+    background-color: #f0f0f0;
+    color: #000;
+  }
+
+  .account-sidebar .logout {
+    color: red;
+  }
+
+  .account-content {
+    width: 100%;
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .account-content h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #111111;
+  }
+
+  .wallet-balance {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 30px;
+    color: #28a745;
+    background-color: #e9f7ef;
+    padding: 15px;
+    border-radius: 8px;
+  }
+
+  .wallet-actions {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 30px;
+  }
+
+  .wallet-form {
+    flex: 1;
+  }
+
+  .wallet-form h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: #333;
+  }
+
+  .wallet-form input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+  }
+
+  .wallet-form button {
+    background-color: #040405;
+    color: #fff;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 16px;
+    width: 100%;
+  }
+
+  .wallet-form button:hover {
+    background-color: #1a1a1d;
+  }
+
+  .transaction-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .transaction-item {
+    border: 1px solid #e0e0e0;
+    margin-bottom: 10px;
+    padding: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 15px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+  }
+
+  .transaction-item:hover {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .transaction-type {
+    font-weight: bold;
+    width: 100%;
+    margin-bottom: 5px;
+  }
+
+  .transaction-amount {
+    font-weight: bold;
+  }
+
+  .credit {
+    color: #28a745;
+  }
+
+  .debit {
+    color: #dc3545;
+  }
+  .pagination-container {
+    text-align: center;
+    margin-top: 20px;
+  }
+
+  @media (min-width: 768px) {
+    .account-wrapper {
+      flex-direction: row;
+      justify-content: space-between;
+    }
+
+    .account-sidebar {
+      width: 30%;
+      margin-bottom: 0;
+    }
+
+    .account-content {
+      width: 65%;
+    }
+
+    .transaction-type {
+      width: auto;
+      margin-bottom: 0;
+    }
+
+    .wallet-actions {
+      flex-direction: row;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .container {
+      width: 80%;
+    }
+
+    .account-sidebar {
+      width: 25%;
+    }
+
+    .account-content {
+      width: 70%;
+    }
+
+    .account-content h2 {
+      font-size: 28px;
+    }
+
+    .wallet-balance {
+      font-size: 24px;
+    }
+
+    .transaction-item {
+      font-size: 16px;
+    }
+  }
+</style>
+
+<section class="breadcrumb-option">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="breadcrumb__text">
+          <h4>My Account</h4>
+          <div class="breadcrumb__links">
+            <a href="/">Home</a>
+            <span>My Wallet</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="account-section">
+  <div class="container">
+    <div class="account-wrapper">
+      <!-- <aside class="account-sidebar">
+        <ul>
+          <li><a href="/profile">Account Details</a></li>
+          <li><a href="/orders">My Orders</a></li>
+          <li><a href="/addresses">My Addresses</a></li>
+          <li><a href="/change-password">Change Password</a></li>
+          <li><a href="/wallet">Wallet</a></li>
+          <li><a href="/logout" class="logout">Log Out</a></li>
+        </ul>
+      </aside> -->
+
+      <div class="account-content">
+        <h2>My Wallet</h2>
+        <div class="wallet-balance">
+          Current Balance: ₹<%= wallet.balance.toFixed(2) %>
+        </div>
+        <div class="wallet-actions">
+          <div class="wallet-form">
+            <h3>Add Money</h3>
+            <form id="addMoneyForm">
+              <input
+                type="number"
+                name="amount"
+                step="0.01"
+                required
+                placeholder="Enter amount"
+              />
+              <button type="submit">Add Money</button>
+            </form>
+          </div>
+          <div class="wallet-form">
+            <h3>Withdraw Money</h3>
+            <form id="withdrawMoneyForm">
+              <input
+                type="number"
+                name="amount"
+                step="0.01"
+                required
+                placeholder="Enter amount"
+              />
+              <button type="submit">Withdraw</button>
+            </form>
+          </div>
+        </div>
+        <h3>Transaction History</h3>
+        <ul class="transaction-list">
+          <% wallet.transactions.reverse().forEach(transaction => { %>
+          <li class="transaction-item">
+            <span
+              class="transaction-type <%= transaction.type.toLowerCase() %>"
+            >
+              <%= transaction.type %>
+            </span>
+            <span><%= transaction.description %></span>
+            <span
+              class="transaction-amount <%= transaction.type.toLowerCase() %>"
+            >
+              <%= transaction.type === 'CREDIT' ? '+' : '-' %>₹<%=
+              transaction.amount.toFixed(2) %>
+            </span>
+            <span><%= transaction.date.toLocaleDateString() %></span>
+          </li>
+          <% }) %>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="pagination-container">
+    <% if (currentPage > 1) { %>
+    <a href="?page=<%= currentPage - 1 %>">&laquo; Previous</a>
+    <% } %> <% for (let i = 1; i <= totalPages; i++) { %> <% if (i ===
+    currentPage) { %>
+    <span class="current-page"><%= i %></span>
+    <% } else { %>
+    <a href="?page=<%= i %>"><%= i %></a>
+    <% } %> <% } %> <% if (currentPage < totalPages) { %>
+    <a href="?page=<%= currentPage + 1 %>">Next &raquo;</a>
+    <% } %>
+  </div>
+</section>
+
+<%-include("../../views/partials/user/footer") %>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+  document
+    .getElementById("addMoneyForm")
+    .addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const amount = e.target.amount.value;
+      try {
+        const response = await fetch("/wallet/add", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ amount }),
+        });
+        const data = await response.json();
+        if (response.ok) {
+          Swal.fire({
+            icon: "success",
+            title: "Success!",
+            text: data.message,
+          }).then(() => {
+            location.reload();
+          });
+        } else {
+          throw new Error(data.message);
+        }
+      } catch (error) {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: error.message,
+        });
+      }
+    });
+
+ 
+    document.getElementById("withdrawMoneyForm")
+    .addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const amount = e.target.amount.value;
+      try {
+        const response = await fetch("/wallet/withdraw", {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ amount }),
+        });
+        const data = await response.json();
+        if (response.ok) {
+          Swal.fire({
+            icon: "success",
+            title: "Success!",
+            text: data.message,
+          }).then(() => {
+            location.reload();
+          });
+        } else {
+          throw new Error(data.message);
+        }
+      } catch (error) {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: error.message,
+        });
+      }
+    });
+</script>

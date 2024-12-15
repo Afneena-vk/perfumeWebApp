@@ -107,14 +107,26 @@
                     <td><%=data[i].category.name%></td>
                     <!-- <td><%=data[i].regularPrice%></td> -->
                     <td><%=data[i].salePrice%></td>
-                   <td></td>
+                   <td>
+                     
+                    <%if(locals.data[i].productOffer){%>
+                        <%=data[i].productOffer%>
+                    
+                        <%}else{%>
+                            0%
+                            <%}%>
+
+                   </td>
                     <td>
-                        <button class="btn" onclick="" style="background-color: #426c89; width: 100px; margin-bottom: 10px; width: 100px; margin-bottom: 10px;">
+                        <%if(locals.data[i].productOffer===0){%>
+                        <button class="btn" onclick="addOffer('<%=data[i]._id%>')" style="background-color: #426c89; width: 100px; margin-bottom: 10px; width: 100px; margin-bottom: 10px;">
                             <a href="#" style="text-decoration: none;" class="text-white">Add Offer</a>
                         </button>
-                        <button class="btn" onclick="" style="background-color: #426c89; width: 100px; margin-bottom: 10px; width: 100px;">
+                        <%}else{%>
+                        <button class="btn" onclick="removeOffer('<%=data[i]._id%>')" style="background-color: #426c89; width: 100px; margin-bottom: 10px; width: 100px;">
                             <a href="#" style="text-decoration: none;" class="text-white">Remove</a>
                         </button>
+                        <%}%>
                     </td>
                     <!-- <td><%=data[i].quantity%></td> -->
                     <td>
@@ -181,10 +193,77 @@
             cancelButtonText: 'Cancel'
         }).then((result) => {
             if (result.isConfirmed) {
-                window.location.href = url; // Redirect if confirmed
+                window.location.href = url; 
             }
         });
     }
+
+
+
+async function addOffer(productId){
+    const {value:amount} = await Swal.fire({
+        title: 'Offer in percentage',
+        input:'number',
+        inputLabel:'percentage',
+        inputPlaceholder:'%'
+    })
+    $.ajax({
+        url:"/admin/addProductOffer",
+        method:'post',
+        data:{
+            percentage:amount,
+            productId:productId
+        },
+        success:(response)=>{
+            if(response.status===true){
+                location.reload()
+                Swal.fire('Offer added','The offer has been removed','success')
+            }else {
+                alert("failed")
+            }
+        }
+    })
+
+}
+
+function removeOffer(productId){
+    try{
+        Swal.fire({
+            title:'Remove offer',
+            text:'Are you sure you want to remove ths offer',
+            icon:'warning',
+            showCancelButton:true,
+            confirmButtonColor:'#3085d6',
+            cancelButtonColor:'#d33',
+            confirmButtonText:'Yes,remove it!',
+            timer:5000,
+            timerProgressBar:true
+        }).then(async (result)=>{
+            if(result.isConfirmed){
+               $.ajax({
+
+                    url:"/admin/removeProductOffer",
+                    method:'post',
+                    data:{
+                        productId:productId
+                    },
+                    success:(response)=>{
+                        if(response.status===true){
+                            Swal.fire("Removed!",'The offer has been removed','success');
+                            location.reload()
+                        }else if(response.status===false){
+                            Swal.fire('failed');
+                        }
+                    }
+               })
+            }
+        })
+    }catch(error){
+        console.error(error)
+    }
+}
+
+
 </script>
 
 

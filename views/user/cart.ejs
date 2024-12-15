@@ -140,14 +140,14 @@
                 <div class="row">
                     <div class="col-lg-6 col-md-6 col-sm-6">
                         <div class="continue__btn">
-                            <a href="#">Continue Shopping</a>
+                            <a href="/shop">Continue Shopping</a>
                         </div>
                     </div>
-                    <div class="col-lg-6 col-md-6 col-sm-6">
+                    <!-- <div class="col-lg-6 col-md-6 col-sm-6">
                         <div class="continue__btn update__btn">
                             <a href="#"><i class="fa fa-spinner"></i> Update cart</a>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
             </div>
             <div class="col-lg-4">
@@ -161,8 +161,11 @@
                 <div class="cart__total">
                     <h6>Cart total</h6>
                     <ul>
-                        <li>Subtotal <span>Rs.<%= subtotal %></span></li>
-                        <li>Total <span>Rs.<%= cartTotalPrice %></span></li>
+                        <!-- <li>Subtotal <span>Rs.<%= subtotal %></span></li>
+                        <li>Total <span>Rs.<%= cartTotalPrice %></span></li> -->
+                        <li>Subtotal <span id="cart-subtotal">Rs.<%= subtotal %></span></li>
+                        <li>Total <span id="cart-total">Rs.<%= cartTotalPrice %></span></li>
+
                     </ul>
                     <a href="/checkout" class="primary-btn">Proceed to checkout</a>
                 </div>
@@ -210,9 +213,25 @@ document.querySelectorAll(".increment-btn, .decrement-btn").forEach(button => {
 
             if (response.ok) {
                 quantityInput.value = quantity;
-                document.querySelector(".cart__price").innerText = `Rs.${result.cart.items.find(
+                
+                // document.querySelector(".cart__price").innerText = `Rs.${result.cart.items.find(
+                //     item => item.productId === productId && item.size === size
+                // ).totalPrice}`;
+               
+                const item = result.cart.items.find(
                     item => item.productId === productId && item.size === size
-                ).totalPrice}`;
+                );
+
+                // Update the subtotal and total prices
+                document.querySelector(`[data-id="${productId}"][data-size="${size}"]`)
+                    .closest("tr")
+                    .querySelector(".cart__price").innerText = `Rs.${item.totalPrice}`;
+
+                
+                document.querySelector("#cart-subtotal").innerText = `Rs.${result.cart.subtotal}`;
+                document.querySelector("#cart-total").innerText = `Rs.${result.cart.total}`;
+
+
             } else {
                 
                 Swal.fire({

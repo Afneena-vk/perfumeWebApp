@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create New Coupon</title>
+    <style>
+        .main {
+            margin-left: 120px;
+        }
+
+        @media screen and (max-width: 920px) {
+            .main {
+                margin: 0
+            }
+        }
+
+        .error {
+            color: red;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <%- include("../../views/partials/admin/header") %>
+
+    <div class="content-wrapper">
+        <div class="container-fluid ">
+            <div class="row justify-content-center">
+                <div class="col-md-12 main">
+                    <div class="card mt-5">
+                        <div class="card-header text-center">
+                            <br><br><br>
+                            <h2 class="mb-0">Create New Coupon</h2>
+                        </div>
+                        <div class="card-body">
+                            <form id="couponForm">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="code" class="form-label">Code</label>
+                                        <input type="text" class="form-control" id="code" name="code" >
+                                        <div class="error" id="codeError"></div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="description" class="form-label">Description</label>
+                                        <input type="text" class="form-control" id="description" name="description" >
+                                        <div class="error" id="descriptionError"></div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="discountType" class="form-label">Discount Type</label>
+                                        <select class="form-select" id="discountType" name="discountType">
+                                            <option value="percentage">Percentage</option>
+                                            <option value="fixed">Fixed Amount</option>
+                                        </select>
+                                        <div class="error" id="discountTypeError"></div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="startDate" class="form-label">Start Date</label>
+                                        <input type="date" class="form-control" id="startDate" name="startDate">
+                                        <div class="error" id="startDateError"></div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="endDate" class="form-label">End Date</label>
+                                        <input type="date" class="form-control" id="endDate" name="endDate">
+                                        <div class="error" id="endDateError"></div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="discountValue" class="form-label">Discount Value</label>
+                                        <input type="number" class="form-control" id="discountValue" name="discountValue">
+                                        <div class="error" id="discountValueError"></div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="status" class="form-label">Status</label>
+                                        <select class="form-select" id="status" name="status">
+                                            <option value="Active">Active</option>
+                                            <option value="Inactive">Inactive</option>
+                                        </select>
+                                        <div class="error" id="statusError"></div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="minPurchaseAmount" class="form-label">Min Purchase Amount</label>
+                                        <input type="number" class="form-control" id="minPurchaseAmount" name="minPurchaseAmount">
+                                        <div class="error" id="minPurchaseAmountError"></div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="maxPurchaseAmount" class="form-label">Max Purchase Amount</label>
+                                        <input type="number" class="form-control" id="maxPurchaseAmount" name="maxPurchaseAmount">
+                                        <div class="error" id="maxPurchaseAmountError"></div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="usageLimit" class="form-label">Usage Limit</label>
+                                        <input type="number" class="form-control" id="usageLimit" name="usageLimit">
+                                        <div class="error" id="usageLimitError"></div>
+                                    </div>
+                                </div>
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary btn-lg">Create Coupon</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include("../../views/partials/admin/footer") %>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+       document.getElementById('couponForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    if (validateForm()) {
+        addCoupon();
+    }
+});
+
+function validateForm() {
+    let isValid = true;
+    const fields = ['code', 'description', 'discountType', 'startDate', 'endDate', 'discountValue', 'status', 'minPurchaseAmount', 'maxPurchaseAmount', 'usageLimit'];
+    
+    fields.forEach(field => {
+        const value = document.getElementById(field).value.trim();
+        const errorElement = document.getElementById(`${field}Error`);
+        
+        if (!value) {
+            errorElement.textContent = `${field.charAt(0).toUpperCase() + field.slice(1)} is required.`;
+            isValid = false;
+        } else {
+            errorElement.textContent = '';
+        }
+    });
+
+    
+    const description = document.getElementById('description').value.trim();
+    const descriptionError = document.getElementById('descriptionError');
+    if (!/^[a-zA-Z0-9\s]+$/.test(description)) {
+        descriptionError.textContent = 'Description must contain only letters and numbers.';
+        isValid = false;
+    } else {
+        descriptionError.textContent = '';
+    }
+
+
+    const currentDate = new Date();
+    const startDate = new Date(document.getElementById('startDate').value);
+    const endDate = new Date(document.getElementById('endDate').value);
+
+    if (startDate > endDate) {
+        document.getElementById('endDateError').textContent = 'End date must be after the start date.';
+        isValid = false;
+    } else {
+        document.getElementById('endDateError').textContent = '';
+    }
+
+    if (endDate <= currentDate) {
+        document.getElementById('endDateError').textContent = 'End date must be at least one day after the current date.';
+        isValid = false;
+    } else if (startDate.getTime() === endDate.getTime()) {
+        document.getElementById('endDateError').textContent = 'Start date and end date cannot be the same.';
+        isValid = false;
+    } else {
+        document.getElementById('endDateError').textContent = '';
+    }
+
+
+    const minPurchaseAmount = parseFloat(document.getElementById('minPurchaseAmount').value);
+    const maxPurchaseAmount = parseFloat(document.getElementById('maxPurchaseAmount').value);
+    if (minPurchaseAmount >= maxPurchaseAmount) {
+        document.getElementById('maxPurchaseAmountError').textContent = 'Max purchase amount must be greater than min purchase amount.';
+        isValid = false;
+    }
+
+
+    const usageLimit = document.getElementById('usageLimit').value;
+    if (isNaN(usageLimit) || usageLimit <= 0) {
+        document.getElementById('usageLimitError').textContent = 'Usage Limit must be a valid number greater than 0.';
+        isValid = false;
+    }
+
+
+    const discountType = document.getElementById('discountType').value;
+    const discountValue = parseFloat(document.getElementById('discountValue').value);
+    const discountValueError = document.getElementById('discountValueError');
+
+    if (discountType === 'percentage') {
+        if (isNaN(discountValue) || discountValue <= 0 || discountValue > 60) {
+            discountValueError.textContent = 'Discount value must be a number between 0 and 60 for percentage discounts.';
+            isValid = false;
+        } else {
+            discountValueError.textContent = '';
+        }
+    } else if (discountType === 'fixed') {
+        const maxAllowedDiscount = minPurchaseAmount / 2;
+        if (isNaN(discountValue) || discountValue <= 0 || discountValue > maxAllowedDiscount) {
+            discountValueError.textContent = `Fixed discount value must be a positive number not exceeding ${maxAllowedDiscount.toFixed(2)}.`;
+            isValid = false;
+        } else {
+            discountValueError.textContent = '';
+        }
+    }
+
+    return isValid;
+}
+
+function addCoupon() {
+    const formData = new FormData(document.getElementById('couponForm'));
+    const couponData = Object.fromEntries(formData.entries());
+
+    fetch('/admin/create-coupon/add-coupon', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(couponData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            Swal.fire({
+                title: 'Success!',
+                text: 'Coupon created successfully',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '/admin/coupons';
+                }
+            });
+        } else {
+            Swal.fire({
+                title: 'Error!',
+                text: data.message || 'Failed to create coupon',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        Swal.fire({
+            title: 'Error!',
+            text: 'An unexpected error occurred',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+    });
+}
+    </script>
+</body>
+</html>

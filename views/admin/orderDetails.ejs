@@ -88,7 +88,9 @@
                     <form action="/admin/update-order-status/<%= order.orderId %>" method="POST">
                     
                         <select name="status" class="form-select">
-                            <% const statuses = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled', 'Return Request', 'Returned']; %>
+                            
+                            <% const statuses = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled', "Return Requested","Return Approved","Return Rejected", 'Returned']; %>
+                             
                             <% statuses.forEach(status => { %>
                                 <option value="<%= status %>" <%= status === order.status ? 'selected' : '' %>><%= status %></option>
                             <% }); %>

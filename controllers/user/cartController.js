@@ -239,9 +239,31 @@ const updateCartQuantity = async (req, res) => {
         cart.items[cartItemIndex].quantity = quantity;
         cart.items[cartItemIndex].totalPrice = product.salePrice * quantity;
 
+        const subtotal = cart.items.reduce((total, item) => total + item.totalPrice, 0);
+
+        const total = subtotal ;
+
+        console.log("sub total is...",subtotal);
+        console.log(" total is...",total);
+
         await cart.save();
 
-        return res.status(200).json({ message: "Cart updated successfully", cart });
+        // return res.status(200).json({ message: "Cart updated successfully", cart, subtotal });
+
+        return res.status(200).json({
+            message: "Cart updated successfully",
+            cart: {
+                items: cart.items.map(item => ({
+                    productId: item.productId.toString(),
+                    size: item.size,
+                    quantity: item.quantity,
+                    totalPrice: item.totalPrice,
+                })),
+                subtotal,
+                total,
+            },
+        });
+
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: "An error occurred while updating cart" });

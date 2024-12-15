@@ -163,7 +163,7 @@ const postNewPassword = async (req, res) => {
                 { email: email },
                 { $set: { password: passwordHash } }
             );
-            req.session.destroy(); // Destroy session after resetting password
+            req.session.destroy(); 
             res.redirect("/login");
         } else {
             res.render("reset-password", { message: "Passwords do not match" });
@@ -451,58 +451,6 @@ const deleteAddress  = async (req,res)=>{
 }
 
 
-
-const cancelOrder = async (req, res) => {
-    try {
-      const orderId = req.params.orderId;
-      const userSession = req.session.user || req.user; 
-  
-      if (!userSession) {
-        return res.status(401).json({ message: "User not authenticated" });
-      }
-  
-      
-      const order = await Order.findOne({ _id: orderId, userId: userSession._id })
-        .populate("orderedItems.product");
-  
-      if (!order) {
-        return res.status(404).json({ message: "Order not found" });
-      }
-  
-      
-      if (order.status === "Cancelled" || order.status === "Delivered") {
-        return res.status(400).json({ message: "Cannot cancel this order" });
-      }
-  
-      
-      order.status = "Cancelled";
-      await order.save();
-  
-     
-      for (const item of order.orderedItems) {
-        await Product.findOneAndUpdate(
-          { _id: item.product, "sizes.size": item.size },
-          { $inc: { "sizes.$.quantity": item.quantity } }
-        );
-      }
-  
-    
-      const user = await User.findById(userSession._id);
-      if (!user) {
-        return res.status(404).send("User not found");
-      }
-  
-      
-      res.status(200).json({ message: "Order cancelled successfully" });
-  
-    } catch (error) {
-      console.error("Error cancelling order:", error);
-      res.status(500).json({ message: "Internal Server Error" });
-    }
-  };
-  
-
-
 module.exports = {
     userProfile,
     getEditProfile,
@@ -514,7 +462,6 @@ module.exports = {
     getEditAddress,
     getForgotPassPage,
     forgotEmailValid,
-    cancelOrder,
     verifyForgotPassOtp,
     getResetPassPage,
     resendOtp,

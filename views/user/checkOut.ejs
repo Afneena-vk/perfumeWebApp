@@ -1,5 +1,6 @@
 
 <%- include("../../views/partials/user/header") %>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 <style>
 .checkout__input__checkbox {
     display: flex;
@@ -71,6 +72,37 @@
 .btn-secondary {
     white-space: nowrap;
 }
+
+
+#couponSelect {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+#applyCouponBtn {
+    width: 100%;
+    padding: 8px;
+    background-color: #000;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+#applyCouponBtn:hover {
+    background-color: #333;
+}
+
+#couponMessage {
+    margin-top: 5px;
+    color: #666;
+    font-size: 14px;
+}
+
 </style>
 
 <body>
@@ -107,7 +139,7 @@
     </section>
     
 
-    
+
 <section class="checkout spad">
     <div class="container">
         <div class="checkout__form">
@@ -117,22 +149,22 @@
                         <h6 class="checkout__title">Select Your Address</h6>
                         <div class="address-list">
                             <% if (addresses && addresses.length > 0) { %>
-                            <% addresses.forEach(function(address) { %>
-                                <div class="checkout__input__checkbox">
-                                    <label for="address-<%= address._id %>">
-                                        <input type="radio" id="address-<%= address._id %>" name="selectedAddress" value="<%= address._id %>">
-                                        <span class="checkmark"></span>
-                                        <strong><%= address.name %></strong><br>
-                                        <span><%= address.landMark %>, <%= address.city %>, <%= address.state %> - <%= address.pincode %></span><br>
-                                        <span>Phone: <%= address.phone %></span>
-                                    </label>
-                                    <a href="/editAddress?id=<%= address._id %>" class="btn btn-dark">Edit</a>
-                                </div>
-                            <% }); %>
+                                <% addresses.forEach(function(address) { %>
+                                    <div class="checkout__input__checkbox">
+                                        <label for="address-<%= address._id %>">
+                                            <input type="radio" id="address-<%= address._id %>" name="selectedAddress" value="<%= address._id %>">
+                                            <span class="checkmark"></span>
+                                            <strong><%= address.name %></strong><br>
+                                            <span><%= address.landMark %>, <%= address.city %>, <%= address.state %> - <%= address.pincode %></span><br>
+                                            <span>Phone: <%= address.phone %></span>
+                                        </label>
+                                        <a href="/editAddress?id=<%= address._id %>" class="btn btn-dark">Edit</a>
+                                    </div>
+                                <% }); %>
                             <% } else { %>
-                                <p>No addresses found. <a href="/addAddress"  class="btn btn-dark mt-3">Add New Address</a></p>
-                                <% } %>
-                            </div>
+                                <p>No addresses found. <a href="/addAddress" class="btn btn-dark mt-3">Add New Address</a></p>
+                            <% } %>
+                        </div>
                     </div>
                     <div class="col-lg-4 col-md-6">
                         <div class="checkout__order">
@@ -140,18 +172,54 @@
                             <div class="checkout__order__products">Product <span>Total</span></div>
                             <ul class="checkout__total__products">
                                 <% cartItems.forEach(function(item, index) { %>
-                                    <li><%= index + 1 %>. <%= item.productId.productName %> <span>Rs. <%= item.totalPrice.toFixed(2) %></span></li>
+                                    <li>
+                                        <%= index + 1 %>. <%= item.product.productName %> 
+                                        (Size: <%= item.size %>, Qty: <%= item.quantity %>)
+                                        <ul>
+                                            <li>Regular Price: Rs. <%= item.regularPrice.toFixed(2) %></li>
+                                            <li>Sales Price: Rs. <%= item.salesPrice.toFixed(2) %></li>
+                                            <li>Discount: Rs. <%= item.discount.toFixed(2) %></li>
+                                        </ul>
+                                        <span>Total: Rs. <%= item.salesPrice.toFixed(2) %></span>
+                                    </li>
                                 <% }); %>
                             </ul>
+                           
                             <ul class="checkout__total__all">
-                                <li>Subtotal <span>Rs. <%= cartItems.reduce((sum, item) => sum + item.totalPrice, 0).toFixed(2) %></span></li>
-                                <li>Total <span>Rs. <%= cartItems.reduce((sum, item) => sum + item.totalPrice, 0).toFixed(2) %></span></li>
+                                <li>Subtotal 
+                                    <span>Rs. <%= cartItems.reduce((sum, item) => sum + item.salesPrice, 0).toFixed(2) %></span>
+                                </li>
+                                <li>Total 
+                                    <span id="finalTotal">Rs. <%= cartItems.reduce((sum, item) => sum + item.salesPrice, 0).toFixed(2) %></span>
+                                </li>
                             </ul>
+                            
+
+                            <div class="coupon-selection">
+                                <h6>Select a Coupon</h6>
+                                <div class="coupon-list">
+                                    <% if (coupons && coupons.length > 0) { %>
+                                        <% coupons.forEach(coupon => { %>
+                                            <div class="coupon-item" style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+                                                <div>
+                                                    <strong><%= coupon.code %></strong> - <%= coupon.description %> (Valid until: <%= new Date(coupon.endDate).toLocaleDateString() %>)
+                                                </div>
+                                                <button type="button" class="btn btn-primary apply-coupon-btn" data-coupon-id="<%= coupon._id %>">Apply</button>
+                                            </div>
+                                        <% }) %>
+                                    <% } else { %>
+                                        <p>No coupons available</p>
+                                    <% } %>
+                                </div>
+                                <button type="button" id="removeCouponBtn" class="btn btn-danger" style="display:none;">Remove Coupon</button>
+                                <div id="couponMessage"></div>
+                            </div>
+                          
                             <h6>Select Payment Method</h6>
                             <div class="checkout__input__checkbox">
-                                <label for="paypal">
-                                    PayPal
-                                    <input type="radio" id="paypal" name="paymentMethod" value="PayPal" required>
+                                <label for="razorpay">
+                                    Online Payment(Razorpay)
+                                    <input type="radio" id="razorpay" name="paymentMethod" value="Online Payment" required>
                                     <span class="checkmark"></span>
                                 </label>
                             </div>
@@ -162,6 +230,13 @@
                                     <span class="checkmark"></span>
                                 </label>
                             </div>
+                            <div class="checkout__input__checkbox">
+                                <label for="wallet">
+                                    Wallet
+                                    <input type="radio" id="wallet" name="paymentMethod" value="Wallet Payment" required>
+                                    <span class="checkmark"></span>
+                                </label>
+                            </div>
                             <button type="submit" class="site-btn" id="placeOrderBtn" disabled>PLACE ORDER</button>
                         </div>
                     </div>
@@ -169,46 +244,219 @@
             </form>
         </div>
     </div>
-</section>
+</section> 
 
+   
+
+   
+    <script src="/js/jquery-3.3.1.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/jquery.nice-select.min.js"></script>
+    <script src="/js/jquery.nicescroll.min.js"></script>
+    <script src="/js/jquery.magnific-popup.min.js"></script>
+    <script src="/js/jquery.countdown.min.js"></script>
+    <script src="/js/jquery.slicknav.js"></script>
+    <script src="/js/mixitup.min.js"></script>
+    <script src="/js/owl.carousel.min.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     
-
-   
-
-   
-    <script src="js/jquery-3.3.1.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/jquery.nice-select.min.js"></script>
-    <script src="js/jquery.nicescroll.min.js"></script>
-    <script src="js/jquery.magnific-popup.min.js"></script>
-    <script src="js/jquery.countdown.min.js"></script>
-    <script src="js/jquery.slicknav.js"></script>
-    <script src="js/mixitup.min.js"></script>
-    <script src="js/owl.carousel.min.js"></script>
-    <script src="js/main.js"></script>
-
+    
     <script>
-       const addressRadios = document.querySelectorAll('input[name="selectedAddress"]');
+       
+   
+    document.addEventListener('DOMContentLoaded', function() {
+    const checkoutForm = document.getElementById('checkoutForm');
+    const addressRadios = document.querySelectorAll('input[name="selectedAddress"]');
     const paymentMethodRadios = document.querySelectorAll('input[name="paymentMethod"]');
     const placeOrderBtn = document.getElementById('placeOrderBtn');
 
     function validateForm() {
         const isAddressSelected = [...addressRadios].some(radio => radio.checked);
         const isPaymentMethodSelected = [...paymentMethodRadios].some(radio => radio.checked);
-
         placeOrderBtn.disabled = !(isAddressSelected && isPaymentMethodSelected);
     }
 
-    
-    addressRadios.forEach(radio => {
-        radio.addEventListener('change', validateForm);
-    });
-
-    paymentMethodRadios.forEach(radio => {
-        radio.addEventListener('change', validateForm);
-    });
-
-    
+    addressRadios.forEach(radio => radio.addEventListener('change', validateForm));
+    paymentMethodRadios.forEach(radio => radio.addEventListener('change', validateForm));
     validateForm();
+
+    checkoutForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const formData = new FormData(checkoutForm);
+        const selectedPaymentMethod = formData.get('paymentMethod');
+
+        console.log("Form Data Submitted:", Object.fromEntries(formData))
+
+        try {
+            const response = await fetch('/place-order', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(Object.fromEntries(formData)),
+            });
+
+            const result = await response.json();
+
+            console.log("Response from /place-order:", result); 
+
+            if (!response.ok) {
+           
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: result.error || 'Something went wrong!',
+            });
+            return; 
+        }
+
+            if (selectedPaymentMethod === 'Online Payment') {
+                if (!result.success) {
+                    console.error("Failed to create order:", result.message); 
+                    throw new Error(result.message || 'Failed to create order');
+                }
+
+                const options = {
+                    key: result.key,
+                    amount: result.order.amount,
+                    currency: result.order.currency,
+                    name: "Males-Fashion",
+                    description: "Payment for order",
+                    order_id: result.order.id,
+                    handler: async function(response) {
+                        console.log("Razorpay Payment Response:", response);
+                        const verificationResponse = await fetch('/verify-payment', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                razorpay_payment_id: response.razorpay_payment_id,
+                                razorpay_order_id: response.razorpay_order_id,
+                                razorpay_signature: response.razorpay_signature,
+                                orderId: result.orderId
+                            }),
+                        });
+
+                        const verificationResult = await verificationResponse.json();
+                        console.log("Verification Response:", verificationResult); 
+                        if (verificationResult.success) {
+                            window.location.href = '/order-confirmation';
+                        } else {
+                            alert('Payment verification failed!');
+                           
+                          
+                        }
+                    },
+                    prefill: {
+                        "name": "<%= userData.name %>",
+                        "email": "<%= userData.email %>",
+                        "contact": "<%= userData.phone %>"
+                    
+                    },
+                    theme: {
+                        color: "#3399cc"
+                    },
+                    "modal": {
+                     ondismiss: function() {
+                    handlePaymentDismissal();
+                }
+                    }
+                };
+
+                const razorpay = new Razorpay(options);
+                razorpay.open();
+            } else {
+                
+                window.location.href = '/order-confirmation';
+            }
+        } catch (error) {
+            
+            console.error('Error:', error);
+            
+            Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Something went wrong! Please try again.',
+            
+
+        });
+        }
+    });
+});
+
+function handlePaymentDismissal() {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Payment Cancelled',
+                text: 'You have cancelled the payment',
+                
+                
+                
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '/payment-failurePage'; 
+                } else {
+                    
+                   
+                    window.location.href = '/payment-failurePage';
+                }
+            });
+        }
+    
+
+
+
+$(document).ready(function() {
+   
+    $('.apply-coupon-btn').click(function() {
+        const couponId = $(this).data('coupon-id');
+        console.log('Applying coupon:', couponId); 
+
+        $.ajax({
+            url: '/cart/apply-coupon',
+            method: 'POST',
+            data: { couponId: couponId },
+            success: function(response) {
+                
+                $('#finalTotal').text('Rs. ' + response.finalTotal.toFixed(2));
+                $('#couponMessage').text('Coupon applied successfully!').removeClass('text-danger').addClass('text-success');
+                $('#removeCouponBtn').show(); 
+                $('.apply-coupon-btn').prop('disabled', true); 
+            },
+            error: function(xhr) {
+                const errorMessage = xhr.responseJSON ? xhr.responseJSON.message : 'An error occurred while applying the coupon.';
+                console.error('Error response:', xhr.responseJSON); 
+                $('#couponMessage').text(errorMessage).removeClass('text-success').addClass('text-danger');
+            }
+        });
+    });
+
+   
+    $('#removeCouponBtn').click(function() {
+    console.log('Remove button clicked'); 
+    $.ajax({
+        url: '/cart/remove-coupon',
+        method: 'POST',
+        success: function(response) {
+            console.log('Remove coupon response:', response); 
+            $('#finalTotal').text('Rs. ' + response.finalTotal.toFixed(2));
+            $('#couponMessage').text(response.message).removeClass('text-danger').addClass('text-success');
+            $('#removeCouponBtn').hide();
+            $('.apply-coupon-btn').prop('disabled', false);
+        },
+        error: function(xhr) {
+            console.error('Remove coupon error:', xhr);
+            const errorMessage = xhr.responseJSON ? xhr.responseJSON.message : 'An error occurred while removing the coupon.';
+            $('#couponMessage').text(errorMessage).removeClass('text-success').addClass('text-danger');
+        }
+    });
+   });
+});
+
 </script> 
 <%- include("../../views/partials/user/footer") %>

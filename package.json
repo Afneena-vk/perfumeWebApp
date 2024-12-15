@@ -10,10 +10,13 @@
   "description": "",
   "dependencies": {
     "bcrypt": "^5.1.1",
+    "chartjs-node-canvas": "^4.1.6",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
+    "exceljs": "^4.4.0",
     "express": "^4.21.1",
     "express-session": "^1.18.1",
+    "moment": "^2.30.1",
     "mongodb": "^6.10.0",
     "mongoose": "^8.8.0",
     "multer": "^1.4.5-lts.1",
@@ -21,6 +24,8 @@
     "nodemon": "^3.1.7",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
+    "pdfkit": "^0.15.1",
+    "razorpay": "^2.9.5",
     "sharp": "^0.33.5",
     "uuid": "^11.0.3"
   }

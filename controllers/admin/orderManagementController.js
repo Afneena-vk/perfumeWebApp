@@ -43,13 +43,6 @@ const getOrderDetails = async (req, res) => {
             .populate("userId", "name")
             .populate("orderedItems.product", "productName");
         
-        // const order = await Order.findById(req.params.orderId)
-        // .populate("userId", "name")
-        // .populate({
-        //     path: "orderedItems.product",
-        //     select: "productName productImage" 
-        // });
-
         console.log("order is: ",order);
 
         if (!order) {
@@ -73,7 +66,7 @@ const updateStatus = async (req, res) => {
         console.log('Status:', status);
 
        
-        const validStatuses = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled', 'Return Request', 'Returned'];
+        const validStatuses = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled', "Return Requested","Return Approved","Return Rejected", 'Returned'];
         if (!validStatuses.includes(status)) {
             return res.status(400).send('Invalid status value');
         }
