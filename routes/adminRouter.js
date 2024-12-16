@@ -76,8 +76,6 @@ router.delete("/coupons/delete-coupon/:couponId",adminAuth,couponController.dele
 
 router.get("/sales-report", adminAuth, salesReportController.renderSalesReport);
 router.post("/sales-report", adminAuth,salesReportController.generateSalesReport);
-
-
 router.get('/sales-report/pdf',adminAuth,salesReportController.generateAndDownloadPDF);
 router.get('/sales-report/excel',adminAuth,salesReportController.generateAndDownloadExcel);
 

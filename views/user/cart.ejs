@@ -167,7 +167,7 @@
                         <li>Total <span id="cart-total">Rs.<%= cartTotalPrice %></span></li>
 
                     </ul>
-                    <a href="/checkout" class="primary-btn">Proceed to checkout</a>
+                    <a href="/checkout" class="primary-btn" id="checkout-btn">Proceed to checkout</a>
                 </div>
             </div>
         </div>
@@ -222,7 +222,7 @@ document.querySelectorAll(".increment-btn, .decrement-btn").forEach(button => {
                     item => item.productId === productId && item.size === size
                 );
 
-                // Update the subtotal and total prices
+                
                 document.querySelector(`[data-id="${productId}"][data-size="${size}"]`)
                     .closest("tr")
                     .querySelector(".cart__price").innerText = `Rs.${item.totalPrice}`;
@@ -251,6 +251,7 @@ document.querySelectorAll(".increment-btn, .decrement-btn").forEach(button => {
         }
     });
 });
+
 
  
 </script>

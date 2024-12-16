@@ -16,6 +16,11 @@ const getCheckoutPage = async (req, res) => {
         const addresses = userAddresses ? userAddresses.address : [];
 
         const cart = await Cart.findOne({ userId: userSession._id }).populate('items.productId');
+
+        if (!cart || !cart.items || cart.items.length === 0) {
+            return res.redirect('/cart'); 
+        }
+
         const cartItems = cart ? cart.items.map(item => {
             const product = item.productId;
             const selectedSize = product.sizes.find(size => size.size === item.size);

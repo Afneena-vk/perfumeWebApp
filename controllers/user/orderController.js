@@ -278,8 +278,8 @@ const verifyPayment = async (req, res) => {
 const getOrderConfirmation =  async (req, res) => {
   try {
       
-      
-       res.render('orderConfirmation');
+    const user = req.session.user || req.user;
+       res.render('orderConfirmation', { user });
   } catch (error) {
       console.error("Error in getting order confirmation: ", error);
       res.status(500).send("Something  went wrong!");
@@ -288,7 +288,8 @@ const getOrderConfirmation =  async (req, res) => {
 
 const getPaymentFailure = async  (req, res) => {
     try {
-        res.render('paymentFailure');
+        const user = req.session.user || req.user;
+        res.render('paymentFailure', { user });
     } catch (error) {
         console.error("Error loading payment failure page:", error);
         res.status(500).send("Internal Server Error");

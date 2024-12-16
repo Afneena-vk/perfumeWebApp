@@ -96,7 +96,7 @@
                                 <div><%= item.product.productName %> ,Quantity:<%= item.quantity %></div>
                             <% }); %>
                         </td>
-                        <td>₹<%= orders[i].totalPrice %></td>
+                        <td>₹<%= orders[i].finalAmount %></td>
                         <td><%= orders[i].payment[0].method %></td>
                         <td><%= new Date(orders[i].createdAt).toLocaleDateString() %></td>
                         <td><%= orders[i].status %></td>

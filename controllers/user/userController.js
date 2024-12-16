@@ -339,32 +339,7 @@ const loadShopping = async (req, res) => {
 
       let sortCriteria = { createdAt: -1 }; 
 
-    //   if (req.query.sortBy) {
-    //     switch (req.query.sortBy) {
-    //       case 'priceLowHigh':
-    //         products.sort((a, b) => a.salePrice - b.salePrice);
-    //         break;
-    //       case 'priceHighLow':
-    //         products.sort((a, b) => b.salePrice - a.salePrice);
-    //         break;
-    //       case 'ratings':
-    //         products.sort((a, b) => {
-    //           const avgA = a.ratings.length ? a.ratings.reduce((sum, val) => sum + val, 0) / a.ratings.length : 0;
-    //           const avgB = b.ratings.length ? b.ratings.reduce((sum, val) => sum + val, 0) / b.ratings.length : 0;
-    //           return avgB - avgA;
-    //         });
-    //         break;
-    //       case 'aZ':
-    //         products.sort((a, b) => a.productName.localeCompare(b.productName));
-    //         break;
-    //       case 'zA':
-    //         products.sort((a, b) => b.productName.localeCompare(a.productName));
-    //         break;
-    //       default:
-    //         break;
-    //     }
-    //   }
-
+    
     if (req.query.sortBy) {
         switch (req.query.sortBy) {
             case 'priceLowHigh':
