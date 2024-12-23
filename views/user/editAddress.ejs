@@ -3,74 +3,120 @@
     body {
         background-color: rgb(243, 242, 238);
     }
+
+    .compact-form .form-control {
+        padding: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .compact-form .form-label {
+        margin-bottom: 0.25rem;
+        font-size: 0.9rem;
+    }
+
+    .compact-form .mb-4 {
+        margin-bottom: 1rem !important;
+    }
+
+    .compact-card {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .container {
+        margin-top: 2rem; /* Adjusted margin for better spacing */
+    }
+
+    h3 {
+        font-size: 1.5rem; /* Smaller font size for the heading */
+    }
+
+    small.text-danger {
+        font-size: 0.8rem; /* Smaller font size for error messages */
+    }
+
+    /* Responsive Styles */
+    @media (max-width: 576px) {
+        .compact-card {
+            width: 90%; /* Make the card take up more width on small screens */
+        }
+
+        h3 {
+            font-size: 1.25rem; /* Smaller heading on small screens */
+        }
+
+        .form-group label,
+        .form-control,
+        .btn {
+            font-size: 0.85rem; /* Further reduce font size on small screens */
+        }
+    }
 </style>
 
-<div class="container mt-5">
-    
-    <h3 class="text-center mb-4">Edit Address</h3>
+<div class="container">
+    <div class="text-center mb-3">
+        <h3 class="fw-bold">Edit Address</h3>
+    </div>
 
-   
-    <form action="/editAddress?id=<%= address._id %>" method="POST" onsubmit="return validateEditForm()">
-        
-        <div class="form-group mb-3">
-            <label for="addressType">Address Type</label>
-            <input type="text" class="form-control" id="addressType" name="addressType" value="<%= address.addressType %>">
-            <small class="text-danger d-none" id="addressTypeError">Address Type must be either 'Home' or 'Office'.</small>
+    <div class="card shadow-sm border-0 compact-card">
+        <div class="card-body p-4">
+            <form action="/editAddress?id=<%= address._id %>" method="POST" onsubmit="return validateEditForm()" class="compact-form">
+                <div class="form-group mb-3">
+                    <label for="addressType" class="form-label">Address Type</label>
+                    <input type="text" class="form-control" id="addressType" name="addressType" value="<%= address.addressType %>" placeholder="Home/Office">
+                    <small class="text-danger d-none" id="addressTypeError">Address Type must be either 'Home' or 'Office'.</small>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="name" class="form-label">Name</label>
+                    <input type="text" class="form-control" id="name" name="name" value="<%= address.name %>" placeholder="Full name">
+                    <small class="text-danger d-none" id="nameError">Name can only include alphabets and spaces.</small>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="city" class="form-label">City</label>
+                    <input type="text" class="form-control" id="city" name="city" value="<%= address.city %>" placeholder="City">
+                    <small class="text-danger d-none" id="cityError">City field cannot be empty.</small>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="landMark" class="form-label">Landmark</label>
+                    <input type="text" class="form-control" id="landMark" name="landMark" value="<%= address.landMark %>" placeholder="Nearby landmark">
+                    <small class="text-danger d-none" id="landMarkError">Landmark field cannot be empty.</small>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="state" class="form-label">State</label>
+                    <input type="text" class="form-control" id="state" name="state" value="<%= address.state %>" placeholder="State">
+                    <small class="text-danger d-none" id="stateError">State field cannot be empty.</small>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="pincode" class="form-label">Pincode</label>
+                    <input type="text" class="form-control" id="pincode" name="pincode" value="<%= address.pincode %>" placeholder="Pincode">
+                    <small class="text-danger d-none" id="pincodeError">Pincode must contain only numbers.</small>
+                </div>
+
+            
+                <div class="form-group mb-3">
+                    <label for="phone" class="form-label">Phone</label>
+                    <input type="text" class="form-control" id="phone" name="phone" value="<%= address.phone %>" placeholder="10-digit number">
+                    <small class="text-danger d-none" id="phoneError">Phone Number must be a 10-digit number.</small>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2 mt-3">
+                    <a href="/userProfile" class="btn btn-outline-secondary btn-sm px-3">Cancel</a>
+                    <button type="submit" class="btn btn-success btn-sm px-3">Update Address</button>
+                </div>
+            </form>
         </div>
-
-        
-        <div class="form-group mb-3">
-            <label for="name">Name</label>
-            <input type="text" class="form-control" id="name" name="name" value="<%= address.name %>">
-            <small class="text-danger d-none" id="nameError">Name can only include alphabets and spaces.</small>
-        </div>
-
-       
-        <div class="form-group mb-3">
-            <label for="city">City</label>
-            <input type="text" class="form-control" id="city" name="city" value="<%= address.city %>">
-            <small class="text-danger d-none" id="cityError">City field cannot be empty.</small>
-        </div>
-
-        
-        <div class="form-group mb-3">
-            <label for="landMark">Landmark</label>
-            <input type="text" class="form-control" id="landMark" name="landMark" value="<%= address.landMark %>">
-            <small class="text-danger d-none" id="landMarkError">Landmark field cannot be empty.</small>
-        </div>
-
-       
-        <div class="form-group mb-3">
-            <label for="state">State</label>
-            <input type="text" class="form-control" id="state" name="state" value="<%= address.state %>">
-            <small class="text-danger d-none" id="stateError">State field cannot be empty.</small>
-        </div>
-
-        
-        <div class="form-group mb-3">
-            <label for="pincode">Pincode</label>
-            <input type="text" class="form-control" id="pincode" name="pincode" value="<%= address.pincode %>">
-            <small class="text-danger d-none" id="pincodeError">Pincode must contain only numbers.</small>
-        </div>
-
-       
-        <div class="form-group mb-3">
-            <label for="phone">Phone</label>
-            <input type="text" class="form-control" id="phone" name="phone" value="<%= address.phone %>">
-            <small class="text-danger d-none" id="phoneError">Phone Number must be a 10-digit number.</small>
-        </div>
-
-        
-        <button type="submit" class="btn btn-success mt-3">Update Address</button>
-        <a href="/userProfile" class="btn btn-secondary mt-3">Cancel</a>
-    </form>
+    </div>
 </div>
 
 <script>
     function validateEditForm() {
         let isValid = true;
 
-       
         const addressType = document.getElementById("addressType").value.trim();
         const name = document.getElementById("name").value.trim();
         const city = document.getElementById("city").value.trim();
@@ -79,12 +125,10 @@
         const pincode = document.getElementById("pincode").value.trim();
         const phone = document.getElementById("phone").value.trim();
 
-        
         const nameRegex = /^[A-Za-z\s]+$/;
         const phoneRegex = /^[0-9]{10}$/;
         const pincodeRegex = /^[0-9]+$/;
 
-        
         const addressTypeError = document.getElementById("addressTypeError");
         if (addressType.toLowerCase() !== "home" && addressType.toLowerCase() !== "office") {
             addressTypeError.classList.remove("d-none");
@@ -93,7 +137,6 @@
             addressTypeError.classList.add("d-none");
         }
 
-       
         const nameError = document.getElementById("nameError");
         if (!nameRegex.test(name)) {
             nameError.classList.remove("d-none");
@@ -102,7 +145,6 @@
             nameError.classList.add("d-none");
         }
 
-       
         const cityError = document.getElementById("cityError");
         if (city === "") {
             cityError.classList.remove("d-none");
@@ -111,7 +153,6 @@
             cityError.classList.add("d-none");
         }
 
-        
         const landMarkError = document.getElementById("landMarkError");
         if (landMark === "") {
             landMarkError.classList.remove("d-none");
@@ -120,7 +161,6 @@
             landMarkError.classList.add("d-none");
         }
 
-        
         const stateError = document.getElementById("stateError");
         if (state === "") {
             stateError.classList.remove("d-none");
@@ -129,7 +169,6 @@
             stateError.classList.add("d-none");
         }
 
-        
         const pincodeError = document.getElementById("pincodeError");
         if (!pincodeRegex.test(pincode)) {
             pincodeError.classList.remove("d-none");
@@ -138,7 +177,6 @@
             pincodeError.classList.add("d-none");
         }
 
-        
         const phoneError = document.getElementById("phoneError");
         if (!phoneRegex.test(phone)) {
             phoneError.classList.remove("d-none");

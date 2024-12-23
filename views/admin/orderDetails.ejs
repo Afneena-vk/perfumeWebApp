@@ -65,7 +65,7 @@
     <table class="table table-bordered">
         <thead class="table-dark">
         <tr>
-            <!-- <th>Product Image</th> -->
+            
             <th>Product Name</th>
             <th>Size</th> 
             <th>Quantity</th>
@@ -77,7 +77,7 @@
         <tbody>
         <% order.orderedItems.forEach(item => { %>
             <tr>
-               
+                
                 <td><%= item.product.productName %></td>
                 <td><%= item.size %>
                 <td><%= item.quantity %></td>

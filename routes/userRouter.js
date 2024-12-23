@@ -41,14 +41,16 @@ router.post("/reset-password",profileController.postNewPassword);
 router.get("/userProfile",userAuth,profileController.userProfile);
 router.get("/editProfile",userAuth,profileController.getEditProfile);
 router.post("/editProfile",userAuth,profileController.updateProfile);
+router.get("/change-password",userAuth,profileController.changePassword);
+router.post("/change-password",userAuth,profileController.changePasswordValid);
+router.post("/verify-changepassword-otp",userAuth,profileController.verifyChangePassOtp);
+
 
 router.get("/addAddress",userAuth,profileController.getAddAddress);
 router.post('/addAddress',userAuth,profileController.addNewAddress);
 router.get('/editAddress',userAuth,profileController.getEditAddress);
 router.post("/editAddress",userAuth,profileController.editAddress);
 router.post("/deleteAddress/:addressId",userAuth,profileController.deleteAddress);
-//router.post("/cancelOrder/:orderId", userAuth,profileController.cancelOrder);
-
 
 
 router.get('/cart',userAuth,cartController.getCart);
@@ -57,8 +59,7 @@ router.get('/remove-from-cart',userAuth,cartController.removeFromCart);
 router.post('/update-cart-quantity',userAuth,cartController.updateCartQuantity);
 router.get('/checkout',userAuth,checkoutController.getCheckoutPage);
 router.post('/cart/apply-coupon',userAuth,checkoutController.applyCoupon);
-
-// Route to remove a coupon
+router.get('/check-coupon-status',userAuth,checkoutController.checkCouponStatus);
 router.post('/cart/remove-coupon',userAuth,checkoutController.removeCoupon);
 
 
@@ -71,6 +72,11 @@ router.get("/payment-failurePage", userAuth,orderController.getPaymentFailure);
 router.get("/orders",userAuth,orderController.getOrders);
 router.post("/cancelOrder/:orderId", userAuth,orderController.cancelOrder);
 router.patch('/requestReturn/:orderId',userAuth,orderController.requestReturn);
+router.get("/view-order",userAuth,orderController.viewOrder);
+router.post('/reinitiate-payment', userAuth, orderController.reinitiatePayment);
+
+router.get('/order/download-pdf/:orderId',userAuth,orderController.generateOrderPDF);
+
 
 router.get("/wishlist", userAuth, wishlistController.getWishlist);
 router.post('/wishlist/toggle', userAuth, wishlistController.toggleWishlist);
@@ -80,7 +86,7 @@ router.get('/wallet',userAuth,walletController.getWalletPage);
 router.post("/wallet/add", userAuth, walletController.addMoney);
 router.patch('/wallet/withdraw',userAuth, walletController.withdrawMoney);
   
-
+router.post('/validate-cart-stock',userAuth,cartController.validateCartStock);
   
 
 module.exports = router;

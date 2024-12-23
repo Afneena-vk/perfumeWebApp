@@ -146,7 +146,7 @@ const deleteCategory =  (req, res) => {
 
         for(const product of products){
             product.productOffer = 0;
-          //product.salePrice = product.regularPrice;
+          
            product.salePrice = product.regularPrice - Math.floor(product.regularPrice * (percentage / 100));
            
 

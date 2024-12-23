@@ -362,6 +362,7 @@
     </div>
 
 </section>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
   
@@ -378,8 +379,14 @@ document.querySelectorAll('.wishlist-icon').forEach((icon, index) => {
     const productId = urlParams.get('id'); 
 
     if (!productId) {
-      alert("Product ID not found.");
+     
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Product ID not found.',
+      });
       return;
+
     }
 
     try {
@@ -394,14 +401,29 @@ document.querySelectorAll('.wishlist-icon').forEach((icon, index) => {
 
       if (response.ok) {
         this.classList.toggle('active');
-        alert(data.message);
+        
+        Swal.fire({
+          icon: response.status === 201 ? 'success' : 'info',
+          title: response.status === 201 ? 'Added!' : 'Removed!',
+          text: data.message,
+        });
       } else {
         console.error(data.message);
-        alert('Failed to update wishlist');
+        
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to update wishlist.',
+        });
       }
     } catch (err) {
       console.error('Error:', err);
-      alert('An error occurred while updating the wishlist.');
+      
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'An error occurred while updating the wishlist.',
+      });
     }
   });
 });

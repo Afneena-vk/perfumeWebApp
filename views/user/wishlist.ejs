@@ -31,38 +31,55 @@
   }
 
   .wishlist-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
     padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin: 0 auto;
   }
 
   .card {
+    background: white;
     border: 1px solid #ccc;
     border-radius: 5px;
-    margin: 10px;
-    padding: 10px;
-    flex: 1 1 calc(25% - 20px); 
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 15px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    text-align: center;
+    height: 100%;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  }
+
+  .card a {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
   }
 
   .card img {
-    max-width: 100%;
-    height: auto;
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
     border-radius: 5px;
   }
 
   .card h2 {
-    font-size: 16px; 
-    margin: 10px 0; 
+    font-size: 16px;
+    margin: 10px 0;
+    text-align: center;
   }
 
   .card p {
-    font-size: 14px; 
+    font-size: 14px;
+    margin: 5px 0;
   }
 
   .delete-icon {
@@ -72,22 +89,28 @@
   }
 
   @media (max-width: 1200px) {
-    .card {
-      flex: 1 1 calc(33.33% - 20px); 
+    .products-grid {
+      grid-template-columns: repeat(3, 1fr);
     }
   }
 
   @media (max-width: 768px) {
-    .card {
-      flex: 1 1 calc(50% - 20px); 
+    .products-grid {
+      grid-template-columns: repeat(2, 1fr);
     }
   }
 
   @media (max-width: 576px) {
-    .card {
-      flex: 1 1 100%; 
+    .products-grid {
+      grid-template-columns: 1fr;
     }
   }
+
+  
+
+  
+
+  
 </style>
 
 <section class="breadcrumb-option">
@@ -106,26 +129,21 @@
     </div>
   </div>
 </section>
-
 <div class="wishlist-container">
-  <div class="row">
-    <% products.forEach((product, index) => { %>
+  <div class="products-grid">
+    <% products.forEach(product => { %>
       <div class="card">
-       
         <a href="/productDetails?id=<%= product._id %>">
-        <img src="/uploads/re-images/<%= product.productImage[0] %>" alt="<%= product.productName %>">
-        <h2><%= product.productName %></h2>
-        <p> Rs.<%= product.salePrice.toFixed(2) %></p>
-      </a>
+          <img src="/uploads/re-images/<%= product.productImage[0] %>" alt="<%= product.productName %>">
+          <h2><%= product.productName %></h2>
+          <p>Rs.<%= product.salePrice.toFixed(2) %></p>
+        </a>
         <span class="delete-icon" onclick="deleteProduct('<%= product._id %>')">❤️</span>
-        
       </div>
-      <% if ((index + 1) % 4 === 0) { %>
-        </div><div class="row">
-      <% } %>
     <% }) %>
   </div>
 </div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 

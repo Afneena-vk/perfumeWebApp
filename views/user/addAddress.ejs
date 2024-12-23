@@ -3,71 +3,82 @@
     body {
         background-color: rgb(243, 242, 238);
     }
+    .compact-form .form-control {
+        padding: 0.5rem;
+        font-size: 0.9rem;
+    }
+    .compact-form .form-label {
+        margin-bottom: 0.25rem;
+        font-size: 0.9rem;
+    }
+    .compact-form .mb-4 {
+        margin-bottom: 1rem !important;
+    }
+    .compact-card {
+        max-width: 600px;
+        margin: 0 auto;
+    }
 </style>
-<div class="container mt-5">
-    
-    <div class="text-center mb-5">
-        <h1 class="display-5 fw-bold">Add New Address</h1>
-        <p class="text-muted">Add a new delivery address to your profile.</p>
+
+<div class="container mt-4">
+    <div class="text-center mb-3">
+        <h2 class="fw-bold">Add New Address</h2>
+        <p class="text-muted small">Add a new delivery address to your profile.</p>
     </div>
-
     
-    <div class="card shadow-lg border-0">
-        <div class="card-body p-5">
-            <form action="/addAddress" method="POST" onsubmit="return validateForm()">
-                
-                <div class="mb-4">
-                    <label for="addressType" class="form-label fw-semibold">Address Type</label>
-                    <input type="text" id="addressType" name="addressType" class="form-control form-control-lg" placeholder="e.g., Home, Office">
-                    <small class="text-danger d-none" id="addressTypeError">Address Type must be either 'Home' or 'Office'.</small>
+    <div class="card shadow-sm border-0 compact-card">
+        <div class="card-body p-4">
+            <form action="/addAddress" method="POST" onsubmit="return validateForm()" class="compact-form">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="addressType" class="form-label">Address Type</label>
+                        <input type="text" id="addressType" name="addressType" class="form-control" placeholder="Home/Office">
+                        <small class="text-danger d-none" id="addressTypeError">Must be 'Home' or 'Office'</small>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="name" class="form-label">Full Name</label>
+                        <input type="text" id="name" name="name" class="form-control" placeholder="Full name">
+                        <small class="text-danger d-none" id="nameError">Only alphabets and spaces allowed</small>
+                    </div>
                 </div>
 
-                
-                <div class="mb-4">
-                    <label for="name" class="form-label fw-semibold">Full Name</label>
-                    <input type="text" id="name" name="name" class="form-control form-control-lg" placeholder="Enter your full name">
-                    <small class="text-danger d-none" id="nameError">Name can only include alphabets and spaces.</small>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="city" class="form-label">City</label>
+                        <input type="text" id="city" name="city" class="form-control" placeholder="City">
+                        <small class="text-danger d-none" id="cityError">Required field</small>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="state" class="form-label">State</label>
+                        <input type="text" id="state" name="state" class="form-control" placeholder="State">
+                        <small class="text-danger d-none" id="stateError">Required field</small>
+                    </div>
                 </div>
 
-             
-                <div class="mb-4">
-                    <label for="city" class="form-label fw-semibold">City</label>
-                    <input type="text" id="city" name="city" class="form-control form-control-lg" placeholder="Enter your city">
-                    <small class="text-danger d-none" id="cityError">City field cannot be empty.</small>
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <label for="landMark" class="form-label">Landmark</label>
+                        <input type="text" id="landMark" name="landMark" class="form-control" placeholder="Nearby landmark">
+                        <small class="text-danger d-none" id="landMarkError">Required field</small>
+                    </div>
                 </div>
 
-             
-                <div class="mb-4">
-                    <label for="landMark" class="form-label fw-semibold">Landmark</label>
-                    <input type="text" id="landMark" name="landMark" class="form-control form-control-lg" placeholder="Enter a nearby landmark">
-                    <small class="text-danger d-none" id="landMarkError">Landmark field cannot be empty.</small>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="pincode" class="form-label">Pincode</label>
+                        <input type="text" id="pincode" name="pincode" class="form-control" placeholder="Pincode">
+                        <small class="text-danger d-none" id="pincodeError">Numbers only</small>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="phone" class="form-label">Phone Number</label>
+                        <input type="text" id="phone" name="phone" class="form-control" placeholder="10-digit number">
+                        <small class="text-danger d-none" id="phoneError">10-digit number required</small>
+                    </div>
                 </div>
 
-                
-                <div class="mb-4">
-                    <label for="state" class="form-label fw-semibold">State</label>
-                    <input type="text" id="state" name="state" class="form-control form-control-lg" placeholder="Enter your state">
-                    <small class="text-danger d-none" id="stateError">State field cannot be empty.</small>
-                </div>
-
-               
-                <div class="mb-4">
-                    <label for="pincode" class="form-label fw-semibold">Pincode</label>
-                    <input type="text" id="pincode" name="pincode" class="form-control form-control-lg" placeholder="Enter your pincode">
-                    <small class="text-danger d-none" id="pincodeError">Pincode must contain only numbers.</small>
-                </div>
-
-               
-                <div class="mb-4">
-                    <label for="phone" class="form-label fw-semibold">Phone Number</label>
-                    <input type="text" id="phone" name="phone" class="form-control form-control-lg" placeholder="Enter your phone number">
-                    <small class="text-danger d-none" id="phoneError">Phone Number must be a 10-digit number.</small>
-                </div>
-
-               
-                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                    <button type="submit" class="btn btn-success btn-lg px-4">Save Address</button>
-                    <a href="/userProfile" class="btn btn-outline-secondary btn-lg px-4">Cancel</a>
+                <div class="d-flex justify-content-end gap-2 mt-3">
+                    <a href="/userProfile" class="btn btn-outline-secondary btn-sm px-3">Cancel</a>
+                    <button type="submit" class="btn btn-success btn-sm px-3">Save</button>
                 </div>
             </form>
         </div>
@@ -77,82 +88,52 @@
 <script>
     function validateForm() {
         let isValid = true;
+        const fields = {
+            addressType: {
+                value: document.getElementById("addressType").value.trim(),
+                error: document.getElementById("addressTypeError"),
+                validate: value => ["home", "office"].includes(value.toLowerCase())
+            },
+            name: {
+                value: document.getElementById("name").value.trim(),
+                error: document.getElementById("nameError"),
+                validate: value => /^[A-Za-z\s]+$/.test(value)
+            },
+            city: {
+                value: document.getElementById("city").value.trim(),
+                error: document.getElementById("cityError"),
+                validate: value => value !== ""
+            },
+            landMark: {
+                value: document.getElementById("landMark").value.trim(),
+                error: document.getElementById("landMarkError"),
+                validate: value => value !== ""
+            },
+            state: {
+                value: document.getElementById("state").value.trim(),
+                error: document.getElementById("stateError"),
+                validate: value => value !== ""
+            },
+            pincode: {
+                value: document.getElementById("pincode").value.trim(),
+                error: document.getElementById("pincodeError"),
+                validate: value => /^[0-9]+$/.test(value)
+            },
+            phone: {
+                value: document.getElementById("phone").value.trim(),
+                error: document.getElementById("phoneError"),
+                validate: value => /^[0-9]{10}$/.test(value)
+            }
+        };
 
-        
-        const addressType = document.getElementById("addressType").value.trim();
-        const name = document.getElementById("name").value.trim();
-        const city = document.getElementById("city").value.trim();
-        const landMark = document.getElementById("landMark").value.trim();
-        const state = document.getElementById("state").value.trim();
-        const pincode = document.getElementById("pincode").value.trim();
-        const phone = document.getElementById("phone").value.trim();
-
-        
-        const nameRegex = /^[A-Za-z\s]+$/;
-        const phoneRegex = /^[0-9]{10}$/;
-        const pincodeRegex = /^[0-9]+$/;
-
-        
-        const addressTypeError = document.getElementById("addressTypeError");
-        if (addressType.toLowerCase() !== "home" && addressType.toLowerCase() !== "office") {
-            addressTypeError.classList.remove("d-none");
-            isValid = false;
-        } else {
-            addressTypeError.classList.add("d-none");
-        }
-
-        
-        const nameError = document.getElementById("nameError");
-        if (!nameRegex.test(name)) {
-            nameError.classList.remove("d-none");
-            isValid = false;
-        } else {
-            nameError.classList.add("d-none");
-        }
-
-        
-        const cityError = document.getElementById("cityError");
-        if (city === "") {
-            cityError.classList.remove("d-none");
-            isValid = false;
-        } else {
-            cityError.classList.add("d-none");
-        }
-
-        
-        const landMarkError = document.getElementById("landMarkError");
-        if (landMark === "") {
-            landMarkError.classList.remove("d-none");
-            isValid = false;
-        } else {
-            landMarkError.classList.add("d-none");
-        }
-
-        
-        const stateError = document.getElementById("stateError");
-        if (state === "") {
-            stateError.classList.remove("d-none");
-            isValid = false;
-        } else {
-            stateError.classList.add("d-none");
-        }
-
-        
-        const pincodeError = document.getElementById("pincodeError");
-        if (!pincodeRegex.test(pincode)) {
-            pincodeError.classList.remove("d-none");
-            isValid = false;
-        } else {
-            pincodeError.classList.add("d-none");
-        }
-
-        
-        const phoneError = document.getElementById("phoneError");
-        if (!phoneRegex.test(phone)) {
-            phoneError.classList.remove("d-none");
-            isValid = false;
-        } else {
-            phoneError.classList.add("d-none");
+        for (const field in fields) {
+            const { value, error, validate } = fields[field];
+            if (!validate(value)) {
+                error.classList.remove("d-none");
+                isValid = false;
+            } else {
+                error.classList.add("d-none");
+            }
         }
 
         return isValid;

@@ -450,6 +450,70 @@ const deleteAddress  = async (req,res)=>{
     }
 }
 
+const changePassword = async (req,res)=>{
+    try {
+        const userSession = req.session?.user || req.user; 
+
+          res.render('change-password', { user: userSession })
+
+    } catch (error) {
+        res.redirect('/pageNotFound')
+    }
+}
+
+const changePasswordValid = async (req,res)=>{
+    try {
+        
+       const {email} = req.body;
+       const userExists = await User.findOne({email});
+       if(userExists){
+        const otp = generateOtp();
+        const emailSent = await sendVerificationEmail(email,otp);
+        if(emailSent){
+            req.session.userOtp = otp;
+            req.session.userData = req.body;
+            req.session.email = email;
+            res.render("change-password-otp");
+            console.log('OTP:',otp);
+
+        }else {
+            res.json({
+                success:false,
+                message: "Failed to send OTP. Please try again",
+            })
+        }
+       }else {
+          res.render('change-password',{
+            message:"User with this email dos not exist"
+          })
+       }
+
+    } catch (error) {
+        
+      console.log("Error in change password validation", Error);
+      res.redirect("/pageNotFound");
+
+    }
+}
+
+const verifyChangePassOtp = async(req,res) =>{
+    try {
+        
+   const enteredOtp = req.body.otp;
+   if(enteredOtp===req.session.userOtp){
+
+    res.json({success:true,redirectUrl:"/reset-password"})
+
+   }else {
+      res.json({success:false,message:"OTP not matching"})
+   }
+
+    } catch (error) {
+
+        res.status(500).json({success:false, message: "An error occurred. Please try again later"})
+        
+    }
+}
 
 module.exports = {
     userProfile,
@@ -466,5 +530,7 @@ module.exports = {
     getResetPassPage,
     resendOtp,
     postNewPassword,
-
+    changePassword,
+    changePasswordValid,
+    verifyChangePassOtp,
 };

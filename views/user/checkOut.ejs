@@ -230,6 +230,7 @@
                                     <span class="checkmark"></span>
                                 </label>
                             </div>
+                            <div id="codError" class="text-danger" style="display: none;">Orders above Rs. 1000 cannot be paid via Cash on Delivery.</div>
                             <div class="checkout__input__checkbox">
                                 <label for="wallet">
                                     Wallet
@@ -273,11 +274,27 @@
     const paymentMethodRadios = document.querySelectorAll('input[name="paymentMethod"]');
     const placeOrderBtn = document.getElementById('placeOrderBtn');
 
+   
+
     function validateForm() {
-        const isAddressSelected = [...addressRadios].some(radio => radio.checked);
-        const isPaymentMethodSelected = [...paymentMethodRadios].some(radio => radio.checked);
-        placeOrderBtn.disabled = !(isAddressSelected && isPaymentMethodSelected);
+    const isAddressSelected = [...addressRadios].some(radio => radio.checked);
+    const isPaymentMethodSelected = [...paymentMethodRadios].some(radio => radio.checked);
+    
+    
+    const finalTotal = parseFloat(document.getElementById('finalTotal').innerText.replace('Rs. ', '').replace(',', ''));
+
+    
+    const isCodSelected = document.getElementById('cod').checked;
+    const codErrorDiv = document.getElementById('codError');
+    
+    if (isCodSelected && finalTotal > 1000) {
+        codErrorDiv.style.display = 'block'; 
+        placeOrderBtn.disabled = true; 
+    } else {
+        codErrorDiv.style.display = 'none'; 
+        placeOrderBtn.disabled = !(isAddressSelected && isPaymentMethodSelected); 
     }
+}
 
     addressRadios.forEach(radio => radio.addEventListener('change', validateForm));
     paymentMethodRadios.forEach(radio => radio.addEventListener('change', validateForm));
@@ -412,50 +429,104 @@ function handlePaymentDismissal() {
 
 
 $(document).ready(function() {
-   
+    
+    $.ajax({
+        url: '/cart/check-coupon-status',
+        method: 'GET',
+        success: function(response) {
+            if (response.success && response.couponApplied) {
+                $('#removeCouponBtn').show();
+                $('.apply-coupon-btn').prop('disabled', true);
+            } else {
+                $('#removeCouponBtn').hide();
+                $('.apply-coupon-btn').prop('disabled', false);
+            }
+        }
+    });
+
+    function updateDiscountDisplay(response) {
+        if (!response.success) return;
+
+        $('.checkout__total__products li').each(function() {
+            const $item = $(this);
+            const regularPrice = parseFloat($item.find('li:contains("Regular Price")').text().split('Rs. ')[1]);
+            const salesPrice = parseFloat($item.find('li:contains("Sales Price")').text().split('Rs. ')[1]);
+            let totalDiscount = regularPrice - salesPrice;
+
+            if (response.couponApplied && response.couponDiscount) {
+                const proportion = salesPrice / response.originalTotal;
+                const itemCouponDiscount = response.couponDiscount * proportion;
+                totalDiscount += itemCouponDiscount;
+            }
+
+            $item.find('li:contains("Discount")').text(
+                `Discount: Rs. ${totalDiscount.toFixed(2)}` +
+                (response.couponApplied ? ' (includes coupon discount)' : '')
+            );
+        });
+
+        if (response.finalTotal !== undefined) {
+            $('#finalTotal').text(`Rs. ${response.finalTotal.toFixed(2)}`);
+        }
+    }
+
     $('.apply-coupon-btn').click(function() {
         const couponId = $(this).data('coupon-id');
-        console.log('Applying coupon:', couponId); 
-
+        
         $.ajax({
             url: '/cart/apply-coupon',
             method: 'POST',
-            data: { couponId: couponId },
+            data: { couponId },
             success: function(response) {
-                
-                $('#finalTotal').text('Rs. ' + response.finalTotal.toFixed(2));
-                $('#couponMessage').text('Coupon applied successfully!').removeClass('text-danger').addClass('text-success');
-                $('#removeCouponBtn').show(); 
-                $('.apply-coupon-btn').prop('disabled', true); 
+                if (response.success) {
+                    updateDiscountDisplay(response);
+                    $('#couponMessage')
+                        .text('Coupon applied successfully!')
+                        .removeClass('text-danger')
+                        .addClass('text-success');
+                    $('#removeCouponBtn').show();
+                    $('.apply-coupon-btn').prop('disabled', true);
+                } else {
+                    $('#couponMessage')
+                        .text(response.message)
+                        .removeClass('text-success')
+                        .addClass('text-danger');
+                }
             },
             error: function(xhr) {
-                const errorMessage = xhr.responseJSON ? xhr.responseJSON.message : 'An error occurred while applying the coupon.';
-                console.error('Error response:', xhr.responseJSON); 
-                $('#couponMessage').text(errorMessage).removeClass('text-success').addClass('text-danger');
+                const errorMessage = xhr.responseJSON?.message || 'Error applying coupon';
+                $('#couponMessage')
+                    .text(errorMessage)
+                    .removeClass('text-success')
+                    .addClass('text-danger');
             }
         });
     });
 
-   
     $('#removeCouponBtn').click(function() {
-    console.log('Remove button clicked'); 
-    $.ajax({
-        url: '/cart/remove-coupon',
-        method: 'POST',
-        success: function(response) {
-            console.log('Remove coupon response:', response); 
-            $('#finalTotal').text('Rs. ' + response.finalTotal.toFixed(2));
-            $('#couponMessage').text(response.message).removeClass('text-danger').addClass('text-success');
-            $('#removeCouponBtn').hide();
-            $('.apply-coupon-btn').prop('disabled', false);
-        },
-        error: function(xhr) {
-            console.error('Remove coupon error:', xhr);
-            const errorMessage = xhr.responseJSON ? xhr.responseJSON.message : 'An error occurred while removing the coupon.';
-            $('#couponMessage').text(errorMessage).removeClass('text-success').addClass('text-danger');
-        }
+        $.ajax({
+            url: '/cart/remove-coupon',
+            method: 'POST',
+            success: function(response) {
+                if (response.success) {
+                    updateDiscountDisplay(response);
+                    $('#couponMessage')
+                        .text('Coupon removed successfully!')
+                        .removeClass('text-danger')
+                        .addClass('text-success');
+                    $('#removeCouponBtn').hide();
+                    $('.apply-coupon-btn').prop('disabled', false);
+                }
+            },
+            error: function(xhr) {
+                const errorMessage = xhr.responseJSON?.message || 'Error removing coupon';
+                $('#couponMessage')
+                    .text(errorMessage)
+                    .removeClass('text-success')
+                    .addClass('text-danger');
+            }
+        });
     });
-   });
 });
 
 </script> 

@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const User = require("../../models/userSchema");
 const Cart = require("../../models/cartSchema");
 const Product = require("../../models/productSchema");
-
+const Wishlist = require("../../models/wishlistSchema");
 
 const getCart = async (req, res) => {
     try {
@@ -77,6 +77,7 @@ const getCart = async (req, res) => {
 };
 
 
+
 const addToCart = async (req, res) => {
     try {
         const userSession = req.session?.user || req.user;
@@ -103,55 +104,65 @@ const addToCart = async (req, res) => {
         }
         
         if (sizeData.quantity < quantity) {
-            return res.status(400).json({ 
+            return res.status(400).json({
                 message: `Only ${sizeData.quantity} items available in stock`
             });
         }
-  
-      
-      const totalPrice = product.salePrice * quantity;
 
-      const cart = await Cart.findOne({ userId: userSession._id });
+        const totalPrice = product.salePrice * quantity;
+        const cart = await Cart.findOne({ userId: userSession._id });
         
-      
-      const existingItem = cart?.items.find(item => 
-          item.productId.toString() === productId && item.size === selectedSize);
-      
-      if (existingItem) {
-          return res.status(400).json({ message: "This product with the selected size is already in the cart" });
-      }
-  
-
-    const cartItem = {
-        productId,
-        size: selectedSize,
-        quantity,
-        price: product.salePrice,
-        totalPrice, 
-    };
-  
-    if (cart) {
-        await Cart.updateOne(
-            { userId: userSession._id },
-            { $push: { items: cartItem } }
+        const existingItem = cart?.items.find(item =>
+            item.productId.toString() === productId && item.size === selectedSize
         );
-    } else {
-        const newCart = new Cart({
-            userId: userSession._id,
-            items: [cartItem],
+
+        if (existingItem) {
+            return res.status(400).json({ message: "This product with the selected size is already in the cart" });
+        }
+
+        
+        await Wishlist.updateOne(
+            { userId: userSession._id },
+            { 
+                $pull: { 
+                    products: {
+                        productId: productId,
+                       
+                    }
+                } 
+            }
+        );
+
+        const cartItem = {
+            productId,
+            size: selectedSize,
+            quantity,
+            price: product.salePrice,
+            totalPrice,
+        };
+
+        if (cart) {
+            await Cart.updateOne(
+                { userId: userSession._id },
+                { $push: { items: cartItem } }
+            );
+        } else {
+            const newCart = new Cart({
+                userId: userSession._id,
+                items: [cartItem],
+            });
+            await newCart.save();
+        }
+
+        return res.status(200).json({ 
+            message: "Product added to cart successfully and removed from wishlist if it existed" 
         });
-        await newCart.save();
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "An error occurred while adding to cart" });
     }
-
-
-return res.status(200).json({ message: "Product added to cart successfully" });
-} catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: "An error occurred while adding to cart" });
-}
 };
-  
-
 
 
 const removeFromCart = async (req, res) => {
@@ -248,7 +259,7 @@ const updateCartQuantity = async (req, res) => {
 
         await cart.save();
 
-        // return res.status(200).json({ message: "Cart updated successfully", cart, subtotal });
+      
 
         return res.status(200).json({
             message: "Cart updated successfully",
@@ -270,7 +281,76 @@ const updateCartQuantity = async (req, res) => {
     }
 };
 
+const validateCartStock = async (req, res) => {
+    try {
+        const userId = req.session.user._id;
+        
+        
+        const cart = await Cart.findOne({ userId })
+            .populate({
+                path: 'items.productId',
+                select: 'productName sizes isBlocked'
+            });
 
+        if (!cart || cart.items.length === 0) {
+            return res.status(400).json({
+                valid: false,
+                message: 'Cart is empty'
+            });
+        }
+
+        const invalidItems = [];
+
+        
+        for (const cartItem of cart.items) {
+            const product = cartItem.productId;
+            
+            
+            if (product.isBlocked) {
+                invalidItems.push({
+                    name: product.productName,
+                    size: cartItem.size,
+                    cartQuantity: cartItem.quantity,
+                    availableStock: 0,
+                    reason: 'Product is no longer available'
+                });
+                continue;
+            }
+
+            
+            const sizeInfo = product.sizes.find(s => s.size === cartItem.size);
+            
+            if (!sizeInfo || sizeInfo.quantity < cartItem.quantity) {
+                invalidItems.push({
+                    name: product.productName,
+                    size: cartItem.size,
+                    cartQuantity: cartItem.quantity,
+                    availableStock: sizeInfo ? sizeInfo.quantity : 0
+                });
+            }
+        }
+
+        if (invalidItems.length > 0) {
+            return res.status(400).json({
+                valid: false,
+                invalidItems: invalidItems,
+                message: 'Some items have insufficient stock'
+            });
+        }
+
+        return res.json({
+            valid: true,
+            message: 'All items are in stock'
+        });
+
+    } catch (error) {
+        console.error('Error validating cart stock:', error);
+        return res.status(500).json({
+            valid: false,
+            message: 'Error validating cart stock'
+        });
+    }
+};
 
 
 
@@ -279,4 +359,5 @@ module.exports = {
     addToCart,
     removeFromCart,
     updateCartQuantity,
+    validateCartStock,
 }

@@ -253,6 +253,52 @@ document.querySelectorAll(".increment-btn, .decrement-btn").forEach(button => {
 });
 
 
+
+
+document.getElementById('checkout-btn').addEventListener('click', async function(e) {
+    e.preventDefault(); 
+
+    try {
+        
+        const response = await fetch('/validate-cart-stock', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.valid) {
+            
+            window.location.href = '/checkout';
+        } else {
+            
+            let errorMessage = 'The following items have insufficient stock:\n\n';
+            result.invalidItems.forEach(item => {
+                errorMessage += `${item.name} (Size: ${item.size}) - Available Stock: ${item.availableStock}, Cart Quantity: ${item.cartQuantity}\n`;
+            });
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Insufficient Stock',
+                text: errorMessage,
+                confirmButtonText: 'Update Cart'
+            });
+        }
+    } catch (error) {
+        console.error('Error validating cart:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'An error occurred while validating your cart.'
+        });
+    }
+});
+
+
+
+
  
 </script>
  

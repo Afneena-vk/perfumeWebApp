@@ -180,8 +180,10 @@ const getEditProduct = async (req,res)=>{
     try {
       
        const id = req.query.id;
-       const product = await Product.findOne({_id:id});
-       const category = await Category.find({});
+       const product = await Product.findOne({_id:id})
+       .populate('brand')
+       .populate('category');
+       const category = await Category.find({ isListed: true });
        const brand = await Brand.find({});
         res.render("edit-product",{
             product:product,

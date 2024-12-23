@@ -61,7 +61,8 @@ const orderSchema = new Schema({
         phone: String,
       },
     invoiceDate:{
-        type:Date
+        type:Date,
+        default: Date.now
     },
     status:{
         type:String,

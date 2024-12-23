@@ -296,118 +296,117 @@ const logout = async (req,res)=>{
     }
 }
 
+
+  
 const loadShopping = async (req, res) => {
     try {
-      const user = req.session.user || req.user;
-      console.log("User session data:", user);
-  
-      const categories = await Category.find({ isListed: true });
-      console.log("Categories fetched:", categories);
-  
-      const brands = await Brand.find({ isBlocked: false });
-      console.log("Brands fetched:", brands);
-  
-      
-      let filterOptions = {
-        isBlocked: false,
+        const user = req.session.user || req.user;
+        console.log("User session data:", user);
+
+        const categories = await Category.find({ isListed: true });
+        console.log("Categories fetched:", categories);
+
+        const brands = await Brand.find({ isBlocked: false });
+        console.log("Brands fetched:", brands);
+
         
-      };
+        let filterOptions = {
+            isBlocked: false
+        };
 
-   
-  
-      
-      if (req.query.category) {
-        filterOptions.category = req.query.category;
-      }
-  
-      
-      if (req.query.brand) {
-        filterOptions.brand = req.query.brand;
-      }
+        
+        const activeBrandIds = brands.map(brand => brand._id.toString());
+        const activeCategoryIds = categories.map(category => category._id.toString());
 
+        
+        if (req.query.brand && activeBrandIds.includes(req.query.brand)) {
+            filterOptions.brand = req.query.brand;
+        } else {
+          
+            filterOptions.brand = { $in: activeBrandIds };
+        }
+
+        
+        if (req.query.category && activeCategoryIds.includes(req.query.category)) {
+            filterOptions.category = req.query.category;
+        } else {
+           
+            filterOptions.category = { $in: activeCategoryIds };
+        }
 
        
-       if (req.query.search) {
-        filterOptions.productName = new RegExp(req.query.search, 'i'); 
-    }
-
-     
-
-      const page = parseInt(req.query.page) || 1; 
-      const limit = 8; 
-      const skip = (page - 1) * limit; 
-
-      let sortCriteria = { createdAt: -1 }; 
-
-    
-    if (req.query.sortBy) {
-        switch (req.query.sortBy) {
-            case 'priceLowHigh':
-                sortCriteria = { salePrice: 1 }; 
-                break;
-            case 'priceHighLow':
-                sortCriteria = { salePrice: -1 }; 
-                break;
-            case 'ratings':
-                sortCriteria = { 'ratings.average': -1 }; 
-                break;
-            case 'aZ':
-                sortCriteria = { productName: 1 }; 
-                break;
-            case 'zA':
-                sortCriteria = { productName: -1 }; 
-                break;
-            default:
-                sortCriteria = { createdAt: -1 }; 
-                break;
+        if (req.query.search) {
+            filterOptions.productName = new RegExp(req.query.search, 'i');
         }
-    }
 
-    const totalProducts = await Product.countDocuments(filterOptions);
-    const products = await Product.find(filterOptions)
-        .populate('brand category')
-        .sort(sortCriteria) 
-        .skip(skip)
-        .limit(limit)
-        .lean();
+        const page = parseInt(req.query.page) || 1;
+        const limit = 8;
+        const skip = (page - 1) * limit;
 
+        let sortCriteria = { createdAt: -1 };
 
-          const totalPages = Math.ceil(totalProducts / limit);
-  
-          for (let product of products) {
+        if (req.query.sortBy) {
+            switch (req.query.sortBy) {
+                case 'priceLowHigh':
+                    sortCriteria = { salePrice: 1 };
+                    break;
+                case 'priceHighLow':
+                    sortCriteria = { salePrice: -1 };
+                    break;
+                case 'ratings':
+                    sortCriteria = { 'ratings.average': -1 };
+                    break;
+                case 'aZ':
+                    sortCriteria = { productName: 1 };
+                    break;
+                case 'zA':
+                    sortCriteria = { productName: -1 };
+                    break;
+                default:
+                    sortCriteria = { createdAt: -1 };
+                    break;
+            }
+        }
+
+        const totalProducts = await Product.countDocuments(filterOptions);
+        
+        const products = await Product.find(filterOptions)
+            .populate('brand category')
+            .sort(sortCriteria)
+            .skip(skip)
+            .limit(limit)
+            .lean();
+
+        const totalPages = Math.ceil(totalProducts / limit);
+
+        for (let product of products) {
             const totalStock = product.sizes.reduce((sum, size) => sum + size.quantity, 0);
             product.status = totalStock > 0 ? "Available" : "Out of Stock";
             await Product.updateOne({ _id: product._id }, { $set: { status: product.status } });
         }
 
-    
-      
-      let userData = null;
-      if (user) {
-        userData = await User.findById(user._id);
-      }
-  
-      
-      return res.render("shop", {
-        user: userData,
-        products: products,
-        categories: categories,
-        brands: brands,
-        selectedCategory: req.query.category || '',
-        selectedBrand: req.query.brand || '',
-        selectedSort: req.query.sortBy || '',
-        searchQuery: req.query.search || '',
-        currentPage: page,
-        totalPages: totalPages,
-        
-      });
-    } catch (error) {
-      console.error("Error loading shopping page:", error);
-      return res.status(500).send("Server error");
-    }
-  };
-  
+        let userData = null;
+        if (user) {
+            userData = await User.findById(user._id);
+        }
 
+        return res.render("shop", {
+            user: userData,
+            products: products,
+            categories: categories,
+            brands: brands,
+            selectedCategory: req.query.category || '',
+            selectedBrand: req.query.brand || '',
+            selectedSort: req.query.sortBy || '',
+            searchQuery: req.query.search || '',
+            currentPage: page,
+            totalPages: totalPages,
+        });
+    } catch (error) {
+        console.error("Error loading shopping page:", error);
+        return res.status(500).send("Server error");
+    }
+};
 
 
 
@@ -484,8 +483,8 @@ const getStockQuantity = async (req, res) => {
         
         const stockQuantity = product.sizes.find(sizeObj => sizeObj.size === size);
 
-        
         res.json({ quantity: stockQuantity ? stockQuantity.quantity : 0 });
+        
     } catch (error) {
         console.error('Error fetching stock quantity:', error);
         res.status(500).json({ message: 'Internal Server Error' });

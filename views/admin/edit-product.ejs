@@ -57,13 +57,19 @@
             <div class="col-lg-4 mb-4">
               <label class="form-label">Brand</label>
               <select class="form-select border" name="brand">
-                <% for(let i = 0;i < brand.length;i++) {%>
-                <option value="<%= brand[i].brandName  %>">
-                  
-                  <%= brand[i].brandName %>
+                <!-- Current product's brand first -->
+                <option value="<%= product.brand.brandName %>" selected>
+                    <%= product.brand.brandName %>
                 </option>
+                <!-- Other brands -->
+                <% for(let i = 0; i < brand.length; i++) { %>
+                    <% if(brand[i]._id.toString() !== product.brand._id.toString()) { %>
+                        <option value="<%= brand[i].brandName %>">
+                            <%= brand[i].brandName %>
+                        </option>
+                    <% } %>
                 <% } %>
-              </select>
+            </select>
               <div id="brand-error" class="error-message"></div>
             </div>
             <div class="mb-4">
@@ -163,17 +169,20 @@
                 <div class="row gx-2">
                   <div class="col-sm-6 mb-3">
                     <label class="form-label">Category</label>
-                    <select
-                      class="form-select border"
-                      style="width: 150px"
-                      name="category"
-                    >
-                      <% for(let i = 0;i < cat.length;i++) {%>
-                      <option value="<%= cat[i].name  %>">
-                        <%= cat[i].name %>
+                    <select class="form-select border" style="width: 150px" name="category">
+                      
+                      <option value="<%= product.category.name %>" selected>
+                          <%= product.category.name %>
                       </option>
+                      
+                      <% for(let i = 0; i < cat.length; i++) { %>
+                          <% if(cat[i]._id.toString() !== product.category._id.toString()) { %>
+                              <option value="<%= cat[i].name %>">
+                                  <%= cat[i].name %>
+                              </option>
+                          <% } %>
                       <% } %>
-                    </select>
+                  </select>
                     <div id="category-error" class="error-message"></div>
                   </div>
                 </div>
@@ -194,7 +203,7 @@
                     <div class="position-relative">
                       <img
                         class="rounded img-fluid"
-                        src="/uploads/re-image/<%= product.productImage[i] %>"
+                        src="/uploads/re-images/<%= product.productImage[i] %>"
                         alt="Product image"
                       />
                       <button

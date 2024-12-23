@@ -5,6 +5,8 @@ const Category = require("../../models/categorySchema");
 const Address = require("../../models/addressSchema");
 const Brand = require("../../models/brandSchema");
 const Order = require("../../models/orderSchema");
+const Wallet = require("../../models/walletSchema");
+
 
 const getOrderManagementPage = async (req, res) => {
     try {
@@ -83,6 +85,45 @@ const updateStatus = async (req, res) => {
             return res.status(404).send('Order not found');
         }
 
+        if (status === 'Returned') {
+            
+            if (order.payment && order.payment.length > 0) {
+                order.payment[0].status = 'Refunded';
+            }
+            let wallet = await Wallet.findOne({ userId: order.userId });
+
+             
+             if (!wallet) {
+                wallet = new Wallet({
+                    userId: order.userId,
+                    balance: 0,
+                    transactions: []
+                });
+            }
+
+            
+            wallet.balance += order.finalAmount;
+            
+            
+            wallet.transactions.push({
+                type: 'CREDIT',
+                amount: order.finalAmount,
+                description: `Refund for order ${orderId}`,
+                orderId: order._id,
+                date: new Date()
+            });
+
+            await wallet.save();
+        } 
+        else if (status === 'Delivered') {
+            
+            if (order.payment && order.payment.length > 0) {
+                order.payment[0].status = 'completed';
+            }
+        }
+
+        
+        await order.save();
     
         res.redirect('/admin/order');
     } catch (error) {
