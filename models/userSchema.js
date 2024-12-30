@@ -1,5 +1,6 @@
 const { name } = require("ejs");
 const mongoose = require("mongoose");
+const { v4: uuidv4 } = require("uuid");
 const {Schema} = mongoose;
 
 
@@ -43,10 +44,13 @@ const userSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref:"Cart",
     }],
-    wallet:{
-         type:Number,
-         default:0,
+   
+
+    wallet: {
+        type: Schema.Types.ObjectId,
+        ref:'Wallet'
     },
+
     wishlist:[{
         type:Schema.Types.ObjectId,
         ref:"Wishlist"
@@ -63,9 +67,17 @@ const userSchema = new Schema({
     
     referalCode:{
         type:String,
+        default: () => uuidv4().split('-')[0],
+        unique: true,
+        required : false
     },
+   
+    referrals: [{ 
+        type: Schema.Types.ObjectId,
+        ref: 'Referral'
+    }],
     redeemed:{
-        type:Boolean
+        type:Boolean,
     },
     redeemedUsers: [{
         type: Schema.Types.ObjectId,

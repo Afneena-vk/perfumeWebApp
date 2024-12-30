@@ -16,6 +16,7 @@ const renderSalesReport = (req, res) => {
 };
 
 
+
 const generateSalesReport = async (req, res) => {
     try {
         const { reportType, startDate, endDate } = req.body;
@@ -63,30 +64,40 @@ const generateSalesReport = async (req, res) => {
                 return res.status(400).json({ message: 'Invalid report type' });
         }
 
-        const filter = {
-            ...dateFilter,
-            'status': 'Delivered',
-            status: { $nin: ['Pending','Processing','Shipped','Cancelled']}
-        };
-
-        const orders = await Order.find(filter)
-            .populate('orderedItems.product')
-            .sort({ date: -1 });
-
         
-        const totalOrders = orders.length;
-        const totalSales = orders.reduce((sum, order) => sum + order.finalAmount, 0);
-        const totalDiscount = orders.reduce((sum, order) => sum + (order.totalPrice - order.finalAmount), 0);
+        const orders = await Order.find(dateFilter).populate('orderedItems.product');
 
        
+        const deliveredItems = [];
+        let totalSales = 0;
+        let totalDiscount = 0;
+
+        
+
+        for (const order of orders) {
+            for (const item of order.orderedItems) {
+                if (item.status === 'Delivered') {
+                    const product = item.product; 
+                    const discount = product.regularPrice - item.finalPrice; 
+
+                    deliveredItems.push({
+                        orderId: order.orderId,
+                        date: order.date,
+                        finalAmount: item.finalPrice * item.quantity, 
+                        discount: discount * item.quantity 
+                    });
+
+                    totalSales += item.finalPrice * item.quantity; 
+                    totalDiscount += discount * item.quantity; 
+                }
+            }
+        }
+
+
+        const totalOrders = deliveredItems.length;
 
         req.session.reportData = {
-            orders: orders.map(order => ({
-                orderId: order.orderId,
-                date: order.date,
-                finalAmount: order.finalAmount,
-                discount: order.totalPrice - order.finalAmount
-            })),
+            orders: deliveredItems,
             totalOrders,
             totalSales,
             totalDiscount
@@ -98,7 +109,6 @@ const generateSalesReport = async (req, res) => {
             totalDiscount,
             orders: req.session.reportData.orders
         });
-
 
     } catch (error) {
         console.error('Error generating sales report:', error);

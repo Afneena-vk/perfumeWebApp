@@ -1,0 +1,346 @@
+<%- include("../partials/admin/header") %>
+<style>
+   .error {
+            color: red;
+            font-size: 0.9em;
+        }
+</style>
+
+<div class="content-wrapper">
+  <div class="container-fluid">
+
+    
+    <!-- Page Title -->
+    <div class="row mb-4">
+      <div class="col">
+        <br><br><br><br>
+        <h1 class="h2">Referral Offers</h1>
+      </div>
+    </div>
+
+        <!-- Referral Offers Table -->
+        <div class="card">
+          <div class="card-header">
+            <h3>Existing Referral Offers</h3>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>Offer Code</th>
+                    <th>Title</th>
+                    <th>Description</th>
+                   
+                    <th>Wallet Credit</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% if(referralOffers && referralOffers.length > 0) { %>
+                    <% referralOffers.forEach(offer => { %>
+                      <tr>
+                        <td><%= offer.offerCode %></td>
+                        <td><%= offer.title %></td>
+                        <td><%= offer.description || 'N/A' %></td>
+                       
+                        <td><%= offer.walletCreditAmount %> rs</td>
+
+                        <td><span class="badge bg-<%= offer.status === 'active' ? 'success' : 'danger' %>"><%= offer.status %></span></td>
+                        <td>
+                        
+                          <button onclick="deleteReferralOffer('<%= offer._id %>')" class="btn btn-sm btn-danger">Delete</button>
+                        </td>
+                      </tr>
+                    <% }); %>
+                  <% } else { %>
+                    <tr>
+                      <td colspan="10" class="text-center">No referral offers found</td>
+                    </tr>
+                  <% } %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+    <!-- Form to Create Referral Offer -->
+    <div class="card mb-4">
+      <div class="card-header">
+        <h3>Create New Referral Offer</h3>
+      </div>
+      <div class="card-body">
+        <form action="/admin/referral-offer/create" method="POST" class="form-horizontal" id="referralOfferForm">
+          <div class="row">
+            <!-- Offer Code -->
+            <div class="col-md-3">
+              <div class="form-group">
+                <label for="offerCode">Offer Code</label>
+                <input type="text" class="form-control" id="offerCode" name="offerCode" placeholder="Enter Offer Code">
+                <div class="error" id="offerCodeError"></div>
+              </div>
+            </div>
+        
+            <!-- Title -->
+            <div class="col-md-3">
+              <div class="form-group">
+                <label for="title">Title</label>
+                <input type="text" class="form-control" id="title" name="title" placeholder="Enter Offer Title">
+                <div class="error" id="titleError"></div>
+              </div>
+            </div>
+        
+            <!-- Description -->
+            <div class="col-md-3">
+              <div class="form-group">
+                <label for="description">Description</label>
+                <input type="text" class="form-control" id="description" name="description" placeholder="Enter Description">
+                <div class="error" id="descriptionError"></div>
+              </div>
+            </div>
+        
+           
+            <!-- Wallet Credit Amount -->
+            <div class="col-md-3">
+              <div class="form-group">
+                <label for="walletCreditAmount">Wallet Credit Amount</label>
+                <input type="number" class="form-control" id="walletCreditAmount" name="walletCreditAmount" placeholder="Enter Wallet Credit Amount" min="0">
+                <div class="error" id="walletCreditAmountError"></div>
+              </div>
+            </div>
+        
+        
+            <!-- Start Date -->
+            <div class="col-md-2">
+              <div class="form-group">
+                <label for="startDate">Start Date</label>
+                <input type="date" class="form-control" id="startDate" name="startDate">
+                <div class="error" id="startDateError"></div>
+                
+              </div>
+            </div>
+        
+            <!-- End Date -->
+            <div class="col-md-2">
+              <div class="form-group">
+                <label for="endDate">End Date</label>
+                <input type="date" class="form-control" id="endDate" name="endDate">
+                <div class="error" id="endDateError"></div>
+              </div>
+            </div>
+        
+            <!-- Status -->
+            <div class="col-md-2">
+              <div class="form-group">
+                <label for="status">Status</label>
+                <select class="form-control" id="status" name="status" required>
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        
+          <!-- Submit Button -->
+          <div class="row mt-3">
+            <div class="col text-end">
+              <button type="submit" class="btn btn-primary">Create Offer</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+
+  </div>
+</div>
+
+
+
+<%- include("../partials/admin/footer") %>
+
+<script>
+
+
+
+const form = document.getElementById('referralOfferForm');
+const fields = {
+  offerCode: document.getElementById('offerCode'),
+  title: document.getElementById('title'),
+  description: document.getElementById('description'),
+  walletCreditAmount: document.getElementById('walletCreditAmount'),
+  startDate: document.getElementById('startDate'),
+  endDate: document.getElementById('endDate')
+};
+
+// Validation functions
+const showError = (element, message) => {
+  const errorDiv = document.getElementById(`${element.id}Error`);
+  errorDiv.textContent = message;
+  return false;
+};
+
+const clearError = (element) => {
+  const errorDiv = document.getElementById(`${element.id}Error`);
+  errorDiv.textContent = '';
+};
+
+const validateField = (field, fieldName) => {
+  if (!field.value.trim()) {
+    return showError(field, `${fieldName} is required`);
+  }
+  clearError(field);
+  return true;
+};
+
+const validateAmount = (amount) => {
+  const value = parseFloat(amount.value);
+  if (!amount.value.trim()) {
+    return showError(amount, 'Amount is required');
+  }
+  if (isNaN(value)) {
+    return showError(amount, 'Amount must be a number');
+  }
+  if (value <= 0) {
+    return showError(amount, 'Amount must be greater than 0');
+  }
+  clearError(amount);
+  return true;
+};
+
+const validateDates = (startDate, endDate) => {
+  const start = new Date(startDate.value);
+  const end = new Date(endDate.value);
+  const current = new Date();
+
+  if (!startDate.value) {
+    return showError(startDate, 'Start date is required');
+  }
+  if (!endDate.value) {
+    return showError(endDate, 'End date is required');
+  }
+  if (end <= start) {
+    return showError(endDate, 'End date must be after start date');
+  }
+  if (end <= current) {
+    return showError(endDate, 'End date must be after current date');
+  }
+  
+  clearError(startDate);
+  clearError(endDate);
+  return true;
+};
+
+
+form.addEventListener('submit', function(event) {
+  event.preventDefault();
+  
+  let isValid = true;
+  
+ 
+  isValid = validateField(fields.offerCode, 'Offer code') && isValid;
+  isValid = validateField(fields.title, 'Title') && isValid;
+  isValid = validateField(fields.description, 'Description') && isValid;
+  
+  
+  isValid = validateAmount(fields.walletCreditAmount) && isValid;
+  
+  
+  isValid = validateDates(fields.startDate, fields.endDate) && isValid;
+  
+  if (isValid) {
+   
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData.entries());
+    
+    fetch('/admin/referral-offer/create', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+      if (result.success) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: result.message,
+          confirmButtonText: 'OK'
+        }).then(() => {
+          window.location.href = '/admin/referral-offer';
+        });
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: result.message,
+          confirmButtonText: 'OK'
+        });
+      }
+    })
+    .catch(error => {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'An unexpected error occurred',
+        confirmButtonText: 'OK'
+      });
+    });
+  }
+});
+
+
+</script>
+
+<script>
+
+function deleteReferralOffer(offerId) {
+    Swal.fire({
+        title: 'Delete Confirmation',
+        text: "Are you sure you want to delete this referral offer?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, delete',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch(`/admin/referral-offer/delete/${offerId}`, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response failed');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Deleted!',
+                        text: 'Referral offer has been deleted.',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    throw new Error(data.message || 'Delete failed');
+                }
+            })
+            .catch(error => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: error.message || 'Failed to delete referral offer'
+                });
+            });
+        }
+    });
+}
+</script>

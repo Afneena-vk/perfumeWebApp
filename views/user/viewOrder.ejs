@@ -3,40 +3,7 @@
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-lg-10">
-            <!-- Order Status Timeline -->
-            <div class="card shadow-sm border-0 mb-4">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center flex-wrap">
-                        <div class="text-center flex-grow-1">
-                            <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                                <i class="fas fa-shopping-cart"></i>
-                            </div>
-                            <p class="mt-2 mb-0 small">Ordered</p>
-                        </div>
-                        <div class="flex-grow-1 border-top mt-3"></div>
-                        <div class="text-center flex-grow-1">
-                            <div class="rounded-circle <%= order.status === 'Processing' || order.status === 'Shipped' || order.status === 'Delivered' ? 'bg-primary' : 'bg-secondary' %> text-white d-inline-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                                <i class="fas fa-box"></i>
-                            </div>
-                            <p class="mt-2 mb-0 small">Processing</p>
-                        </div>
-                        <div class="flex-grow-1 border-top mt-3"></div>
-                        <div class="text-center flex-grow-1">
-                            <div class="rounded-circle <%= order.status === 'Shipped' || order.status === 'Delivered' ? 'bg-primary' : 'bg-secondary' %> text-white d-inline-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                                <i class="fas fa-shipping-fast"></i>
-                            </div>
-                            <p class="mt-2 mb-0 small">Shipped</p>
-                        </div>
-                        <div class="flex-grow-1 border-top mt-3"></div>
-                        <div class="text-center flex-grow-1">
-                            <div class="rounded-circle <%= order.status === 'Delivered' ? 'bg-primary' : 'bg-secondary' %> text-white d-inline-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                                <i class="fas fa-check"></i>
-                            </div>
-                            <p class="mt-2 mb-0 small">Delivered</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            
 
             <!-- Order Details -->
             <div class="card shadow-sm border-0">
@@ -46,11 +13,7 @@
                             <h4 class="mb-1">Order #<%= order.orderId %></h4>
                             <p class="text-muted mb-0">Placed on <%= new Date(order.date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) %></p>
                         </div>
-                        <span class="badge bg-<%= order.status.toLowerCase() === 'delivered' ? 'success' : 
-                            order.status.toLowerCase() === 'pending' ? 'warning' : 
-                            'info' %> px-3 py-2">
-                            <%= order.status %>
-                        </span>
+                       
                     </div>
                 </div>
 
@@ -88,10 +51,16 @@
                                 </p>
                                 <p class="mb-2">
                                     <span class="text-muted">Payment Status:</span><br>
-                                    <strong class="text-<%= order.payment[0]?.status === 'Paid' ? 'success' : 'warning' %>">
+                                    <strong class="text-<%= order.payment[0]?.status === 'completed' ? 'success' : 'warning' %>">
                                         <%= order.payment[0]?.status || 'N/A' %>
                                     </strong>
                                 </p>
+                                <% if (order.payment[0]?.razorpayOrderId) { %>
+                                    <p class="mb-2">
+                                        <span class="text-muted">Razorpay Order ID:</span><br>
+                                        <strong><%= order.payment[0].razorpayOrderId %></strong>
+                                    </p>
+                                <% } %>
                             </div>
                         </div>
                     </div>
@@ -110,6 +79,7 @@
                                         <th>Size</th>
                                         <th>Quantity</th>
                                         <th class="text-end">Price</th>
+                                        <th>Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -128,7 +98,9 @@
                                             </td>
                                             <td><%= item.size %></td>
                                             <td><%= item.quantity %></td>
-                                            <td class="text-end">₹<%= item.price.toFixed(2) %></td>
+                                            <td class="text-end">₹<%= item.finalPrice.toFixed(2) %></td>
+                                          
+                                            <td><%= item.status %></td>
                                         </tr>
                                     <% }); %>
                                 </tbody>
@@ -150,7 +122,7 @@
                                 </div>
                                 <% if (order.coupon) { %>
                                     <div class="d-flex justify-content-between mb-2 text-success">
-                                        <span>Coupon Discount (<%= order.coupon.code %>)</span>
+                                        <span> Discount </span>
                                         <strong>-₹<%= (order.totalPrice - order.finalAmount).toFixed(2) %></strong>
                                     </div>
                                 <% } %>
@@ -167,11 +139,11 @@
                 <div class="card-footer bg-white border-top p-4">
                     <div class="d-flex justify-content-between align-items-center">
                         <a href="/orders" class="btn btn-outline-secondary">
-                            <i class="fas fa-arrow-left me-2"></i>Back to Orders
+                            <i class="fas fa-arrow-left me-2"></i> Back to Orders
                         </a>
-                        <% if (order.status === 'Delivered') { %>
+                        <% if (order.orderedItems.some(item => item.status === 'Delivered')) { %>
                         <a href="/order/download-pdf/<%= order.orderId %>" class="btn btn-dark">
-                            <i class="fas fa-print me-2"></i>Print Order
+                            <i class="fas fa-print me-2"></i> Print Order
                         </a>
                         <% } %>
                     </div>

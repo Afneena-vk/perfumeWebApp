@@ -33,7 +33,21 @@ const orderSchema = new Schema({
         price:{
             type:Number,
             default:0
-        }
+        },
+        discountApplied: {
+          type: Number,
+          default: 0
+      },
+      finalPrice: {
+          type: Number,
+          required: true
+      },
+        status: {
+          type: String,
+          required: true,
+          enum: ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled', 'Return Requested', 'Return Approved', 'Return Rejected', 'Returned'],
+          default: 'Pending'
+      }
 
     }],
     
@@ -67,7 +81,7 @@ const orderSchema = new Schema({
     status:{
         type:String,
         required:true,
-        // enum:['Pending','Processing','Shipped','Delivered','Cancelled','Return Request','Returned'],
+        
         enum:['Pending','Processing','Shipped','Delivered','Cancelled', "Return Requested","Return Approved","Return Rejected",'Returned'],
         default: "Pending",   
     },
@@ -93,11 +107,7 @@ const orderSchema = new Schema({
           required: false  
         }
       }],
-    // createdOn :{
-    //     type:Date,
-    //     default:Date.now,
-    //     required:true
-    // },
+    
    
     coupon: {
       type: Schema.Types.ObjectId,

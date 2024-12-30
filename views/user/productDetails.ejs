@@ -284,7 +284,7 @@
                                     <div class="quantity">
                                         <div class="pro-qty">
                                          
-                                            <!-- <input type="number" name="quantity" value="1" min="1" max="<%= product.sizes.length ? product.sizes[0].quantity : 0 %>" id="quantityInput"> -->
+                                           
                                             <input type="number" name="quantity" value="1" id="quantityInput">
                                         </div>
                                     </div>
@@ -295,10 +295,7 @@
                                 </form>
                             </div>
                            
-                            <!-- <div class="product__details__btns__option">
-                                <a href="#"><i class="fa fa-heart"></i> add to wishlist</a>
-                                
-                            </div> -->
+                           
                             <div class="product__details__last__option">
                                 
                                 <ul>
@@ -307,15 +304,7 @@
                                     <!-- <li><span>Tag:</span> Clothes, Skin, Body</li> -->
                                 </ul>
                             </div>
-                            <!-- <h5>Reviews:</h5>
-    <% product.reviews.forEach(review => { %>
-      <p><strong><%= review.user.name %>:</strong> <%= review.comment %></p>
-    <% }) %>
-    <form method="POST" action="/product/<%= product._id %>/addReview">
-      <textarea name="comment" placeholder="Write your review"></textarea>
-      <input type="number" name="rating" min="1" max="5" placeholder="Rating (1-5)">
-      <button type="submit">Submit Review</button>
-    </form> -->
+                           
 
                         </div>
                     </div>
@@ -447,7 +436,7 @@ document.querySelector("form").addEventListener("submit", async function (event)
         const result = await response.json();
         
         if (response.ok) {
-            // window.location.href = "/cart";
+            
             Swal.fire({
                 icon: "success",
                 title: "Added to Cart",
@@ -496,31 +485,29 @@ document.querySelector("form").addEventListener("submit", async function (event)
     function updateStockStatus(radio) {
         const selectedQuantity = parseInt(radio.getAttribute('data-quantity'));
         const stockStatusElement = document.getElementById('stock-status');
-        //const quantityInput = document.getElementById('quantityInput');
-
-        // Update the stock status
+       
         if (selectedQuantity > 0) {
             stockStatusElement.textContent = 'In Stock';
             stockStatusElement.classList.remove('out-of-stock');
             stockStatusElement.classList.add('in-stock');
-            //quantityInput.max = selectedQuantity; // Set max quantity based on selected size
+            
         } else {
             stockStatusElement.textContent = 'Out of Stock';
             stockStatusElement.classList.remove('in-stock');
             stockStatusElement.classList.add('out-of-stock');
-            //quantityInput.max = 0; // Set max quantity to 0
+           
         }
 
-        // Set the selected size in the hidden input
+       
         document.getElementById('selectedSize').value = radio.value;
     }
     
-// Update the stock status function
+
 function updatequantityStatus(radio) {
     const selectedSize = radio.value;
     const productId = "<%= product._id %>";
 
-    // Make an AJAX request to fetch the stock quantity for the selected size
+    
     fetch(`/product/${productId}/stock`, {
         method: 'POST',
         headers: {
@@ -535,7 +522,7 @@ function updatequantityStatus(radio) {
         const stockStatusElement = document.getElementById('stock-status');
         const stockQuantityElement = document.getElementById('stock-quantity');
 
-        // Update the stock status and quantity
+
         if (data.quantity > 0) {
             stockStatusElement.textContent = 'In Stock';
             stockStatusElement.classList.remove('out-of-stock');

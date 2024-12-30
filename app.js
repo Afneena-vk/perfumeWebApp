@@ -42,6 +42,16 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/",userRouter);
 app.use("/admin",adminRouter);
 
+
+
+
+app.use("/", (req, res) => {
+    
+    res.redirect("/pageNotFound");
+});
+
+
+
 const PORT=3000 || process.env.PORT;
 app.listen(process.env.PORT,()=>{
     console.log("server is running");

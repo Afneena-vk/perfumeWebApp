@@ -9,6 +9,7 @@ const brandController = require("../controllers/admin/brandController");
 const orderManagementController = require("../controllers/admin/orderManagementController");
 const couponController = require("../controllers/admin/couponController");
 const salesReportController = require("../controllers/admin/salesReportController")
+const referralOfferController = require("../controllers/admin/referralOfferController");
 
 const multer = require("multer");
 const storage = require('../helpers/multer');
@@ -63,8 +64,7 @@ router.post("/removeProductOffer",adminAuth,productController.removeProductOffer
 //order Management
 router.get('/order',adminAuth,orderManagementController.getOrderManagementPage);
 router.get("/orders/view/:orderId", adminAuth,orderManagementController.getOrderDetails);
-router.post('/update-order-status/:orderId',adminAuth,orderManagementController.updateStatus);
-
+router.post('/update-item-status/:orderId/:itemId',adminAuth,orderManagementController.updateItemStatus);
 
 //coupon management
 router.get("/coupons",adminAuth,couponController.coupon);
@@ -80,6 +80,8 @@ router.post("/sales-report", adminAuth,salesReportController.generateSalesReport
 router.get('/sales-report/pdf',adminAuth,salesReportController.generateAndDownloadPDF);
 router.get('/sales-report/excel',adminAuth,salesReportController.generateAndDownloadExcel);
 
-
+router.get("/referral-offer",adminAuth, referralOfferController.getReferralOffers);
+router.post("/referral-offer/create",adminAuth, referralOfferController.createReferralOffer);
+router.delete("/referral-offer/delete/:id", adminAuth, referralOfferController.deleteReferralOffer);
 
 module.exports = router;

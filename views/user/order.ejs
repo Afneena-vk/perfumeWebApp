@@ -206,9 +206,7 @@
                             <div class="order-id">#<%= order.orderId %></div>
                             <div class="order-date"><%= new Date(order.date).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) %></div>
                         </div>
-                        <div class="status-badge status-<%= order.status.toLowerCase() %>">
-                            <%= order.status %>
-                        </div>
+                        
                     </div>
                     <div class="text-end mt-3">
                         <a href="/view-order?id=<%= order._id %>" class="btn btn-primary">View Details</a>
@@ -246,7 +244,7 @@
                                     <% } %>
                                 </div>
                             </div>
-                            <% if (order.payment[0]?.method === 'Online Payment' && order.payment[0]?.status === 'pending') { %>
+                            <% if (order.payment[0]?.method === 'Online Payment' && order.payment[0]?.status === 'pending' && order.status !== 'Cancelled') { %>
                                 <div class="text-end mt-2">
                                     <button class="btn btn-danger pay-now" data-id="<%= order._id %>">Pay Now</button>
                                 </div>
@@ -270,8 +268,37 @@
                                     </div>
                                     <div>
                                         <div class="info-label">Price</div>
-                                        <div class="info-value">₹<%= item.price.toFixed(2) %></div>
+                                        
+                                        <div class="info-value">₹<%= (item.finalPrice !== undefined ? item.finalPrice : 0).toFixed(2) %></div> <!-- Added check for finalPrice -->
+                                        
                                     </div>
+                                    <div>
+                                        <div class="info-label">Status</div>
+                                        <div class="info-value"><%= item.status %></div>
+                                    </div>
+                                    <% if (item.status === 'Delivered') { %>
+                                        <div class="text-end mt-2">
+                                            <button class="btn btn-primary request-return-item" 
+                                                    data-order-id="<%= order._id %>" 
+                                                    data-item-id="<%= item._id %>">
+                                                Request Return
+                                            </button>
+                                        </div>
+                                    <% } %>
+                                  <% if (item.status !== 'Cancelled' && 
+                                    item.status !== 'Delivered' && 
+                                    item.status !== 'Return Requested' && 
+                                    item.status !== 'Return Approved' && 
+                                    item.status !== 'Return Rejected' && 
+                                    item.status !== 'Returned') { %>
+                                  <div class="text-end mt-2">
+                                      <button class="btn btn-danger cancel-item" 
+                                              data-order-id="<%= order._id %>" 
+                                              data-item-id="<%= item._id %>">
+                                          Cancel Item
+                                      </button>
+                                  </div>
+                              <% } %>
                                 </div>
                             <% }); %>
                         </div>
@@ -349,77 +376,87 @@
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    document.querySelectorAll('.cancel-order').forEach(button => {
-        button.addEventListener('click', function(event) {
-            event.preventDefault();
-            const orderId = this.getAttribute('data-id');
+  
 
-            Swal.fire({
-                title: 'Cancel Order?',
-                text: "This action cannot be undone.",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d63031',
-                cancelButtonColor: '#636e72',
-                confirmButtonText: 'Yes, cancel order',
-                cancelButtonText: 'No, keep order',
-                borderRadius: '12px'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    fetch(`/cancelOrder/${orderId}`, {
-                        method: 'POST',
-                    })
-                    .then(response => {
-                        if (response.ok) {
-                            Swal.fire({
-                                title: 'Order Cancelled',
-                                text: 'Your order has been cancelled successfully.',
-                                icon: 'success',
-                                confirmButtonColor: '#0984e3'
-                            }).then(() => {
-                                location.reload();
-                            });
-                        } else {
-                            Swal.fire({
-                                title: 'Error',
-                                text: 'Failed to cancel the order. Please try again.',
-                                icon: 'error',
-                                confirmButtonColor: '#0984e3'
-                            });
-                        }
-                    })
-                    .catch(error => {
-                        console.error("Error:", error);
-                        Swal.fire({
-                            title: 'Error',
-                            text: 'An error occurred. Please try again.',
-                            icon: 'error',
-                            confirmButtonColor: '#0984e3'
-                        });
-                    });
-                }
-            });
-        });
-    });
-
-document.querySelectorAll('.request-return').forEach(button => {
+    document.querySelectorAll('.cancel-item').forEach(button => {
     button.addEventListener('click', function(event) {
         event.preventDefault();
-        const orderId = this.getAttribute('data-id');
+        const orderId = this.getAttribute('data-order-id');
+        const itemId = this.getAttribute('data-item-id');
+
+        Swal.fire({
+            title: 'Cancel Item?',
+            text: "This action cannot be undone.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d63031',
+            cancelButtonColor: '#636e72',
+            confirmButtonText: 'Yes, cancel item',
+            cancelButtonText: 'No, keep item',
+            borderRadius: '12px'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(`/cancel-order-item/${orderId}/${itemId}`, {
+                    method: 'POST',
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+
+                        const finalAmountElement = document.querySelector('.final-amount');
+                        if (finalAmountElement) {
+                            finalAmountElement.textContent = `₹${data.newFinalAmount}`;
+                        }
+
+                        Swal.fire({
+                            title: 'Item Cancelled',
+                            text: 'The item has been cancelled successfully.',
+                            icon: 'success',
+                            confirmButtonColor: '#0984e3'
+                        }).then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        throw new Error('Failed to cancel item');
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Failed to cancel the item. Please try again.',
+                        icon: 'error',
+                        confirmButtonColor: '#0984e3'
+                    });
+                });
+            }
+        });
+    });
+});
+
+
+
+
+
+document.querySelectorAll('.request-return-item').forEach(button => {
+    button.addEventListener('click', function(event) {
+        event.preventDefault();
+        const orderId = this.getAttribute('data-order-id');
+        const itemId = this.getAttribute('data-item-id');
 
         Swal.fire({
             title: 'Request Return?',
-            text: "Are you sure you want to request a return for this order?",
+            text: "Are you sure you want to request a return for this item?",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#0984e3',
             cancelButtonColor: '#636e72',
             confirmButtonText: 'Yes, request return',
-            cancelButtonText: 'No, keep order',
+            cancelButtonText: 'No, keep item',
             borderRadius: '12px'
         }).then((result) => {
             if (result.isConfirmed) {
-                fetch(`/requestReturn/${orderId}`, {
+                fetch(`/requestReturn/${orderId}/${itemId}`, {
                     method: 'PATCH',
                 })
                 .then(response => {
@@ -458,8 +495,9 @@ document.querySelectorAll('.request-return').forEach(button => {
 });
 
 
+
 document.addEventListener('DOMContentLoaded', function() {
-    // Check if Razorpay is loaded
+    
     if (typeof Razorpay === 'undefined') {
         console.error('Razorpay script not loaded');
         return;

@@ -52,7 +52,7 @@
         <p class="details"><strong>User:</strong> <%= order.userId.name %></p>
         <p class="details"><strong>Order Date:</strong> <%= new Date(order.date).toLocaleDateString() %></p>
         <p class="details"><strong>Payment Method:</strong> <%= order.payment[0].method %></p>
-        <p class="details"><strong>Total Price:</strong> ₹<%= order.totalPrice %></p>
+        <p class="details"><strong>Total Price:</strong> ₹<%= order.finalAmount %></p>
     </div>
     <div>
         <p><strong>Delivery Address:</strong></p>
@@ -82,21 +82,22 @@
                 <td><%= item.size %>
                 <td><%= item.quantity %></td>
                 <td>₹<%= item.price %></td>
-                <td>₹<%= item.quantity * item.price %></td>
-                <!-- <td><%= order.status %></td> -->
+                <td>₹<%= item.quantity * item.finalPrice %></td>
+               
                 <td>
-                    <form action="/admin/update-order-status/<%= order.orderId %>" method="POST">
                     
+                        <form action="/admin/update-item-status/<%= order.orderId %>/<%= item._id %>" method="POST">
                         <select name="status" class="form-select">
                             
                             <% const statuses = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled', "Return Requested","Return Approved","Return Rejected", 'Returned']; %>
                              
                             <% statuses.forEach(status => { %>
-                                <option value="<%= status %>" <%= status === order.status ? 'selected' : '' %>><%= status %></option>
+                               
+                                <option value="<%= status %>" <%= status === item.status ? 'selected' : '' %>><%= status %></option>
                             <% }); %>
                         </select>
-                        
-                        <button type="submit" class="btn btn-primary btn-sm mt-2" <%= order.status === 'Cancelled' ? 'disabled' : '' %>>Update</button>
+                        <button type="submit" class="btn btn-primary btn-sm mt-2" <%= item.status === 'Cancelled' ? 'disabled' : '' %>>Update</button>
+                       
                     </form>
                 </td>
                 
@@ -106,5 +107,32 @@
     </table>
 </div>
 
+// Add this script to your EJS file
+<script>
+document.querySelectorAll('form').forEach(form => {
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(form);
+        
+        try {
+            const response = await fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    status: formData.get('status')
+                })
+            });
+            
+            if (response.ok) {
+                window.location.reload();
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    });
+});
+</script>
 
 <%- include("../../views/partials/admin/footer") %>  

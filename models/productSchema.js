@@ -54,10 +54,7 @@ isBlocked:{
     type:Boolean,
     default:false
 },
-// isDeleted: { 
-//     type: Boolean,
-//     default: false,
-//   },
+
 status:{
     type:String,
     enum:["Available","out of stock","Discontinued"],

@@ -4,11 +4,21 @@ const User = require("../../models/userSchema");
 const Category = require("../../models/categorySchema");
 const Product = require("../../models/productSchema");
 const Brand = require("../../models/brandSchema");
-//const Cart = require("../../models/cartSchema");
+const ReferralOffer = require("../../models/referralOfferSchema");
+const Referral = require("../../models/referralSchema");
+const Wallet = require("../../models/walletSchema");
+const Cart = require("../../models/cartSchema");
 const env = require("dotenv").config();
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
 const session = require('express-session');
+
+const {
+    applyReferralOffer,
+    creditWallet,
+  } = require("../../controllers/user/userReferralController");
+  
+  let sessionActive = false;
 
 const pageNotFound = async (req,res)=>{
 
@@ -111,11 +121,24 @@ async function sendVerificationEmail(email,otp){
 
 }
 
+const validateReferralCode = async (refCode) => {
+    return await User.findOne({ referalCode: refCode });
+};
+
 const signup = async (req,res)=>{
     try {
         
-        const {name,phone,email, password, cPassword} = req.body;
+        const {name,phone,email, password, cPassword, refCode } = req.body;
        
+
+        if (refCode) {
+            const validReferrer = await validateReferralCode(refCode);
+            if (!validReferrer) {
+                return res.render("signup", { message: "Invalid referral code" });
+            }
+        }
+
+
         if(password !== cPassword){
             return res.render("signup",{message:"Password do not match"});
           }
@@ -134,9 +157,11 @@ const signup = async (req,res)=>{
         }
 
         req.session.userOtp = otp;
-        req.session.userData = {name,phone,email,password};
+        req.session.userData = {name,phone,email,password,refCode};
 
         res.render("verify-otp");
+
+        console.log(refCode);
         console.log("OTP Sent",otp);
 
     } catch (error) {
@@ -158,6 +183,7 @@ const securePassword = async (password)=>{
     }
 }
 
+
 const verifyOtp = async (req,res)=>{
     try {
         
@@ -177,11 +203,32 @@ const verifyOtp = async (req,res)=>{
             })
            
             await saveUserData.save();
+            
             console.log("User saved successfully:", saveUserData);
-           
+            const newWallet = new Wallet({ userId: saveUserData._id, balance: 0 });
+            await newWallet.save();
+        
+            saveUserData.wallet = newWallet._id;
+
+            await saveUserData.save();
+        
+            const newCart = new Cart({ userId: saveUserData._id, items: [] });
+            await newCart.save();
+        
+            
+            saveUserData.cart = newCart._id;
+        
+            await saveUserData.save();
+        
+            if (user.refCode) {
+              await applyReferralOffer(saveUserData._id, user.refCode);
+            }
+        
           
             
             req.session.user = { _id: saveUserData._id, name: saveUserData.name }; 
+            sessionActive = true;
+
             res.json({success:true,redirectUrl:"/"})
             
         }else {
@@ -242,12 +289,62 @@ const loadLogin = async (req,res)=>{
     }
 }
 
+
 const login = async (req,res)=>{
     try {
         
-       const {email,password} = req.body;
+       const {email,password, googleId } = req.body;
 
-       const findUser = await User.findOne({isAdmin:0,email:email});
+       const findUser = await User.findOne({isAdmin:0,email:email}).populate('cart wallet');
+
+       if (googleId) {
+        if (!findUser) {
+        
+          findUser = new User({
+            email: email,
+            googleId: googleId,
+            role: "user",
+            isVerified: true
+          });
+          await findUser.save(); 
+        
+        
+          const newWallet = new Wallet({ user: findUser._id, balance: 0 });
+          await newWallet.save();
+          findUser.wallet = newWallet._id;
+  
+          const newCart = new Cart({ userId: findUser._id, items: [] });
+          await newCart.save();
+          findUser.cart = newCart._id;
+  
+          await findUser.save();
+        } else {
+          
+          if (!findUser.googleId) {
+          
+            findUser.googleId = googleId;
+          }
+  
+      
+          if (!findUser.wallet) {
+            const newWallet = new Wallet({ user: findUser._id, balance: 0 });
+            await newWallet.save();
+            findUser.wallet = newWallet._id;
+          }
+  
+          if (!findUser.cart) {
+            const newCart = new Cart({ userId: findUser._id, items: [] });
+            await newCart.save();
+            findUser.cart = newCart._id;
+          }
+  
+          await findUser.save();
+        }
+  
+        req.session.user = findUser.toObject(); 
+        sessionActive = true;
+        return res.redirect("/");
+      }
 
        if(!findUser){
           return res.render("login",{message:"User not found"})
@@ -264,6 +361,7 @@ const login = async (req,res)=>{
        }
 
        req.session.user = { _id: findUser._id, name: findUser.name }; 
+       sessionActive = true;
 
        console.log("Session user after login:", req.session.user);
 
@@ -276,6 +374,7 @@ const login = async (req,res)=>{
 
     }
 }
+
 
 const logout = async (req,res)=>{
     try {
@@ -421,15 +520,23 @@ const getProductDetails = async (req, res) => {
             return res.status(401).json({ success: false, message: 'Please login' });
         }
 
-        
+        console.log("product id is",productId);
+
+        if (!mongoose.Types.ObjectId.isValid(productId)) {
+           
+            return res.redirect("/pageNotFound");
+        }
+
         const product = await Product.findById(productId)
             .populate('category') 
             .populate('brand'); 
 
-        
+        console.log("product is",product);
+
         if (!product) {
             return res.status(404).render('404', { message: 'Product not found' });
         }
+        
 
         
         const totalRatings = product.ratings.reduce((sum, rating) => sum + rating, 0);

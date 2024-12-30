@@ -80,6 +80,16 @@
 
     <div class="card mb-4">
         <div class="card-header">
+            Referral Code
+        </div>
+        <div class="card-body">
+            <p><strong>Your Referral Code:</strong> <span id="referralCode"><%= user.referalCode || 'Not available' %></span></p>
+            <button id="copyReferralCode" class="btn btn-danger btn-sm">Copy</button>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
             Address Management
         </div>
         <div class="card-body">
@@ -127,56 +137,7 @@
         </div>
     </div>
 
-    <!-- <div class="card mb-4">
-        <div class="card-header">
-            Recent Orders
-        </div>
-        <div class="card-body">
-            <% if (orders && orders.length > 0) { %>
-                <ul class="list-group">
-                    <% orders.forEach(order => { %>
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <div>
-                                <strong>Order ID:</strong> <%= order.orderId %><br>
-                                <strong>Order Date:</strong> <%= new Date(order.date).toLocaleDateString() %><br>
-                                <strong>Total:</strong> $ <%= order.totalPrice %><br>
-                                <strong>Payment Method:</strong> <%= order.payment[0]?.method || 'N/A' %><br>
-                                <strong>Status:</strong> <span class="<%= order.status === 'Cancelled' ? 'text-danger' : 'text-success' %>">
-                                    <%= order.status %>
-                                </span>
-                                
-                                <ul>
-                                    <% order.orderedItems.forEach(item => { %>
-                                      <li>
-                                        <strong>Product:</strong> <%= item.product?.productName || 'Unknown' %><br>
-                                        <strong>Size:</strong> <%= item.size %><br>
-                                        <strong>Quantity:</strong> <%= item.quantity %><br>
-                                        <strong>Price:</strong> $<%= item.price %>
-                                      </li>
-                                    <% }); %>
-                                  </ul>
-                                  
-                                  <div class="mt-3">
-                                    <strong>Shipping Address:</strong><br>
-                                    <p><%= order.address.name %></p>
-                                    <p><%= order.address.addressType %> - <%= order.address.city %>, <%= order.address.state %>, <%= order.address.pincode %></p>
-                                    <p>Landmark: <%= order.address.landMark %></p>
-                                    <p>Phone: <%= order.address.phone %></p>
-                                </div>
-                            </div>
-                            <% if (order.status !== 'Cancelled' && order.status !== 'Delivered') { %>
-                                
-                                <a href="#" class="btn btn-danger btn-sm cancel-order" data-id="<%= order._id %>">Cancel Order</a>
 
-                            <% } %>
-                        </li>
-                    <% }); %>
-                </ul>
-            <% } else { %>
-                <p>No recent orders found.</p>
-            <% } %>
-        </div>
-    </div> -->
     <div class="card mb-4"> 
        
         <div class="card-body">
@@ -244,6 +205,26 @@
         });
     });
 });
+
+
+
+document.getElementById('copyReferralCode').addEventListener('click', function() {
+        const referralCode = document.getElementById('referralCode').innerText;
+        navigator.clipboard.writeText(referralCode).then(() => {
+            Swal.fire(
+                'Copied!',
+                'Your referral code has been copied to clipboard.',
+                'success'
+            );
+        }).catch(err => {
+            console.error('Error copying text: ', err);
+            Swal.fire(
+                'Error!',
+                'Failed to copy the referral code. Please try again.',
+                'error'
+            );
+        });
+    });
 
 
 </script>

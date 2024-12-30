@@ -108,18 +108,7 @@
                   <div id="salePrice-error" class="error-message"></div>
                 </div>
               </div>
-              <!-- <div class="col-lg-4">
-                <div class="mb-4">
-                  <label class="form-label">Quantity</label>
-                  <input
-                    name="quantity"
-                    type="text"
-                    value="<%= product.quantity  %>"
-                    class="form-control border"
-                  />
-                  <div id="quantity-error" class="error-message"></div>
-                </div>
-              </div> -->
+             
             </div>
             <div class="row">
               <div class="col-lg-4">
@@ -241,7 +230,7 @@
                         onchange="handleNewImage(event,  i+1)"
                       />
                     </div>
-                    <!-- Cropper container -->
+                    
                     <div
                       class="cropper-container"
                       id="cropperContainer<%= i+1 %>"
@@ -461,7 +450,7 @@
     const saleprice = document.getElementsByName("salePrice")[0].value;
     const color = document.getElementsByName("color")[0].value;
     const category = document.getElementsByName("category")[0].value;
-    // const images = document.getElementById("input1");
+   
     const sizeInputs = document.getElementsByName("sizes[]");
     const quantityInputs = document.getElementsByName("quantities[]");
     imageDatas = document.getElementById("imageDatas")?.value;
@@ -529,10 +518,7 @@
       displayErrorMessage("color-error", "Please enter a color.");
       isValid = false;
     }
-    // if (!imageDatas && images.files.length === 0) {
-    //   displayErrorMessage("images-error", "Please select an image.");
-    //   isValid = false;
-    // }
+    
     const existingImages = document.querySelectorAll(".existing-image");
     const newImageInputs = document.querySelectorAll(
       'input[type="file"][name="images"]'

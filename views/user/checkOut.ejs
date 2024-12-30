@@ -267,34 +267,31 @@
     
     <script>
        
-   
-    document.addEventListener('DOMContentLoaded', function() {
+
+
+document.addEventListener('DOMContentLoaded', function() {
     const checkoutForm = document.getElementById('checkoutForm');
     const addressRadios = document.querySelectorAll('input[name="selectedAddress"]');
     const paymentMethodRadios = document.querySelectorAll('input[name="paymentMethod"]');
     const placeOrderBtn = document.getElementById('placeOrderBtn');
 
-   
-
     function validateForm() {
-    const isAddressSelected = [...addressRadios].some(radio => radio.checked);
-    const isPaymentMethodSelected = [...paymentMethodRadios].some(radio => radio.checked);
-    
-    
-    const finalTotal = parseFloat(document.getElementById('finalTotal').innerText.replace('Rs. ', '').replace(',', ''));
-
-    
-    const isCodSelected = document.getElementById('cod').checked;
-    const codErrorDiv = document.getElementById('codError');
-    
-    if (isCodSelected && finalTotal > 1000) {
-        codErrorDiv.style.display = 'block'; 
-        placeOrderBtn.disabled = true; 
-    } else {
-        codErrorDiv.style.display = 'none'; 
-        placeOrderBtn.disabled = !(isAddressSelected && isPaymentMethodSelected); 
+        const isAddressSelected = [...addressRadios].some(radio => radio.checked);
+        const isPaymentMethodSelected = [...paymentMethodRadios].some(radio => radio.checked);
+        
+        const finalTotal = parseFloat(document.getElementById('finalTotal').innerText.replace('Rs. ', '').replace(',', ''));
+        
+        const isCodSelected = document.getElementById('cod').checked;
+        const codErrorDiv = document.getElementById('codError');
+        
+        if (isCodSelected && finalTotal > 1000) {
+            codErrorDiv.style.display = 'block'; 
+            placeOrderBtn.disabled = true; 
+        } else {
+            codErrorDiv.style.display = 'none'; 
+            placeOrderBtn.disabled = !(isAddressSelected && isPaymentMethodSelected); 
+        }
     }
-}
 
     addressRadios.forEach(radio => radio.addEventListener('change', validateForm));
     paymentMethodRadios.forEach(radio => radio.addEventListener('change', validateForm));
@@ -306,9 +303,30 @@
         const formData = new FormData(checkoutForm);
         const selectedPaymentMethod = formData.get('paymentMethod');
 
-        console.log("Form Data Submitted:", Object.fromEntries(formData))
+        console.log("Form Data Submitted:", Object.fromEntries(formData));
 
         try {
+            // First validate stock
+            const stockResponse = await fetch('/validate-stock', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            const stockResult = await stockResponse.json();
+
+            if (!stockResult.success) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Stock Error',
+                    text: stockResult.error,
+                    confirmButtonText: 'Update Cart'
+                });
+                return;
+            }
+
+            // If stock validation passes, proceed with order placement
             const response = await fetch('/place-order', {
                 method: 'POST',
                 headers: {
@@ -322,14 +340,13 @@
             console.log("Response from /place-order:", result); 
 
             if (!response.ok) {
-           
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: result.error || 'Something went wrong!',
-            });
-            return; 
-        }
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: result.error || 'Something went wrong!',
+                });
+                return; 
+            }
 
             if (selectedPaymentMethod === 'Online Payment') {
                 if (!result.success) {
@@ -365,43 +382,36 @@
                             window.location.href = '/order-confirmation';
                         } else {
                             alert('Payment verification failed!');
-                           
-                          
                         }
                     },
                     prefill: {
                         "name": "<%= userData.name %>",
                         "email": "<%= userData.email %>",
                         "contact": "<%= userData.phone %>"
-                    
                     },
                     theme: {
                         color: "#3399cc"
                     },
                     "modal": {
-                     ondismiss: function() {
-                    handlePaymentDismissal();
-                }
+                        ondismiss: function() {
+                            handlePaymentDismissal();
+                        }
                     }
                 };
 
                 const razorpay = new Razorpay(options);
                 razorpay.open();
             } else {
-                
                 window.location.href = '/order-confirmation';
             }
         } catch (error) {
-            
             console.error('Error:', error);
             
             Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Something went wrong! Please try again.',
-            
-
-        });
+                icon: 'error',
+                title: 'Error',
+                text: 'Something went wrong! Please try again.',
+            });
         }
     });
 });
@@ -528,6 +538,7 @@ $(document).ready(function() {
         });
     });
 });
+
 
 </script> 
 <%- include("../../views/partials/user/footer") %>

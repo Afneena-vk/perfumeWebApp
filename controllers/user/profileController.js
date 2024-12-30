@@ -193,7 +193,8 @@ const userProfile = async (req,res) =>{
      
        const user = await User.findById(userSession._id);
 
-       
+       console.log(user.referalCode);
+
        if (!user) {
         return res.status(404).send("User not found");
     }

@@ -70,12 +70,12 @@ router.post("/verify-payment", userAuth,orderController.verifyPayment);
 router.get("/payment-failurePage", userAuth,orderController.getPaymentFailure);
 
 router.get("/orders",userAuth,orderController.getOrders);
-router.post("/cancelOrder/:orderId", userAuth,orderController.cancelOrder);
-router.patch('/requestReturn/:orderId',userAuth,orderController.requestReturn);
+router.post('/cancel-order-item/:orderId/:itemId',userAuth,orderController.cancelOrderItem);
+router.patch('/requestReturn/:orderId/:itemId',userAuth,orderController.requestReturn);
 router.get("/view-order",userAuth,orderController.viewOrder);
 router.post('/reinitiate-payment', userAuth, orderController.reinitiatePayment);
-
 router.get('/order/download-pdf/:orderId',userAuth,orderController.generateOrderPDF);
+
 
 
 router.get("/wishlist", userAuth, wishlistController.getWishlist);
@@ -87,6 +87,7 @@ router.post("/wallet/add", userAuth, walletController.addMoney);
 router.patch('/wallet/withdraw',userAuth, walletController.withdrawMoney);
   
 router.post('/validate-cart-stock',userAuth,cartController.validateCartStock);
+router.post('/validate-stock',userAuth,orderController.validateStock);
   
 
 module.exports = router;

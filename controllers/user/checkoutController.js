@@ -239,10 +239,10 @@ const checkCouponStatus = async (req, res) => {
 
 
 
-
 module.exports = {
    getCheckoutPage,
    applyCoupon,
    removeCoupon,
-   checkCouponStatus
+   checkCouponStatus,
+   
 };

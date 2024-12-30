@@ -81,25 +81,31 @@
                         <th scope="col">Items</th>
                         <th scope="col">Total Price</th>
                         <th scope="col">Payment Method</th>
-                        <th scope="col">Created At</th>
-                        <th scope="col">Status</th>
+                        
                         <th scope="col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <% for (let i = orders.length - 1; i >= 0; i--) { %>
                     <tr>
-                        <td><%= orders[i]._id %></td>
+                        
+                        <td><%= orders[i].orderId %></td>
+
+                        
                         <td><%= orders[i].userId.name %></td>
                         <td>
                             <% orders[i].orderedItems.forEach(item => { %>
-                                <div><%= item.product.productName %> ,Quantity:<%= item.quantity %></div>
+                                <% if (item.product) { %>
+                                    <div><%= item.product.productName %>, Quantity: <%= item.quantity %></div>
+                                <% } else { %>
+                                    <div>Product information not available, Quantity: <%= item.quantity %></div>
+                                <% } %>
                             <% }); %>
+                            
                         </td>
                         <td>₹<%= orders[i].finalAmount %></td>
                         <td><%= orders[i].payment[0].method %></td>
-                        <td><%= new Date(orders[i].createdAt).toLocaleDateString() %></td>
-                        <td><%= orders[i].status %></td>
+                        
                         <td>
                             <a href="/admin/orders/view/<%= orders[i]._id %>" class="btn-view">View</a>
                         </td>

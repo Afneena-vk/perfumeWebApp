@@ -48,6 +48,45 @@
     border-color: #007bff; 
     outline: none;
 }
+
+.empty-cart-container {
+    text-align: center;
+    padding: 50px 20px;
+}
+
+.empty-cart-image {
+    width: 300px;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+.empty-cart-container h3 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.empty-cart-container p {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.empty-cart-container .btn {
+    background-color: #ff6f61;
+    color: white;
+    padding: 10px 20px;
+    text-transform: uppercase;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.empty-cart-container .btn:hover {
+    background-color: #ff3b2f;
+}
+
  
  </style>
 
@@ -98,15 +137,7 @@
                                                 <h5>Rs.<%= item.price %></h5>
                                             </div>
                                         </td>
-                                        <!-- <td class="quantity__item">
-                                            <div class="quantity">
-                                                <div class="pro-qty-2">
-                                                    <button class="decrement-btn" data-id="<%= item.productId %>" data-size="<%= item.size %>">-</button>
-                                                    <input type="text" value="<%= item.quantity %>">
-                                                    <button class="increment-btn" data-id="<%= item.productId %>" data-size="<%= item.size %>">+</button>
-                                                </div>
-                                            </div>
-                                        </td> -->
+                                       
                                         <td class="quantity__item">
                                             <div class="quantity">
                                                 <button class="quantity__button decrement-btn" data-id="<%= item.productId %>" data-size="<%= item.size %>">-</button>
@@ -116,10 +147,7 @@
                                         </td>
 
                                         <td class="cart__price">Rs.<%= item.totalPrice %></td>
-                                        <!-- <td class="cart__close">
-                                            <a href="/remove-from-cart?productId=<%= item.productId %>" class="cart__remove-btn">
-                                            <i class="fa fa-close"></i>
-                                        </a> -->
+                                       
                                         <td class="cart__close">
                                             <a href="/remove-from-cart?productId=<%= item.productId %>&size=<%= item.size %>" class="cart__remove-btn">
                                                 <i class="fa fa-close"></i>
@@ -131,7 +159,15 @@
                                 <% }) %>
                             <% } else { %>
                                 <tr>
-                                    <td colspan="4" class="text-center">Your cart is empty.</td>
+                                    
+                                    <td colspan="4" class="text-center">
+                                        <div class="empty-cart-container">
+                                            <img src="/img/empty-cart-modern.jpg" alt="Cart is empty" class="empty-cart-image">
+                                            <h3>Your Cart is Empty</h3>
+                                            
+                                            <a href="/shop" class="btn btn-primary">Shop Now</a>
+                                        </div>
+                                    </td>
                                 </tr>
                             <% } %>
                         </tbody>
@@ -143,26 +179,15 @@
                             <a href="/shop">Continue Shopping</a>
                         </div>
                     </div>
-                    <!-- <div class="col-lg-6 col-md-6 col-sm-6">
-                        <div class="continue__btn update__btn">
-                            <a href="#"><i class="fa fa-spinner"></i> Update cart</a>
-                        </div>
-                    </div> -->
+                   
                 </div>
             </div>
             <div class="col-lg-4">
-                <!-- <div class="cart__discount">
-                    <h6>Discount codes</h6>
-                    <form action="#">
-                        <input type="text" placeholder="Coupon code">
-                        <button type="submit">Apply</button>
-                    </form>
-                </div> -->
+               
                 <div class="cart__total">
                     <h6>Cart total</h6>
                     <ul>
-                        <!-- <li>Subtotal <span>Rs.<%= subtotal %></span></li>
-                        <li>Total <span>Rs.<%= cartTotalPrice %></span></li> -->
+                        
                         <li>Subtotal <span id="cart-subtotal">Rs.<%= subtotal %></span></li>
                         <li>Total <span id="cart-total">Rs.<%= cartTotalPrice %></span></li>
 
@@ -214,9 +239,7 @@ document.querySelectorAll(".increment-btn, .decrement-btn").forEach(button => {
             if (response.ok) {
                 quantityInput.value = quantity;
                 
-                // document.querySelector(".cart__price").innerText = `Rs.${result.cart.items.find(
-                //     item => item.productId === productId && item.size === size
-                // ).totalPrice}`;
+              
                
                 const item = result.cart.items.find(
                     item => item.productId === productId && item.size === size

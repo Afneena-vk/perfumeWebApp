@@ -174,6 +174,13 @@
                       <%=message%>
                     </div>
                   <%}%>
+
+                  <div class="mb-3">
+                    <label for="referral" class="form-label">Referral Code (optional)</label>
+                    <input type="text" class="form-control" name="refCode" id="referral" placeholder="Referral Code">
+                    <div id="error6" class="error-message"></div>
+                  </div>
+
                   <div
                     class="d-flex justify-content-between align-items-center"
                   >
@@ -197,7 +204,7 @@
               </div>
               <div class="signup-image">
                 <a href="/">
-                  <img src="/img/hero/ima.jpg" alt="hgf" />
+                  <img src="/img/hero/ima3.jpg" alt="hgf" />
                 </a>
                 <div class="text-center mt-2">
                   <a href="/login" class="sign-in-link"
@@ -220,12 +227,14 @@ const emailid= document.getElementById("email");
 const phoneid= document.getElementById("phone");
 const passid= document.getElementById("password");
 const cpassid= document.getElementById("confirm-password");
+const refCodeid= document.getElementById("referral");
 
 const error1 = document.getElementById("error1");
 const error2 = document.getElementById("error2");
 const error3 = document.getElementById("error3");
 const error4 = document.getElementById("error4");
 const error5 = document.getElementById("error5");
+const error6 = document.getElementById("error6");
 
 const signform = document.getElementById("signform");
 
@@ -336,6 +345,18 @@ document.addEventListener("DOMContentLoaded",function(){
        emailValidateChecking();
        phoneValidateChecking();
        passValidateChecking();
+
+       if (refCode) {
+        
+        if (refCode.length < 1) { 
+            refError.style.display = "block";
+            refError.innerHTML = "Referral code must be at least 1 characters";
+        } else {
+            refError.style.display = "none";
+            refError.innerHTML = "";
+        }
+    }
+
       
        if(
           !nameid ||

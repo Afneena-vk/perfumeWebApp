@@ -106,7 +106,63 @@
     }
   }
 
+  .wishlist-container {
+    padding: 20px;
+  }
+
   
+  .empty-wishlist {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .empty-wishlist-image {
+    max-width: 100%;
+    height: auto;
+    width: 300px; 
+    margin-bottom: 20px;
+  }
+
+  .empty-wishlist p {
+    font-size: 18px;
+    color: #333;
+    margin: 10px 0;
+  }
+
+  .empty-wishlist a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+  }
+
+  .empty-wishlist a:hover {
+    text-decoration: underline;
+  }
+
+ 
+  @media (max-width: 768px) {
+    .empty-wishlist-image {
+      width: 200px; 
+    }
+
+    .empty-wishlist p {
+      font-size: 16px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .empty-wishlist-image {
+      width: 150px; 
+    }
+
+    .empty-wishlist p {
+      font-size: 14px;
+    }
+  }
 
   
 
@@ -130,6 +186,7 @@
   </div>
 </section>
 <div class="wishlist-container">
+  <% if (products.length > 0) { %>
   <div class="products-grid">
     <% products.forEach(product => { %>
       <div class="card">
@@ -142,6 +199,12 @@
       </div>
     <% }) %>
   </div>
+  <% } else { %>
+    <div class="empty-wishlist">
+      <img src="/img/empty-wishlist.png" alt="Wishlist is empty" class="empty-wishlist-image">
+      <p>Your wishlist is empty. <a href="/shop">Start shopping</a> to add items to your wishlist!</p>
+    </div>
+  <% } %>
 </div>
 
 
