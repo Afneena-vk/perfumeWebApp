@@ -49,7 +49,7 @@ const getCheckoutPage = async (req, res) => {
         const totalDiscount = cartItems.reduce((sum, item) => sum + item.discount, 0);
 
         res.locals.user = userData;
-        res.render('checkout', { 
+        res.render('checkOut', { 
             addresses, 
             cartItems, 
             coupons, 
